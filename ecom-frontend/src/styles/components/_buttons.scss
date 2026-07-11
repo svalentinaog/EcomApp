@@ -1,0 +1,43 @@
+@use "sass:color";
+@use "../abstracts/variables" as *;
+@use "../abstracts/mixins" as *;
+
+// Base general del botón
+.btn {
+  @include button-base;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  width: auto; // default
+
+  // Variantes
+  &--white {
+    background: #fff;
+    color: $title;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, .08);
+
+    &:hover {
+      background: color.adjust(#fff, $lightness: -5%);
+    }
+  }
+
+  &--primary {
+    background: $primary;
+    color: $title;
+
+    &:hover {
+      background: color.adjust($primary, $lightness: -5%);
+    }
+  }
+
+  &--primary-full-width {
+    background: $primary;
+    color: $title;
+    width: 100%;
+
+    &:hover {
+      background: color.adjust($primary, $lightness: -5%);
+    }
+  }
+}

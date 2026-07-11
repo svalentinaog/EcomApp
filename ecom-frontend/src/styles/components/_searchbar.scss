@@ -1,0 +1,63 @@
+@use "../abstracts/variables" as *;
+
+.searchbar {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: $light-gray;
+  padding: 0.4rem 0.8rem;
+
+  &__icon {
+    width: 22px;
+    height: 22px;
+    opacity: 0.7;
+  }
+
+  input {
+    border: none;
+    background: transparent;
+    width: 100%;
+    font-size: 1rem;
+    color: #222;
+
+    &:focus {
+      outline: none;
+    }
+
+    &::placeholder {
+      color: #555;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .navbar .searchbar {
+    display: none;
+  }
+
+  .mobile-menu .searchbar {
+    width: 100%;
+    padding: 0.4rem 0.8rem;
+
+    &__icon {
+      width: 24px;
+      height: 24px;
+    }
+
+    input {
+      display: block;
+      width: 100%;
+      font-size: 1rem;
+      border: none;
+      background: transparent;
+
+      &:focus {
+        outline: none;
+      }
+
+      &::placeholder {
+        color: #555;
+      }
+    }
+  }
+}

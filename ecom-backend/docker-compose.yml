@@ -1,0 +1,57 @@
+version: '3.8'
+
+services:
+  # 1. Servidor Web (Nginx)
+  web:
+    # 1. Servidor Web (Nginx)
+    image: nginx:alpine
+    container_name: ecom_web
+    ports:
+      - "8000:80"
+    volumes:
+      - .:/var/www/html
+      - ./.docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - app
+    networks:
+      - ecom_network
+
+  # 2. Aplicación (PHP-FPM)
+  app:
+    build:
+      context: .
+      dockerfile: .docker/php/Dockerfile
+    container_name: ecom_app
+    volumes:
+      - ./:/var/www/html
+      - ./.docker/nginx/default.conf:/etc/nginx/conf.d/default.conf # <--- ESTA LÍNEA ES LA QUE MANDA EL DEFAULT.CONF A Nginx
+    ports:
+      - "9000:9000"
+    networks:
+      - ecom_network
+
+  # 3. Base de Datos (MySQL 8)
+  db:
+    image: mysql:8.0
+    container_name: ecom_db
+    restart: unless-stopped
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE:-ecommerce_db}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-secret}
+      MYSQL_USER: ${DB_USERNAME:-ecom_user}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-secret}
+    volumes:
+      - ecom_mysql_data:/var/lib/mysql
+    networks:
+      - ecom_network
+
+# Definición de red interna para que los contenedores se comuniquen
+networks:
+  ecom_network:
+    driver: bridge
+
+# Volumen persistente para evitar perder la base de datos
+volumes:
+  ecom_mysql_data:

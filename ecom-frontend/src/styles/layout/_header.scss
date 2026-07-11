@@ -1,0 +1,245 @@
+@use "../abstracts/variables" as *;
+
+header {
+  background: $white;
+
+  hr {
+    border: none;
+    height: 1px;
+    background: rgba(0, 0, 0, 0.1);
+  }
+
+  .header-content {
+    width: 100%;
+    max-width: 1280px;
+    padding: 1rem 2rem;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+
+    .top-bar {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      .top-bar-left {
+        display: flex;
+        align-items: center;
+        gap: 24px;
+
+      }
+
+      .top-bar-item {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 8px;
+
+        p,
+        a {
+          margin: 0;
+          text-decoration: none;
+          color: $text-paragraph;
+        }
+
+        a.active {
+          color: $primary;
+        }
+      }
+    }
+
+    .menu-items {
+      display: flex;
+      gap: 24px;
+
+      a {
+        color: $title;
+        text-decoration: none;
+        font-size: 14px;
+        text-transform: uppercase;
+
+        &.active {
+          color: $primary;
+        }
+      }
+    }
+
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      .navbar-content {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 24px;
+
+        .hamburger-menu {
+          display: none;
+        }
+
+        .cart-link {
+          position: relative;
+
+          .cart-count {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: absolute;
+            top: -8px;
+            right: -12px;
+            background-color: $primary;
+            font-size: 12px;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+          }
+        }
+      }
+
+
+    }
+
+    .mobile-menu-overlay {
+      display: none;
+    }
+
+    .mobile-menu {
+      display: none;
+    }
+  }
+
+  // Responsive
+  @media (max-width: 768px) {
+    .header-content {
+      padding: 0.75rem 1rem;
+      position: relative;
+
+      .top-bar {
+        flex-direction: row;
+        justify-content: space-between;
+
+        .top-bar-left {
+          gap: 12px;
+
+          .top-bar-item {
+            p {
+              display: none;
+            }
+          }
+        }
+      }
+
+      .navbar {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+
+        img.logo {
+          width: 80px;
+        }
+
+        .navbar-content {
+          display: flex;
+          gap: 16px;
+          align-items: center;
+
+          .menu-items {
+            display: none;
+          }
+
+          img[alt="Cart"] {
+            width: 32px;
+            height: 32px;
+          }
+
+          .hamburger-menu {
+            display: block;
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+          }
+        }
+      }
+
+      /* Mobile menu overlay */
+      .mobile-menu-overlay {
+        display: block;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 999;
+      }
+
+      /* Menú móvil slide-out */
+      .mobile-menu {
+        display: flex;
+        flex-direction: column;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 85%;
+        max-width: 320px;
+        height: 100vh;
+        background: $white;
+        z-index: 1000;
+        padding: 1.5rem;
+        gap: 1.5rem;
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+        overflow-y: auto;
+
+        &.open {
+          transform: translateX(0);
+        }
+
+        .mobile-menu-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding-bottom: 1rem;
+          border-bottom: 1px solid $light-gray;
+
+          h3 {
+            color: $title;
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin: 0;
+          }
+
+          .close-menu-btn {
+            background: none;
+            border: none;
+            color: $text-paragraph;
+            cursor: pointer;
+            padding: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: color 0.2s ease;
+
+            &:hover {
+              color: $primary;
+            }
+          }
+        }
+
+        a {
+          font-size: 16px;
+          text-decoration: none;
+          color: $title;
+
+          &.active {
+            color: $primary;
+          }
+        }
+      }
+    }
+  }
+}

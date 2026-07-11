@@ -1,0 +1,66 @@
+@use "../../abstracts/variables" as *;
+
+// .bg-legal-section {
+//   background-color: $light-gray;
+// }
+
+.legal-section {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 40px;
+
+  hr {
+    border: none;
+    height: 1px;
+    background: rgba(0, 0, 0, 0.1);
+  }
+
+  &__head {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  &__body {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+  }
+}
+
+.legal-block {
+  &__subtitle {
+    font-size: 22px;
+    font-weight: 600;
+    color: $title;
+    margin-bottom: 16px;
+    line-height: 1.3;
+  }
+
+  &__paragraphs {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  &__text {
+    font-size: 16px;
+    line-height: 1.7;
+    color: $text-paragraph;
+    text-align: justify;
+    margin: 0;
+  }
+}
+
+// Ajustes responsivos
+@media (max-width: 768px) {
+  .legal-section {
+    padding: 40px 0;
+
+    &__title {
+      font-size: 32px;
+    }
+  }
+}

@@ -1,0 +1,115 @@
+{
+  "navigation": {
+    "home": "Home",
+    "shop": "Shop",
+    "cart": "Shopping Cart",
+    "contact": "Contact",
+    "access": "Access",
+    "legalNotice": "Legal Notice",
+    "privacyPolicy": "Privacy Policy",
+    "shippingPolicy": "Shipping and Returns"
+  },
+  "header": {
+    "spanish": "Spanish",
+    "access": "Access",
+    "search": "Search products..."
+  },
+  "footer": {
+    "description": "Your trusted store for tech products with nationwide shipping.",
+    "titles": {
+      "menu": "Menu",
+      "contact": "Contact Information",
+      "legal": "Legal"
+    },
+    "address": "123 Street, Building 456, Jamundí",
+    "legal": {
+      "terms": "Legal Notice",
+      "privacy": "Privacy Policy",
+      "shipping": "Shipping and Returns"
+    },
+    "copyright": "Sandra Valentina Ortiz Gonzalez — ADSO Apprentice | Record No. 3118288"
+  },
+  "CTA": {
+    "title": "[Main banner or promotion text]",
+    "description": "[Brief description]",
+    "btn": "Contact",
+    "alt": "Featured image"
+  },
+  "comingSoon": {
+    "title": "Coming Soon",
+    "description": "We are working on enabling this section.",
+    "cart": "Cart coming soon",
+    "productDetail": "Product details coming soon",
+    "auth": "Authentication coming soon",
+    "shop": "Shop coming soon"
+  },
+  "noResults": {
+    "title": "No matches found",
+    "description": "No products match your search, try other keywords",
+    "button": "Clear filters",
+    "imageAlt": "No results"
+  },
+  "login": {
+    "title": "Access",
+    "email": "Email",
+    "emailPlaceholder": "example@gmail.com",
+    "password": "Password",
+    "passwordPlaceholder": "Enter password",
+    "rememberMe": "Remember me",
+    "forgotPassword": "Forgot your password?",
+    "loginButton": "Sign in",
+    "noAccount": "Don't have an account?",
+    "registerNow": "Register now"
+  },
+  "register": {
+    "title": "Create account",
+    "name": "Name",
+    "namePlaceholder": "Enter your name",
+    "email": "Email",
+    "emailPlaceholder": "example@gmail.com",
+    "password": "Password",
+    "passwordPlaceholder": "Enter password",
+    "confirmPassword": "Confirm password",
+    "confirmPasswordPlaceholder": "Re-enter your password",
+    "registerButton": "Create account",
+    "haveAccount": "Already have an account?",
+    "loginNow": "Sign in now"
+  },
+  "cart": {
+    "emptyTitle": "Your cart is empty",
+    "emptyDescription": "Go to the shop and add products to your cart",
+    "shopButton": "Discover products",
+    "title": "Shopping Cart",
+    "columns": {
+      "product": "Product",
+      "price": "Price",
+      "quantity": "Quantity",
+      "total": "Total",
+      "remove": "Remove from Cart"
+    },
+    "summary": {
+      "title": "Cart Summary",
+      "quantityProducts": "Quantity of products",
+      "subtotal": "Subtotal",
+      "shipping": "Shipping",
+      "shippingFree": "Free",
+      "total": "Total"
+    },
+    "checkoutButton": "Checkout"
+  },
+  "recoverPassword": {
+    "title": "Recover Password",
+    "email": "Email",
+    "emailPlaceholder": "example@gmail.com",
+    "sendButton": "Send"
+  },
+  "newPassword": {
+    "title": "New Password",
+    "newPassword": "New Password",
+    "newPasswordPlaceholder": "Your Password",
+    "confirmPassword": "Confirm Password",
+    "confirmPasswordPlaceholder": "Your Password",
+    "changeButton": "Change Password",
+    "loginLink": "Sign in"
+  }
+}

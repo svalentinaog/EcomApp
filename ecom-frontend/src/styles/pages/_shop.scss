@@ -1,0 +1,249 @@
+@use "../abstracts/variables" as *;
+
+.shop-content {
+  display: flex;
+  gap: 2rem;
+  padding: 2rem 0;
+  width: 100%;
+}
+
+.filter-sidebar-wrapper {
+  flex-shrink: 0;
+}
+
+.products-shop {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.current-category {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  background: $light-gray;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+
+  h3 {
+    color: $title;
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin: 0;
+  }
+}
+
+.clear-filters {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: $title;
+  background: transparent;
+  border: none;
+  padding: 0.25rem;
+  transition: color 0.15s ease, transform 0.15s ease;
+
+  svg {
+    display: block;
+    width: 1.25rem;
+    height: 1.25rem;
+    fill: currentColor;
+  }
+
+  &:hover {
+    color: $primary;
+    transform: scale(1.08);
+  }
+}
+
+.product-list-shop {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+  width: 100%;
+
+  .no-products {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 4rem 1rem;
+    color: $text-paragraph;
+    font-size: 1.125rem;
+  }
+}
+
+.pagination {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem 0;
+}
+
+.pagination__item {
+  min-width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 999px;
+  border: 1px solid $light-gray;
+  background: $white;
+  color: $title;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  padding: 0 0.75rem;
+}
+
+.pagination__item:hover:not(:disabled) {
+  border-color: $primary;
+  color: $primary;
+  background: rgba($primary, 0.08);
+}
+
+.pagination__item--active {
+  background: $primary;
+  border-color: $primary;
+}
+
+.pagination__item--control {
+  min-width: 2.5rem;
+  padding: 0 0.85rem;
+}
+
+.pagination__item--ellipsis {
+  cursor: default;
+  border-color: transparent;
+  background: transparent;
+  color: $text-paragraph;
+}
+
+.pagination__item:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.mobile-filter-btn {
+  display: none;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1rem;
+  background: $white;
+  border: 1px solid $light-gray;
+  border-radius: 8px;
+  cursor: pointer;
+  color: $title;
+  font-weight: 500;
+  transition: all 0.2s ease;
+
+  &:hover {
+    border-color: $primary;
+    color: $primary;
+  }
+}
+
+.filter-sidebar-header {
+  display: none;
+}
+
+.filter-overlay {
+  display: none;
+}
+
+// Mobile styles
+@media (max-width: 768px) {
+  .filter-overlay {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+  }
+  .shop-content {
+    flex-direction: column;
+    padding: 1rem 0;
+  }
+
+  .filter-sidebar-wrapper {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 85%;
+    max-width: 320px;
+    height: 100vh;
+    background: $white;
+    z-index: 1000;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+    padding: 1.5rem;
+    box-shadow: 2px 0 10px rgba($secondary, 0.1);
+    overflow-y: auto;
+
+    &.open {
+      transform: translateX(0);
+    }
+
+    .filter-sidebar-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid $light-gray;
+
+      h3 {
+        color: $title;
+        font-size: 1.25rem;
+        font-weight: 600;
+      }
+
+      .close-filter-btn {
+        background: none;
+        border: none;
+        color: $text-paragraph;
+        cursor: pointer;
+        padding: 0.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: color 0.2s ease;
+
+        &:hover {
+          color: $primary;
+        }
+      }
+    }
+
+    .filter-sidebar {
+      width: 100%;
+      gap: 1.5rem;
+
+      &__section {
+        border-bottom: none;
+        padding-bottom: 0;
+      }
+    }
+  }
+
+  .mobile-filter-btn {
+    display: flex;
+  }
+
+  .current-category {
+    padding: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .product-list-shop {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+}

@@ -1,0 +1,26 @@
+@use "../abstracts/variables" as *;
+
+.product-filter {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+
+  h4 {
+    cursor: pointer;
+  }
+
+  // Responsive
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 16px;
+
+    h4 {
+      font-size: 14px;
+    }
+  }
+}
+
+.tab-active {
+  color: $primary;
+  text-decoration: underline;
+}

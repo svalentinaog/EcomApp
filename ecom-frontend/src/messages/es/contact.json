@@ -1,0 +1,36 @@
+{
+  "hero": {
+    "title": "Contacto",
+    "subtitle": "Área para promociones principales",
+    "description": "Contáctanos para cualquier pregunta o problema"
+  },
+  "infoSection": {
+    "title": "Información de Contacto",
+    "address": {
+      "title": "Dirección",
+      "description": "Av. Principal 123, Ciudad, País"
+    },
+    "email": {
+      "title": "Correo Electrónico",
+      "description": "contacto@ejemplo.com"
+    },
+    "phone": {
+      "title": "Teléfono",
+      "description": "+123 456 7890"
+    }
+  },
+  "formSection": {
+    "title": "Formulario de Contacto",
+    "description": "Contáctanos para cualquier pregunta o problema"
+  },
+  "form": {
+    "placeholder": {
+      "name": "Nombre",
+      "email": "Correo Electrónico",
+      "phone": "Teléfono",
+      "message": "Mensaje"
+    },
+    "terms_and_conditions": "He leído la Política de Privacidad y acepto el tratamiento de mis datos para el trámite de la solicitud realizada.",
+    "submit": "Enviar"
+  }
+}

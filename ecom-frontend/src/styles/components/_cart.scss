@@ -1,0 +1,290 @@
+@use "../abstracts/variables" as *;
+
+.cart-content {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  margin: 0 auto;
+}
+
+// ---------- TABLE ----------
+.cart-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed; 
+
+  th:nth-child(1),
+  td:nth-child(1) {
+    width: 500px;
+  }
+  // th:nth-child(2),
+  // td:nth-child(2) {
+  //
+  // }
+  // th:nth-child(3),
+  // td:nth-child(3) {
+  //
+  // }
+  // th:nth-child(4),
+  // td:nth-child(4) {
+  //
+  // }
+  th:nth-child(5),
+  td:nth-child(5) {
+    width: 50px;
+  }
+}
+
+.cart-table thead th {
+  text-align: left;
+  padding: 0.5rem;
+}
+
+.cart-table tbody td {
+  padding: 0.5rem;
+  border-top: 1px solid $light-gray;
+  vertical-align: middle;
+  color: $secondary;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+// ---------- CELLS ----------
+.cart-item-product {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+
+  img {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 8px;
+    background: $light-gray;
+    flex-shrink: 0;
+  }
+
+  p {
+    margin: 0;
+    color: $secondary;
+    font-size: 0.85rem;
+    line-height: 1.4;
+  }
+}
+
+.cart-item-price,
+.cart-item-total {
+  font-weight: 700;
+  font-size: 0.9rem;
+  white-space: nowrap;
+}
+
+.quantity-controls {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+  padding: 4px 6px;
+  border-radius: 999px;
+  background: $light-gray;
+  width: fit-content;
+
+  button {
+    width: 24px;
+    height: 24px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid transparent;
+    background-color: $white;
+    border-radius: 50%;
+    color: $secondary;
+    font-size: 0.85rem;
+    line-height: 1;
+    cursor: pointer;
+    transition: all 0.18s ease;
+
+    &:hover,
+    &:focus-visible {
+      border-color: $dark-primary;
+      background: $light-primary;
+    }
+  }
+
+  p {
+    min-width: 18px;
+    margin: 0;
+    text-align: center;
+    color: $secondary;
+    font-weight: 700;
+    font-size: 0.85rem;
+  }
+}
+
+.cart-item-remove-cell {
+  text-align: center;
+}
+
+.cart-item-remove {
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 50%;
+  background-color: transparent;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: $text-paragraph;
+  font-size: 15px;
+  transition: color 0.18s ease;
+
+  &:hover,
+  &:focus-visible {
+    color: $dark-primary;
+  }
+}
+
+// ---------- DIVIDER ----------
+.cart-divider {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+}
+.cart-divider-line {
+  flex: 1;
+  height: 2px;
+  background-color: $light-gray;
+}
+.cart-divider-icon {
+  width: 22px;
+  height: 22px;
+  opacity: 0.65;
+}
+
+// ---------- SUMMARY ----------
+.cart-summary {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  border: 1px solid $light-gray;
+  padding: 24px;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  background-color: $white;
+  box-shadow: none;
+
+  .btn--primary {
+    width: auto;
+    align-self: flex-start;
+  }
+}
+
+.cart-summary-header h5 {
+  margin: 0;
+  font-size: 1.1rem;
+  letter-spacing: -0.02em;
+  color: $secondary;
+}
+
+.cart-summary-table {
+  width: 100%;
+  border-collapse: collapse;
+
+  td:first-child {
+    color: $secondary;
+    text-align: left;
+  }
+
+  td:last-child {
+    text-align: right;
+    color: $secondary;
+  }
+}
+
+.cart-summary-row td {
+  padding: 12px;
+  border-bottom: 1px solid $light-gray;
+  font-size: 0.9rem;
+}
+
+.cart-summary-row:last-child td {
+  border-bottom: none;
+}
+
+.cart-summary-row--total td {
+  background-color: $light-gray;
+  padding-top: 10px;
+  color: $secondary;
+  font-weight: 700;
+  border-radius: 8px;
+  font-size: 0.95rem;
+
+  &:last-child {
+    font-size: 1rem;
+  }
+}
+
+// ---------- RESPONSIVE ----------
+@media (max-width: 1024px) {
+  .cart-content {
+    gap: 20px;
+    max-width: 100%;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+}
+
+@media (max-width: 768px) {
+  // En mobile, la tabla se "des-tabla" y cada <tr> se comporta como card
+  .cart-table,
+  .cart-table thead,
+  .cart-table tbody,
+  .cart-table th,
+  .cart-table td,
+  .cart-table tr {
+    display: block;
+    width: auto;
+  }
+
+  .cart-table thead {
+    display: none;
+  }
+
+  .cart-table tbody tr {
+    border: 1px solid $light-gray;
+    border-radius: 14px;
+    padding: 16px;
+    margin-bottom: 14px;
+    box-shadow: 0 12px 30px rgba($secondary, 0.06);
+  }
+
+  .cart-table tbody td {
+    border-bottom: none;
+    padding: 6px 0;
+  }
+
+  .cart-item-product img {
+    width: 64px;
+    height: 64px;
+    border-radius: 10px;
+  }
+
+  .cart-item-remove-cell {
+    text-align: left;
+  }
+
+  .cart-content {
+    gap: 20px;
+    padding: 1.5rem 0;
+  }
+}

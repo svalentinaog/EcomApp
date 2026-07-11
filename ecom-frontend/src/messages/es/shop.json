@@ -1,0 +1,24 @@
+{
+  "products": "Todos los Productos",
+  "filters": {
+    "title": "Filtros",
+    "categories": "Categorías",
+    "prices": "Precios",
+    "all": "Productos",
+    "apply": "Aplicar filtros",
+    "clear": "Limpiar"
+  },
+  "product": {
+    "add_to_cart": "Añadir al carrito",
+    "discount": "Descuento"
+  },
+  "pagination": {
+    "ariaLabel": "Paginación de productos",
+    "previous": "Anterior",
+    "next": "Siguiente"
+  },
+  "relatedProducts": {
+    "title": "Otros productos relacionados"
+  },
+  "noProducts": "No se hallaron productos que coincidan con tu búsqueda"
+}

@@ -1,0 +1,77 @@
+@use "../../abstracts/variables" as *;
+
+.bg-section-features {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: $light-gray;
+
+  .hero-section-features {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    gap: 2rem;
+
+    .feature-item {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 24px;
+      padding: 24px;
+
+      img {
+        width: 48px;
+        height: 48px;
+      }
+
+      div {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+    }
+
+    .separator {
+      width: 1px;
+      background-color: rgba(0, 0, 0, 0.1);
+    }
+  }
+
+  // Responsive
+  @media (max-width: 1024px) {
+    .hero-section-features {
+      flex-direction: column;
+      gap: 1.5rem;
+
+      .separator {
+        display: none; // ocultamos separador en tablet/móvil
+      }
+
+      .feature-item {
+        padding: 30px;
+
+        img {
+          width: 40px;
+          height: 40px;
+        }
+      }
+    }
+  }
+
+  @media (max-width: 768px) {
+    .hero-section-features {
+      gap: 1rem;
+
+      .feature-item {
+        padding: 20px;
+
+        img {
+          width: 32px;
+          height: 32px;
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,50 @@
+@use "../abstracts/variables" as *;
+
+
+
+h1,
+h2,
+h3,
+h4,
+h5,
+span, th {
+  margin: 0;
+  color: $title;
+}
+
+h1 {
+  font-size: 3rem;
+}
+
+h2 {
+  font-size: 2.5rem;
+}
+
+h3,
+span {
+  font-size: 1.5rem;
+}
+
+h4 {
+  font-size: 1.25rem;
+}
+
+h5 {
+  font-size: 1rem;
+}
+
+p,
+button,
+a, td, th {
+  margin: 0;
+  font-size: 1rem;
+}
+
+p,
+small, td {
+  color: $text-paragraph;
+}
+
+span, th {
+  font-weight: 700;
+}

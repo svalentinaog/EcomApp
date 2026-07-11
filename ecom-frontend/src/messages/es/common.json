@@ -1,0 +1,115 @@
+{
+  "navigation": {
+    "home": "Inicio",
+    "shop": "Tienda",
+    "cart": "Carrito de Compras",
+    "contact": "Contacto",
+    "access": "Acceso",
+    "legalNotice": "Aviso legal",
+    "privacyPolicy": "Política de privacidad",
+    "shippingPolicy": "Política de envíos y devoluciones"
+  },
+  "header": {
+    "english": "Inglés",
+    "access": "Acceso",
+    "search": "Buscador de productos..."
+  },
+  "footer": {
+    "description": "Tu tienda de confianza para productos tecnológicos.",
+    "titles": {
+      "menu": "Menú",
+      "contact": "Contacto",
+      "legal": "Legal"
+    },
+    "address": "Calle 123, Edificio 456, Jamundí",
+    "legal": {
+      "terms": "Aviso legal",
+      "privacy": "Política de privacidad",
+      "shipping": "Política de envíos y devoluciones"
+    },
+    "copyright": "Sandra Valentina Ortiz Gonzalez — Aprendiz ADSO | Ficha N.º 3118288"
+  },
+  "CTA": {
+    "title": "[Texto principal banner o promoción]",
+    "description": "[Breve descripción]",
+    "btn": "Contacto",
+    "alt": "Imagen destacada"
+  },
+  "comingSoon": {
+    "title": "Próximamente",
+    "description": "Estamos trabajando para habilitar esta sección.",
+    "cart": "Próximamente carrito",
+    "productDetail": "Próximamente detalle de producto",
+    "auth": "Próximamente autenticación",
+    "shop": "Próximamente tienda"
+  },
+  "noResults": {
+    "title": "No se hallaron coincidencias",
+    "description": "No se hay productos que coincidan con la búsqueda que realizaste, intenta con otras palabras claves",
+    "button": "Limpiar filtros",
+    "imageAlt": "Sin resultados"
+  },
+  "login": {
+    "title": "Acceso",
+    "email": "Correo electrónico",
+    "emailPlaceholder": "example@gmail.com",
+    "password": "Contraseña",
+    "passwordPlaceholder": "Ingresar contraseña",
+    "rememberMe": "Acuérdate de mí",
+    "forgotPassword": "¿Has olvidado tu contraseña?",
+    "loginButton": "Acceso",
+    "noAccount": "¿No tienes una cuenta?",
+    "registerNow": "Registrate ahora"
+  },
+  "register": {
+    "title": "Crear cuenta",
+    "name": "Nombre",
+    "namePlaceholder": "Ingresa tu nombre",
+    "email": "Correo electrónico",
+    "emailPlaceholder": "example@gmail.com",
+    "password": "Contraseña",
+    "passwordPlaceholder": "Ingresar contraseña",
+    "confirmPassword": "Confirmar contraseña",
+    "confirmPasswordPlaceholder": "Vuelve a ingresar tu contraseña",
+    "registerButton": "Crear cuenta",
+    "haveAccount": "¿Ya tienes una cuenta?",
+    "loginNow": "Accede ahora"
+  },
+  "cart": {
+    "emptyTitle": "Tu carrito está vacío",
+    "emptyDescription": "Ve a la tienda y agrega productos a tu carrito",
+    "shopButton": "Descubrir productos",
+    "title": "Carrito de Compras",
+    "columns": {
+      "product": "Producto",
+      "price": "Precio",
+      "quantity": "Cantidad",
+      "total": "Total",
+      "remove": "Eliminar del Carrito"
+    },
+    "summary": {
+      "title": "Resumen de carrito",
+      "quantityProducts": "Cantidad de productos",
+      "subtotal": "Subtotal",
+      "shipping": "Envío",
+      "shippingFree": "Gratis",
+      "total": "Total"
+    },
+    "checkoutButton": "Pagar"
+  },
+  "recoverPassword": {
+    "title": "Recuperar contraseña",
+    "email": "Correo electrónico",
+    "emailPlaceholder": "example@gmail.com",
+    "sendButton": "Enviar"
+  },
+  "newPassword": {
+    "title": "Contraseña Nueva",
+    "newPassword": "Nueva Contraseña",
+    "newPasswordPlaceholder": "Tu Contraseña",
+    "confirmPassword": "Confirmar contraseña",
+    "confirmPasswordPlaceholder": "Tu Contraseña",
+    "changeButton": "Cambiar Contraseña",
+    "loginLink": "Iniciar sesión"
+  }
+}

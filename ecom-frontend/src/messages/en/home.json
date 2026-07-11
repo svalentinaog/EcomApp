@@ -1,0 +1,28 @@
+{
+  "hero": {
+    "badge": "[Main promotion area]",
+    "title": "[Eye-catching message or campaign slogan]",
+    "description": "[Space for a brief description]",
+    "cta": "Shop"
+  },
+  "benefits": {
+    "shipping": {
+      "title": "Free shipping",
+      "description": "Free shipping on all orders over $100"
+    },
+    "returns": {
+      "title": "30-day returns",
+      "description": "Return any item within 30 days for a full refund"
+    },
+    "support": {
+      "title": "24/7 Support",
+      "description": "Contact our support team for any questions or issues"
+    },
+    "placeholder": "[Brief description of the benefit]"
+  },
+  "products": {
+    "title": "Products",
+    "categories_all": "[Filter all categories]",
+    "view_more": "View products"
+  }
+}

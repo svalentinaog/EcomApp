@@ -1,0 +1,35 @@
+{
+  "hero": {
+    "title": "Contact",
+    "subtitle": "Main promotion area",
+    "description": "Contact us for any questions or issues"
+  },
+  "infoSection": {
+    "address": {
+      "title": "Address",
+      "description": "123 Main St, Anytown, USA"
+    },
+    "email": {
+      "title": "Email",
+      "description": "contact@example.com"
+    },
+    "phone": {
+      "title": "Phone",
+      "description": "+1 (555) 123-4567"
+    }
+  },
+  "formSection": {
+    "title": "Contact Form",
+    "description": "Contact us for any questions or issues"
+  },
+  "form": {
+    "placeholder": {
+      "name": "Name",
+      "email": "Email",
+      "phone": "Phone",
+      "message": "Message"
+    },
+    "terms_and_conditions": "I have read the Privacy Policy and accept the processing of my data for the request made.",
+    "submit": "Submit"
+  }
+}

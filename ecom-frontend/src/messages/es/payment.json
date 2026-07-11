@@ -1,0 +1,31 @@
+{
+  "title": "Realizar Pago",
+  "subtitle": "Tu pago es 100% seguro",
+  "paymentMethod": {
+    "title": "Método de Pago",
+    "method": "Mercado Pago",
+    "description": "Serás redirigido a Mercado Pago para completar tu pago de forma segura.",
+    "button": "Pagar con Mercado Pago",
+    "terms": "Al continuar, aceptas los términos y condiciones de Mercado Pago."
+  },
+  "contactData": {
+    "title": "Datos de Contacto",
+    "fullName": "Nombre completo",
+    "fullNamePlaceholder": "Tu nombre completo",
+    "phone": "Teléfono",
+    "phonePlaceholder": "Tu teléfono",
+    "address": "Dirección",
+    "addressPlaceholder": "Tu dirección",
+    "city": "Ciudad",
+    "cityPlaceholder": "Tu ciudad",
+    "saveButton": "Guardar Datos"
+  },
+  "summary": {
+    "title": "Resumen del Pedido",
+    "product": "Arroz Integral Premium 1kg x1",
+    "subtotal": "Subtotal",
+    "shipping": "Envío",
+    "shippingFree": "Gratis",
+    "total": "Total"
+  }
+}

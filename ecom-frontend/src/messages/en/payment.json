@@ -1,0 +1,31 @@
+{
+  "title": "Make Payment",
+  "subtitle": "Your payment is 100% secure",
+  "paymentMethod": {
+    "title": "Payment Method",
+    "method": "Mercado Pago",
+    "description": "You will be redirected to Mercado Pago to complete your payment securely.",
+    "button": "Pay with Mercado Pago",
+    "terms": "By continuing, you accept the Mercado Pago terms and conditions."
+  },
+  "contactData": {
+    "title": "Contact Details",
+    "fullName": "Full name",
+    "fullNamePlaceholder": "Your full name",
+    "phone": "Phone number",
+    "phonePlaceholder": "Your phone",
+    "address": "Address",
+    "addressPlaceholder": "Your address",
+    "city": "City",
+    "cityPlaceholder": "Your city",
+    "saveButton": "Save Details"
+  },
+  "summary": {
+    "title": "Order Summary",
+    "product": "Arroz Integral Premium 1kg",
+    "subtotal": "Subtotal",
+    "shipping": "Shipping",
+    "shippingFree": "Free",
+    "total": "Total"
+  }
+}

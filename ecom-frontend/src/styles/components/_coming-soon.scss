@@ -1,0 +1,27 @@
+.coming-soon {
+  display: flex;
+  align-items: center;
+  background: rgba(88, 88, 88, 0.1);
+
+  .coming-soon-card {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+
+    .coming-soon-icon {
+      width: 200px;
+      height: 200px;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .coming-soon {
+    .coming-soon-card {
+      max-width: 90%;
+      padding: 28px 20px;
+    }
+  }
+}

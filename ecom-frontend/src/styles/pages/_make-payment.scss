@@ -1,0 +1,148 @@
+@use "../abstracts/variables" as *;
+
+.make-payment-section {
+  padding: 4rem 0;
+}
+
+.make-payment-main {
+  display: grid;
+  grid-template-columns: 1fr 360px;
+  gap: 32px;
+  align-items: start;
+}
+
+.make-payment-content {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.make-payment-header h1 {
+  margin: 0;
+  font-size: 2rem;
+  font-weight: 700;
+  color: $secondary;
+}
+
+.make-payment-header p {
+  margin: 8px 0 0;
+  color: $text-paragraph;
+  font-size: 1rem;
+}
+
+.make-payment-step {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.make-payment-step__label {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+  color: $secondary;
+}
+
+.make-payment-method-card,
+.make-payment-summary__box {
+  border: 1px solid $light-gray;
+  border-radius: 24px;
+  padding: 24px;
+  background-color: $white;
+}
+
+.make-payment-method-card__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.make-payment-method-badge {
+  padding: 8px 12px;
+  background-color: $light-gray;
+  border-radius: 999px;
+  color: $secondary;
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.make-payment-method-icons {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.make-payment-method-icons img {
+  width: auto;
+  height: 24px;
+}
+
+.make-payment-method-description {
+  margin: 0 0 20px;
+  color: $text-paragraph;
+  font-size: 0.95rem;
+  line-height: 1.7;
+}
+
+.make-payment-method-terms {
+  margin: 16px 0 0;
+  color: $text-paragraph;
+  font-size: 0.82rem;
+  line-height: 1.6;
+}
+
+.make-payment-contact-form {
+  display: grid;
+  gap: 18px;
+}
+
+.make-payment-summary {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.make-payment-summary__box h2 {
+  margin: 0 0 18px;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: $secondary;
+}
+
+.make-payment-summary__item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid $light-gray;
+  color: $text-paragraph;
+}
+
+.make-payment-summary__item--total {
+  border-bottom: none;
+  font-weight: 700;
+  color: $secondary;
+}
+
+@media (max-width: 1024px) {
+  .make-payment-main {
+    grid-template-columns: 1fr;
+  }
+
+  .make-payment-summary {
+    justify-content: stretch;
+  }
+}
+
+@media (max-width: 768px) {
+  .make-payment-section {
+    padding: 2rem 0;
+  }
+
+  .make-payment-step__label,
+  .make-payment-summary__box h2 {
+    font-size: 1rem;
+  }
+}

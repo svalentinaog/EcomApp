@@ -1,0 +1,28 @@
+{
+  "hero": {
+    "badge": "[Área para promociones principales]",
+    "title": "[Mensaje llamativo o slogan de campaña]",
+    "description": "[Espacio para una breve descripción]",
+    "cta": "Tienda"
+  },
+  "benefits": {
+    "shipping": {
+      "title": "Envío gratis",
+      "description": "Envío gratis en todas las órdenes sobre $100"
+    },
+    "returns": {
+      "title": "Devoluciones en 30 días",
+      "description": "Devuelve cualquier artículo dentro de 30 días por un reembolso completo"
+    },
+    "support": {
+      "title": "Soporte 24/7",
+      "description": "Contáctanos para cualquier pregunta o problema"
+    },
+    "placeholder": "[Breve descripción sobre el beneficio]"
+  },
+  "products": {
+    "title": "Productos",
+    "categories_all": "[Filtrar todas las categorías]",
+    "view_more": "Ver productos"
+  }
+}

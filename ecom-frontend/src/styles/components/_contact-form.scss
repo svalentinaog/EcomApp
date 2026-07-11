@@ -1,0 +1,76 @@
+@use "../abstracts/variables" as *;
+@use "../abstracts/mixins" as *;
+
+.contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+  max-width: 700px;
+
+  &__row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  &__input {
+    width: 100%;
+    padding: 1rem;
+    border: 1px solid $stroke-subtle;
+    border-radius: 4px;
+    font-size: 1rem;
+    color: var(--color-text);
+
+    &--textarea {
+      resize: none;
+    }
+
+    &::placeholder {
+      color: #94a3b8;
+    }
+
+    &:focus {
+      outline: none;
+      border-color: $primary
+    }
+  }
+
+  &__consent {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+  }
+
+  &__checkbox-wrapper {
+    display: flex;
+    align-items: center;
+    border-radius: 50%;
+  }
+
+  &__checkbox {
+    cursor: pointer;
+    accent-color: $primary;
+    border-radius: 50%;
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+
+  &__label {
+    font-size: 0.9rem;
+    color: #64748b;
+    line-height: 1.4;
+    cursor: pointer;
+  }
+
+  &__footer {
+    display: flex;
+    justify-content: center;
+    margin-top: 1rem;
+  }
+}

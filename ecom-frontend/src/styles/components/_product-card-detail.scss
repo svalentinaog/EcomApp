@@ -1,0 +1,82 @@
+@use "../abstracts/variables" as *;
+
+.card-product-detail {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 40px;
+
+  .card-product-detail-content {
+    width: 50%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+
+    .card-product-detail-content-info {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+
+      .product-detail-info-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .price-container {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+
+        .price {
+          color: $title;
+        }
+
+        .old-price {
+          text-decoration: line-through;
+          color: $text-paragraph;
+        }
+
+        .discount {
+          color: $discount;
+        }
+      }
+    }
+
+    .card-product-detail-content-actions {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 16px;
+    }
+  }
+
+  @media (max-width: 1024px) {
+    flex-direction: column;
+    gap: 32px;
+
+    .card-product-detail-gallery {
+      width: 100%;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .card-product-detail-content {
+      width: 100%;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .card-product-detail-content {
+      .card-product-detail-content-info {
+        .product-detail-info-container {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 8px;
+        }
+      }
+    }
+  }
+}
