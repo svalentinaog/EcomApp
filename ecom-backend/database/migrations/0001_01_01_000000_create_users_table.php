@@ -17,7 +17,8 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->date('birth_date')->nullable(); // nuevo campo
+            $table->string('role')->default('customer');
+            $table->date('birth_date')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

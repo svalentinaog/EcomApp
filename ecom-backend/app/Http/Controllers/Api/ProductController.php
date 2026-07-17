@@ -13,7 +13,7 @@ class ProductController extends Controller
             // Le pedimos al Modelo todos los productos de alimentación
             // 'with('subcategory')' hace que también traiga a qué subcategoría pertenece cada uno
             // Reemplazamos get() por paginate(10) para activar la paginación automatizada
-            $products = Product::with('subcategory.category')->paginate(10); // 👈 es subcategory pq es el nombre de la función (la relación) que cree dentro del archivo app/Models/Product.php.
+            $products = Product::with('subcategory.category', 'productImages')->paginate(10); // 👈 es subcategory pq es el nombre de la función (la relación) que cree dentro del archivo app/Models/Product.php.
 
             // 3. Entregamos la respuesta en formato JSON (listo para que cualquier frontend lo lea)
             return response()->json([
@@ -26,7 +26,7 @@ class ProductController extends Controller
         public function store(Request $request)
         {
             // 1. Validamos estrictamente los datos que entran
-            $validated = $request->validate([
+            $validatedData = $request->validate([
                 'name'           => 'required|string|max:255',
                 'description'    => 'nullable|string',
                 'price'          => 'required|numeric|min:0',
@@ -42,7 +42,7 @@ class ProductController extends Controller
             ]);
 
             // 2. Creamos el producto en la base de datos
-            $product = Product::create($validated);
+            $product = Product::create($validatedData);
 
             // 3. Guardamos las imágenes en la base de datos
             if ($request->hasFile('product_images')) {
@@ -77,7 +77,7 @@ class ProductController extends Controller
             if (!$product) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Producto no encontrado'
+                    'message' => 'El producto que estas intentando ver no existe'
                 ], 404); // Código 404: Not Found
             }
 
@@ -89,17 +89,26 @@ class ProductController extends Controller
 
         // 3. UPDATE (Actualizar un producto)
         public function update(Request $request, $id) {
+
             $product = Product::find($id);
+
+            // Si el request está vacío, detenemos la ejecución
+            if (empty($request->all())) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'No se enviaron datos para actualizar'
+                ], 422);
+            }
 
             if (!$product) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Producto no encontrado'
+                    'message' => 'El producto que estas intentando actualizar no existe'
                 ], 404);
             }
 
             // 'sometimes' significa: valida esta regla solo si el campo viene en la petición
-            $validated = $request->validate([
+            $validatedData = $request->validate([
                 'name'           => 'sometimes|required|string|max:255',
                 'description'    => 'nullable|string',
                 'price'          => 'sometimes|required|numeric|min:0',
@@ -111,7 +120,7 @@ class ProductController extends Controller
                 'subcategory_id' => 'sometimes|required|exists:subcategories,id',
             ]);
 
-            $product->update($validated);
+            $product->update($validatedData);
 
             return response()->json([
                 'success' => true,
@@ -127,7 +136,7 @@ class ProductController extends Controller
             if (!$product) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Producto no encontrado'
+                    'message' => 'El producto que estas intentando eliminar no existe'
                 ], 404);
             }
 
@@ -135,7 +144,7 @@ class ProductController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Producto eliminado correctamente'
+                'message' => 'Producto eliminado exitosamente'
             ]);
         }
 }

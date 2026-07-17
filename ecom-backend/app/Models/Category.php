@@ -11,8 +11,12 @@ class Category extends Model
     public $fillable = [
         'name'
     ];
+    
+    // ==========================================
+    // RELACIONES DEL DIAGRAMA
+    // ==========================================
 
-    // Relacion:
+    // Relación: Uno a Muchos
     public function subcategories() {
         return $this->hasMany(Subcategory::class);
     }

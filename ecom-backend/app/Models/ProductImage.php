@@ -10,8 +10,12 @@ class ProductImage extends Model
         'url_image',
         'product_id',
     ];
+    
+    // ==========================================
+    // RELACIONES DEL DIAGRAMA
+    // ==========================================
 
-    //   Relacion:
+    // Relación: Muchos a Uno
     public function product() {
         return $this->belongsTo(Product::class);
     }

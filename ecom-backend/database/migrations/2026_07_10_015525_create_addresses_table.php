@@ -17,6 +17,9 @@ return new class extends Migration
             $table->string('phone');
             $table->string('address_line');
             $table->string('city');
+            $table->string('state'); // Estado, provincia o departamento
+            $table->string('postal_code', 20); // Código postal
+            $table->string('country', 2); // Código ISO de 2 letras (ej. 'CO')
             $table->boolean('is_default')->default(false);
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->timestamps();

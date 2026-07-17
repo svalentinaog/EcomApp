@@ -17,10 +17,13 @@ return new class extends Migration
             $table->foreignId('address_id')->nullable()->constrained('addresses')->onDelete('set null');
             $table->string('status')->default('pending');
             $table->string('payment_method');
-            $table->string('shipping_name');
+            $table->string('shipping_full_name');
             $table->string('shipping_phone');
-            $table->string('shipping_address');
+            $table->string('shipping_address_line');
             $table->string('shipping_city');
+            $table->string('shipping_state');
+            $table->string('shipping_postal_code');
+            $table->string('shipping_country');
             $table->decimal('subtotal', 10, 2);
             $table->decimal('shipping_cost', 10, 2);
             $table->decimal('total', 10, 2);
