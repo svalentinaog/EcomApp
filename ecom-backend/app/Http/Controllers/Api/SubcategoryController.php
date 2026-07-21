@@ -34,7 +34,7 @@ class SubcategoryController extends Controller
 
         $validatedData = $request->validate([
             'name' => 'required|string|max:100',
-            'category_id' => 'required|integer|exists:categories,id' 
+            'category_id' => 'required|integer|exists:categories,id'
         ]);
 
         $subcategory = Subcategory::create($validatedData);
@@ -48,7 +48,7 @@ class SubcategoryController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show($id)
+    public function show(int $id)
     {
         $subcategory = Subcategory::find($id);
 
@@ -69,7 +69,7 @@ class SubcategoryController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, int $id)
     {
         $subcategory = Subcategory::find($id);
 
@@ -79,7 +79,7 @@ class SubcategoryController extends Controller
                 'message' => 'No se enviaron datos para actualizar'
             ], 422);
         }
-        
+
         if (!$subcategory) {
             return response()->json([
                 'success' => false,
@@ -104,7 +104,7 @@ class SubcategoryController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($id)
+    public function destroy(int $id)
     {
         $subcategory = Subcategory::find($id);
 
@@ -126,19 +126,19 @@ class SubcategoryController extends Controller
 
 // =====================================================================
 // 🧠 NOTAS DE APRENDIZAJE: SubcategoryController y Validación Relacional
-// - Validación de Existencia Foránea (`exists:categories,id`): Asegura que 
-//   cualquier subcategoría creada o modificada esté vinculada a una categoría 
+// - Validación de Existencia Foránea (`exists:categories,id`): Asegura que
+//   cualquier subcategoría creada o modificada esté vinculada a una categoría
 //   válida y existente en la base de datos, resguardando la integridad referencial.
 //
-// - Reglas Condicionales (`sometimes`): Permiten realizar actualizaciones parciales 
-//   eficientes, procesando únicamente los campos enviados en el payload (como `name` 
+// - Reglas Condicionales (`sometimes`): Permiten realizar actualizaciones parciales
+//   eficientes, procesando únicamente los campos enviados en el payload (como `name`
 //   o `category_id`) sin requerir la estructura completa.
 //
-// - Control Preventivo de Datos Vacíos: La comprobación inicial mediante 
-//   `empty($request->all())` rechaza de inmediato solicitudes sin contenido útil, 
+// - Control Preventivo de Datos Vacíos: La comprobación inicial mediante
+//   `empty($request->all())` rechaza de inmediato solicitudes sin contenido útil,
 //   devolviendo un código HTTP 422 adecuado.
 //
-// - Manejo de Errores 404 Estándar: Comprobación estricta de la existencia del 
-//   recurso mediante `find($id)` previo a cualquier mutación o lectura detallada, 
+// - Manejo de Errores 404 Estándar: Comprobación estricta de la existencia del
+//   recurso mediante `find($id)` previo a cualquier mutación o lectura detallada,
 //   evitando fallos inesperados en el servidor.
 // =====================================================================

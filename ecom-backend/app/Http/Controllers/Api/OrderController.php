@@ -10,6 +10,7 @@ use App\Models\CartItem;
 use App\Models\Address;
 use App\Models\Product;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class OrderController extends Controller
@@ -17,9 +18,9 @@ class OrderController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index()
     {
-        $userId = auth()->id();
+        $userId = Auth::id();
 
         $orders = Order::where('user_id', $userId)
                        ->with('orderItems.product')
@@ -36,7 +37,7 @@ class OrderController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show($id)
+    public function show(int $id)
     {
         $order = Order::with('orderItems.product')->find($id);
 
@@ -47,7 +48,7 @@ class OrderController extends Controller
             ], 404);
         }
 
-        if ($order->user_id !== auth()->id() && !auth()->user()->is_admin) {
+        if ($order->user_id !== Auth::id() && !Auth::user()->is_admin) {
             return response()->json([
                 'success' => false,
                 'message' => 'No tienes permiso para acceder a esta orden.'
@@ -73,12 +74,12 @@ class OrderController extends Controller
 
         if ($validator->fails()) {
             return response()->json([
-                'success' => false, 
+                'success' => false,
                 'errors' => $validator->errors()
             ], 422);
         }
 
-        $userId = auth()->id();
+        $userId = Auth::id();
 
         $address = Address::where('id', $request->address_id)
                           ->where('user_id', $userId)
@@ -86,7 +87,7 @@ class OrderController extends Controller
 
         if (!$address) {
             return response()->json([
-                'success' => false, 
+                'success' => false,
                 'message' => 'La dirección seleccionada no es válida o no te pertenece.'
             ], 403);
         }
@@ -95,7 +96,7 @@ class OrderController extends Controller
 
         if ($cartItems->isEmpty()) {
             return response()->json([
-                'success' => false, 
+                'success' => false,
                 'message' => 'Tu carrito está vacío. No se puede procesar la orden.'
             ], 400);
         }
@@ -170,7 +171,7 @@ class OrderController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, int $id)
     {
         $validated = $request->validate([
             'status' => 'required|string|in:pending,shipped,delivered,canceled'
@@ -199,21 +200,21 @@ class OrderController extends Controller
 
 // =====================================================================
 // 🧠 NOTAS DE APRENDIZAJE: OrderController y Procesamiento Transaccional
-// - Transacciones de Base de Datos (`DB::beginTransaction`, `DB::commit`, `DB::rollBack`): 
-//   Aseguran la atomicidad en procesos complejos de e-commerce (crear orden, registrar 
-//   ítems, descontar stock y vaciar carrito). Si ocurre cualquier error, se revierte 
+// - Transacciones de Base de Datos (`DB::beginTransaction`, `DB::commit`, `DB::rollBack`):
+//   Aseguran la atomicidad en procesos complejos de e-commerce (crear orden, registrar
+//   ítems, descontar stock y vaciar carrito). Si ocurre cualquier error, se revierte
 //   todo para evitar estados inconsistentes.
 //
-// - Snapshot de Dirección: Guardar los datos de envío directamente en la tabla de 
-//   órdenes (`shipping_full_name`, etc.) congela la información en el tiempo, 
-//   protegiendo el registro histórico ante futuros cambios o eliminaciones en el 
+// - Snapshot de Dirección: Guardar los datos de envío directamente en la tabla de
+//   órdenes (`shipping_full_name`, etc.) congela la información en el tiempo,
+//   protegiendo el registro histórico ante futuros cambios o eliminaciones en el
 //   perfil del usuario.
 //
-// - Control de Acceso Dual en `show`: Permite que tanto el propietario de la orden 
-//   como un usuario con privilegios de administrador puedan consultar el detalle 
+// - Control de Acceso Dual en `show`: Permite que tanto el propietario de la orden
+//   como un usuario con privilegios de administrador puedan consultar el detalle
 //   de la misma de forma segura.
 //
-// - Regla de Validación `in:...`: Restringe estrictamente los estados permitidos 
-//   de una orden a un conjunto predefinido (`pending,shipped,delivered,canceled`), 
+// - Regla de Validación `in:...`: Restringe estrictamente los estados permitidos
+//   de una orden a un conjunto predefinido (`pending,shipped,delivered,canceled`),
 //   evitando entradas de datos corruptas o inválidas.
 // =====================================================================

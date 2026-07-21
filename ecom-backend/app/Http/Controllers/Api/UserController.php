@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
@@ -51,7 +52,7 @@ class UserController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show($id)
+    public function show(int $id)
     {
         $user = User::find($id);
 
@@ -72,7 +73,7 @@ class UserController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, int $id)
     {
         $user = User::find($id);
 
@@ -105,7 +106,7 @@ class UserController extends Controller
         }
 
         $user->update($data);
-        
+
         return response()->json([
             'success' => true,
             'message' => 'Usuario actualizado exitosamente',
@@ -125,7 +126,7 @@ class UserController extends Controller
             ], 422);
         }
 
-        $user = auth()->user();
+        $user = User::findOrFail(Auth::id());
 
         $validatedData = $request->validate([
             'name'       => 'sometimes|string|max:255',
@@ -151,10 +152,10 @@ class UserController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($id)
+    public function destroy(int $id)
     {
         $user = User::find($id);
-        
+
         if (!$user) {
             return response()->json([
                 'success' => false,
@@ -162,7 +163,7 @@ class UserController extends Controller
             ], 404);
         }
 
-        if ($user->id === auth()->user()->id) {
+        if ($user->id === Auth::user()->id) {
             return response()->json([
                 'success' => false,
                 'message' => 'No puedes eliminarte a ti mismo'
@@ -180,18 +181,18 @@ class UserController extends Controller
 
 // =====================================================================
 // 🧠 NOTAS DE APRENDIZAJE: UserController y Control de Permisos de Usuario
-// - Separación de Contextos de Actualización: Distinguir entre la gestión global 
-//   por parte de un administrador (`update`) y la auto-actualización del propio 
+// - Separación de Contextos de Actualización: Distinguir entre la gestión global
+//   por parte de un administrador (`update`) y la auto-actualización del propio
 //   usuario (`updateProfile`), protegiendo campos críticos como los roles.
 //
-// - Filtrado Estricto de Atributos (`$request->only`): En el perfil propio, 
-//   se seleccionan únicamente los campos permitidos para evitar que un cliente 
+// - Filtrado Estricto de Atributos (`$request->only`): En el perfil propio,
+//   se seleccionan únicamente los campos permitidos para evitar que un cliente
 //   malintencionado intente alterar privilegios (como escalar a rol `admin`).
 //
-// - Prevención de Auto-eliminación: Validación explícita para evitar que un 
+// - Prevención de Auto-eliminación: Validación explícita para evitar que un
 //   administrador elimine su propia cuenta activa por error (`$user->id === auth()->user()->id`).
 //
-// - Validación Única con Excepción de ID (`unique:users,email,$id`): Esencial en 
-//   métodos de actualización para permitir que un usuario mantenga su correo actual 
+// - Validación Única con Excepción de ID (`unique:users,email,$id`): Esencial en
+//   métodos de actualización para permitir que un usuario mantenga su correo actual
 //   sin generar conflictos de duplicidad en la base de datos.
 // =====================================================================

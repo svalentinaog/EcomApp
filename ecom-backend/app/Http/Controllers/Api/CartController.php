@@ -3,10 +3,11 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\CartItem;
 use App\Models\Product;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Auth;
 
 class CartController extends Controller
 {
@@ -15,7 +16,7 @@ class CartController extends Controller
      */
     public function index()
     {
-        $cartItems = CartItem::where('user_id', auth()->id())
+        $cartItems = CartItem::where('user_id', Auth::id())
                             ->with('product')
                             ->get();
 
@@ -42,7 +43,7 @@ class CartController extends Controller
             ], 422);
         }
 
-        $userId = auth()->id();
+        $userId = Auth::id();
         $productId = $request->product_id;
         $requestedQuantity = $request->quantity;
 
@@ -93,7 +94,7 @@ class CartController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, int $id)
     {
         $validator = Validator::make($request->all(), [
             'quantity' => 'required|integer|min:1'
@@ -107,7 +108,7 @@ class CartController extends Controller
         }
 
         $cartItem = CartItem::where('id', $id)
-                            ->where('user_id', auth()->id())
+                            ->where('user_id', Auth::id())
                             ->first();
 
         if (!$cartItem) {
@@ -138,10 +139,10 @@ class CartController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($id)
+    public function destroy(int $id)
     {
         $cartItem = CartItem::where('id', $id)
-                            ->where('user_id', auth()->id())
+                            ->where('user_id', Auth::id())
                             ->first();
 
         if (!$cartItem) {
@@ -164,7 +165,7 @@ class CartController extends Controller
      */
     public function empty()
     {
-        CartItem::where('user_id', auth()->id())->delete();
+        CartItem::where('user_id', Auth::id())->delete();
 
         return response()->json([
             'success' => true,
@@ -175,16 +176,16 @@ class CartController extends Controller
 
 // =====================================================================
 // 🧠 NOTAS DE APRENDIZAJE: CartController y Lógica de Comercio Electrónico
-// - Aislamiento por Usuario (`auth()->id()`): Garantiza que los registros 
-//   del carrito estén estrictamente asociados al usuario autenticado, previniendo 
+// - Aislamiento por Usuario (`auth()->id()`): Garantiza que los registros
+//   del carrito estén estrictamente asociados al usuario autenticado, previniendo
 //   vulnerabilidades de acceso cruzado entre cuentas.
 //
-// - Validación Dinámica de Stock: Compara las cantidades solicitadas (o acumuladas 
+// - Validación Dinámica de Stock: Compara las cantidades solicitadas (o acumuladas
 //   en caso de repetición) contra el stock disponible en la tabla de productos.
 //
-// - Eager Loading en Carrito (`with('product')`): Carga la información detallada 
+// - Eager Loading en Carrito (`with('product')`): Carga la información detallada
 //   del producto asociado a cada ítem del carrito en una sola consulta optimizada.
 //
-// - Eliminación Masiva Segura (`where('user_id', ...)->delete()`): Permite vaciar 
+// - Eliminación Masiva Segura (`where('user_id', ...)->delete()`): Permite vaciar
 //   todo el carrito del usuario de forma directa y eficiente en una sola instrucción SQL.
 // =====================================================================

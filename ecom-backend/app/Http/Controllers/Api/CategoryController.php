@@ -14,7 +14,7 @@ class CategoryController extends Controller
     public function index()
     {
         $categories = Category::with('subcategories.products')->get();
-        
+
         return response()->json([
             'success' => true,
             'message' => 'Categorías obtenidas correctamente',
@@ -50,7 +50,7 @@ class CategoryController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show($id)
+    public function show(int $id)
     {
         $category = Category::with('subcategories.products')->find($id);
 
@@ -71,7 +71,7 @@ class CategoryController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, int $id)
     {
         $category = Category::find($id);
 
@@ -105,7 +105,7 @@ class CategoryController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($id)
+    public function destroy(int $id)
     {
         $category = Category::find($id);
 
@@ -127,18 +127,18 @@ class CategoryController extends Controller
 
 // =====================================================================
 // 🧠 NOTAS DE APRENDIZAJE: CategoryController y Relaciones Anidadas
-// - Carga Anidada (Eager Loading con Dot Notation): Uso de `with('subcategories.products')` 
-//   para recuperar en una sola consulta estructurada tanto las categorías como sus 
+// - Carga Anidada (Eager Loading con Dot Notation): Uso de `with('subcategories.products')`
+//   para recuperar en una sola consulta estructurada tanto las categorías como sus
 //   subcategorías y los productos pertenecientes a ellas.
 //
-// - Validación `unique` en Actualizaciones: Al actualizar registros, se excluye el ID 
-//   actual (`unique:categories,name,$category->id`) para evitar conflictos falsos de 
+// - Validación `unique` en Actualizaciones: Al actualizar registros, se excluye el ID
+//   actual (`unique:categories,name,$category->id`) para evitar conflictos falsos de
 //   duplicidad cuando el nombre de la categoría permanece sin cambios.
 //
-// - Control de Solicitudes Vacías: Verificación previa (`empty($request->all())`) 
+// - Control de Solicitudes Vacías: Verificación previa (`empty($request->all())`)
 //   para rechazar peticiones que no contengan cargas útiles válidas antes de validar.
 //
-// - Eliminación en Cascada: El borrado de una categoría padre puede propagarse de forma 
-//   automatizada a sus subcategorías si se configuró correctamente la restricción de 
+// - Eliminación en Cascada: El borrado de una categoría padre puede propagarse de forma
+//   automatizada a sus subcategorías si se configuró correctamente la restricción de
 //   clave foránea en la migración de base de datos.
 // =====================================================================

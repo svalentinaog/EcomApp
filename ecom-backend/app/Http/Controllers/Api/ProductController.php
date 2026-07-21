@@ -45,9 +45,9 @@ class ProductController extends Controller
         if ($request->hasFile('product_images')) {
             foreach ($request->file('product_images') as $file) {
                 $path = $file->store('products', 'public');
-                
+
                 $product->productImages()->create([
-                    'url_image' => $path 
+                    'url_image' => $path
                 ]);
             }
         }
@@ -64,7 +64,7 @@ class ProductController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show($id)
+    public function show(int $id)
     {
         $product = Product::with(['subcategory.category', 'productImages'])->find($id);
 
@@ -84,7 +84,7 @@ class ProductController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, $id) 
+    public function update(Request $request, int $id)
     {
         $product = Product::find($id);
 
@@ -126,7 +126,7 @@ class ProductController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($id) 
+    public function destroy(int $id)
     {
         $product = Product::find($id);
 
@@ -148,16 +148,16 @@ class ProductController extends Controller
 
 // =====================================================================
 // 🧠 NOTAS DE APRENDIZAJE: ProductController y Buenas Prácticas
-// - Eager Loading (`with`): Carga relaciones anidadas (ej. subcategory.category) 
+// - Eager Loading (`with`): Carga relaciones anidadas (ej. subcategory.category)
 //   para evitar el problema de consultas N+1 y optimizar el rendimiento.
 //
-// - Regla `sometimes`: Valida el campo únicamente si viene presente en la petición, 
+// - Regla `sometimes`: Valida el campo únicamente si viene presente en la petición,
 //   lo cual es esencial para actualizaciones parciales.
 //
-// - Validación `unique` en Update: Se le concatena el ID actual (unique:table,column,id) 
+// - Validación `unique` en Update: Se le concatena el ID actual (unique:table,column,id)
 //   para evitar que la regla falle al intentar conservar el mismo SKU del producto.
 //
-// - Inyección de Dependencias: Técnica de diseño que permite a una clase obtener 
-//   sus dependencias u objetos requeridos desde el exterior (como `Request $request`), 
+// - Inyección de Dependencias: Técnica de diseño que permite a una clase obtener
+//   sus dependencias u objetos requeridos desde el exterior (como `Request $request`),
 //   en lugar de crearlos internamente.
 // =====================================================================
