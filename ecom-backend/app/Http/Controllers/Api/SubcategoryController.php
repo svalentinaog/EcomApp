@@ -8,7 +8,9 @@ use Illuminate\Http\Request;
 
 class SubcategoryController extends Controller
 {
-    // PÚBLICO: Listar subcategorías
+    /**
+     * Display a listing of the resource.
+     */
     public function index()
     {
         return response()->json([
@@ -18,7 +20,9 @@ class SubcategoryController extends Controller
         ], 200);
     }
 
-    // SOLO ADMIN: Crear subcategoría
+    /**
+     * Store a newly created resource in storage.
+     */
     public function store(Request $request)
     {
         if (empty($request->all())) {
@@ -30,7 +34,6 @@ class SubcategoryController extends Controller
 
         $validatedData = $request->validate([
             'name' => 'required|string|max:100',
-            // Validamos que el ID de la categoría exista en la tabla 'categories'
             'category_id' => 'required|integer|exists:categories,id' 
         ]);
 
@@ -42,7 +45,9 @@ class SubcategoryController extends Controller
         ], 201);
     }
 
-    // PÚBLICO: Ver una subcategoría
+    /**
+     * Display the specified resource.
+     */
     public function show($id)
     {
         $subcategory = Subcategory::find($id);
@@ -61,7 +66,9 @@ class SubcategoryController extends Controller
         ], 200);
     }
 
-    // SOLO ADMIN: Actualizar subcategoría
+    /**
+     * Update the specified resource in storage.
+     */
     public function update(Request $request, $id)
     {
         $subcategory = Subcategory::find($id);
@@ -94,7 +101,9 @@ class SubcategoryController extends Controller
         ], 200);
     }
 
-    // SOLO ADMIN: Eliminar subcategoría
+    /**
+     * Remove the specified resource from storage.
+     */
     public function destroy($id)
     {
         $subcategory = Subcategory::find($id);
@@ -114,3 +123,22 @@ class SubcategoryController extends Controller
         ], 200);
     }
 }
+
+// =====================================================================
+// 🧠 NOTAS DE APRENDIZAJE: SubcategoryController y Validación Relacional
+// - Validación de Existencia Foránea (`exists:categories,id`): Asegura que 
+//   cualquier subcategoría creada o modificada esté vinculada a una categoría 
+//   válida y existente en la base de datos, resguardando la integridad referencial.
+//
+// - Reglas Condicionales (`sometimes`): Permiten realizar actualizaciones parciales 
+//   eficientes, procesando únicamente los campos enviados en el payload (como `name` 
+//   o `category_id`) sin requerir la estructura completa.
+//
+// - Control Preventivo de Datos Vacíos: La comprobación inicial mediante 
+//   `empty($request->all())` rechaza de inmediato solicitudes sin contenido útil, 
+//   devolviendo un código HTTP 422 adecuado.
+//
+// - Manejo de Errores 404 Estándar: Comprobación estricta de la existencia del 
+//   recurso mediante `find($id)` previo a cualquier mutación o lectura detallada, 
+//   evitando fallos inesperados en el servidor.
+// =====================================================================

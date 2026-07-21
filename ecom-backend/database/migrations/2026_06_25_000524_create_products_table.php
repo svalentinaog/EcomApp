@@ -19,26 +19,11 @@ return new class extends Migration
             $table->decimal('old_price', 10, 2)->nullable();
             $table->integer('discount')->default(0); 
             $table->integer('rating')->default(0);   
-            $table->string('sku')->unique(); // Código único
-            $table->integer('stock')->default(0); // Inventario
+            $table->string('sku')->unique();
+            $table->integer('stock')->default(0);
             $table->foreignId('subcategory_id')->constrained('subcategories')->onDelete('cascade');
             $table->timestamps();
         });
-
-        // Schema::create('products', function (Blueprint $table) {
-        //     $table->id();
-        //     $table->string('name',length:50);
-        //     $table->string('description',length:250);
-        //     $table->float('price', precision:20);
-        //     $table->float('old_price', precision:20);
-        //     $table->integer('discount')->default(0);;
-        //     $table->integer('rating')->default(0);;
-        //     $table->string('sku')->unique(); 
-        //     $table->integer('stock')->default(0); 
-        //     $table->unsignedBigInteger('subcategory_id');
-        //     $table->foreign('subcategory_id')->references('id')->on('subcategories');
-        //     $table->timestamps();
-        // });
     }
 
     /**
@@ -49,3 +34,22 @@ return new class extends Migration
         Schema::dropIfExists('products');
     }
 };
+
+// =====================================================================
+// 🧠 NOTAS DE APRENDIZAJE: Migración de Productos y Claves Foráneas
+// - Tipos Numéricos (`decimal` vs `float`): Uso de `decimal` para precios 
+//   en lugar de `float` para evitar errores de redondeo en el e-commerce.
+//
+// - Enfoque Moderno vs Clásico en Claves Foráneas:
+//   * Moderna (`foreignId` y `constrained`): Detecta automáticamente la 
+//     tabla y columna de referencia de manera limpia y concisa.
+//   * Clásica (`unsignedBigInteger`, `references` y `on`): Requiere declarar 
+//     manualmente la columna y su relación explícita. La sintaxis moderna 
+//     reduce este código repetitivo.
+//
+// - Eliminación en Cascada (`onDelete('cascade')`): Propaga automáticamente 
+//   el borrado de una subcategoría a sus productos asociados.
+//
+// - Restricción de Unicidad (`unique`): Aplicada al campo SKU para garantizar 
+//   que no existan productos duplicados.
+// =====================================================================

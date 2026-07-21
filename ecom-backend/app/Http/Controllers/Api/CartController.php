@@ -10,11 +10,11 @@ use Illuminate\Support\Facades\Validator;
 
 class CartController extends Controller
 {
-    // Ver mi carrito
+    /**
+     * Display a listing of the resource.
+     */
     public function index()
     {
-        // auth()->id() nos asegura que el usuario solo vea SU carrito
-        // El with('product') trae la info del producto (nombre, precio) gracias a la relación
         $cartItems = CartItem::where('user_id', auth()->id())
                             ->with('product')
                             ->get();
@@ -25,7 +25,9 @@ class CartController extends Controller
         ], 200);
     }
 
-    // Agregar al carrito
+    /**
+     * Store a newly created resource in storage.
+     */
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -44,7 +46,6 @@ class CartController extends Controller
         $productId = $request->product_id;
         $requestedQuantity = $request->quantity;
 
-        // 1. Buscamos el producto para revisar su stock real
         $product = Product::find($productId);
 
         if ($product->stock < $requestedQuantity) {
@@ -54,16 +55,13 @@ class CartController extends Controller
             ], 400);
         }
 
-        // 2. Verificamos si el usuario ya tiene este producto en el carrito
         $cartItem = CartItem::where('user_id', $userId)
                             ->where('product_id', $productId)
                             ->first();
 
         if ($cartItem) {
-            // Si ya existe, sumamos la cantidad solicitada a la que ya tenía
             $newQuantity = $cartItem->quantity + $requestedQuantity;
 
-            // Volvemos a validar el stock por si la suma se pasa
             if ($product->stock < $newQuantity) {
                 return response()->json([
                     'success' => false,
@@ -76,7 +74,6 @@ class CartController extends Controller
 
             $message = 'Cantidad actualizada en el carrito';
         } else {
-            // Si no existe, creamos el registro nuevo
             $cartItem = CartItem::create([
                 'user_id' => $userId,
                 'product_id' => $productId,
@@ -93,7 +90,9 @@ class CartController extends Controller
         ], 200);
     }
 
-    // Actualizar la cantidad de un ítem en el carrito
+    /**
+     * Update the specified resource in storage.
+     */
     public function update(Request $request, $id)
     {
         $validator = Validator::make($request->all(), [
@@ -107,7 +106,6 @@ class CartController extends Controller
             ], 422);
         }
 
-        // Buscamos el ítem asegurándonos que le pertenece al usuario logueado
         $cartItem = CartItem::where('id', $id)
                             ->where('user_id', auth()->id())
                             ->first();
@@ -119,7 +117,6 @@ class CartController extends Controller
             ], 404);
         }
 
-        // Validamos el stock del producto asociado
         $product = $cartItem->product;
         if ($product->stock < $request->quantity) {
             return response()->json([
@@ -138,7 +135,9 @@ class CartController extends Controller
         ], 200);
     }
 
-    // Quitar un producto específico del carrito
+    /**
+     * Remove the specified resource from storage.
+     */
     public function destroy($id)
     {
         $cartItem = CartItem::where('id', $id)
@@ -160,7 +159,9 @@ class CartController extends Controller
         ], 200);
     }
 
-    // Vaciar todo el carrito
+    /**
+     * Empty the entire cart.
+     */
     public function empty()
     {
         CartItem::where('user_id', auth()->id())->delete();
@@ -171,3 +172,19 @@ class CartController extends Controller
         ], 200);
     }
 }
+
+// =====================================================================
+// 🧠 NOTAS DE APRENDIZAJE: CartController y Lógica de Comercio Electrónico
+// - Aislamiento por Usuario (`auth()->id()`): Garantiza que los registros 
+//   del carrito estén estrictamente asociados al usuario autenticado, previniendo 
+//   vulnerabilidades de acceso cruzado entre cuentas.
+//
+// - Validación Dinámica de Stock: Compara las cantidades solicitadas (o acumuladas 
+//   en caso de repetición) contra el stock disponible en la tabla de productos.
+//
+// - Eager Loading en Carrito (`with('product')`): Carga la información detallada 
+//   del producto asociado a cada ítem del carrito en una sola consulta optimizada.
+//
+// - Eliminación Masiva Segura (`where('user_id', ...)->delete()`): Permite vaciar 
+//   todo el carrito del usuario de forma directa y eficiente en una sola instrucción SQL.
+// =====================================================================

@@ -12,13 +12,8 @@ class AddressController extends Controller
      */
     public function index(Request $request)
     {
-        // 1. Obtenemos al usuario que está haciendo la petición
-        $user = $request->user();
+        $addresses = $request->user()->addresses;
 
-        // 2. Gracias a la relación, traemos solo SUS direcciones
-        $addresses = $user->addresses;
-
-        // 3. Devolvemos la lista con un código 200 OK
         return response()->json([
             'success' => true,
             'message' => 'Direcciones obtenidas correctamente',
@@ -31,7 +26,6 @@ class AddressController extends Controller
      */
     public function store(Request $request)
     {
-        // 1. VALIDAR DATOS
         $validatedData = $request->validate([
             'full_name'    => 'required|string|max:255',
             'phone'        => 'required|string|max:20',
@@ -43,7 +37,6 @@ class AddressController extends Controller
             'is_default'   => 'boolean',
         ]);
 
-        // 2. PREVENIR DUPLICADOS
         $duplicate = $request->user()->addresses()
             ->where('address_line', $validatedData['address_line'])
             ->where('city', $validatedData['city'])
@@ -52,18 +45,16 @@ class AddressController extends Controller
         if ($duplicate) {
             return response()->json([
                 'success' => false,
-                'message' => 'Ya tienes esta dirección registrada.'], 422);
+                'message' => 'Ya tienes esta dirección registrada.'
+            ], 422);
         }
 
-        // 3. LÓGICA DE DIRECCIÓN PREDETERMINADA
-        // Si el usuario quiere que esta sea la principal, desactivamos las anteriores.
         if ($request->boolean('is_default')) {
             $request->user()->addresses()
                 ->where('is_default', true)
                 ->update(['is_default' => false]);
         }
 
-        // 4. CREACIÓN Y RESPUESTA
         $address = $request->user()->addresses()->create($validatedData);
 
         return response()->json([
@@ -78,10 +69,8 @@ class AddressController extends Controller
      */
     public function show(Request $request, string $id)
     {
-        // Buscamos la dirección ÚNICAMENTE dentro de las direcciones de este usuario
-        $address = $request->user()->addresses()->find($id); // Ve a las direcciones que le pertenecen a este usuario autenticado y, solo ahí dentro, busca la que tenga este $id
+        $address = $request->user()->addresses()->find($id);
 
-        // Si no existe o es de otro usuario, $address será null
         if (!$address) {
             return response()->json([
                 'success' => false,
@@ -101,14 +90,13 @@ class AddressController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        // 1. Buscamos la dirección garantizando que sea de este usuario
         $address = $request->user()->addresses()->find($id);
 
-        // Si el request está vacío, detenemos la ejecución
         if (empty($request->all())) {
             return response()->json([
                 'success' => false,
-                'message' => 'No se enviaron datos para actualizar'], 422);
+                'message' => 'No se enviaron datos para actualizar'
+            ], 422);
         }
 
         if (!$address) {  
@@ -118,7 +106,6 @@ class AddressController extends Controller
             ], 404);
         }
 
-        // 2. Validamos los datos usando 'sometimes'
         $validatedData = $request->validate([
             'full_name'    => 'sometimes|required|string|max:255',
             'phone'        => 'sometimes|required|string|max:20',
@@ -130,20 +117,17 @@ class AddressController extends Controller
             'is_default'   => 'sometimes|boolean',
         ]);
 
-        // 3. DIRECCIÓN PREDETERMINADA
-        // Si el usuario quiere marcar esta como 'is_default' (true)
         if ($request->boolean('is_default')) {
             $request->user()->addresses()
-                // ¡IMPORTANTE! Excluimos la que dirección estamos editando
-                ->where('id', '!=', $id) // Busca todas las direcciones predeterminadas del usuario, pero ignora la que estoy editando en este momento (la del ID que recibí)
+                ->where('id', '!=', $id)
                 ->where('is_default', true)
                 ->update(['is_default' => false]);
         }
 
-        // 4. Actualizamos el registro
         $address->update($validatedData);
 
         return response()->json([
+            'success' => true,
             'message' => 'Dirección actualizada correctamente.',
             'data'    => $address
         ], 200);
@@ -163,7 +147,6 @@ class AddressController extends Controller
             ], 404);
         }
 
-        // Si encontramos la dirección, la eliminamos de la base de datos
         $address->delete();
 
         return response()->json([
@@ -173,10 +156,20 @@ class AddressController extends Controller
     }
 }
 
-
-// NOTA:
-// SELECT * FROM addresses 
-// WHERE user_id = 3                 -- (Esto lo hace $request->user()->addresses())
-//   AND address_line = 'Calle Falsa 123'  -- (Este es tu primer where)
-//   AND city = 'Cali'               -- (Este es tu segundo where)
-// LIMIT 1;                          -- (Esto lo hace el ->first())
+// =====================================================================
+// 🧠 NOTAS DE APRENDIZAJE: AddressController y Seguridad por Relaciones
+// - Scoping de Relaciones (`$request->user()->addresses()`): Garantiza 
+//   multitenencia y seguridad, asegurando que un usuario solo pueda leer, 
+//   actualizar o borrar sus propias direcciones y nunca las de otros.
+//
+// - Prevención de Duplicados en Consultas Relacionadas: Encadenar condiciones 
+//   como `where` y `first` sobre la relación filtra directamente en la base 
+//   de datos asociada a ese usuario específico.
+//
+// - Exclusión en Actualizaciones (`where('id', '!=', $id)`): Clave al manejar 
+//   campos únicos o predeterminados (`is_default`), evitando que el propio 
+//   registro que estás editando se desactive a sí mismo.
+//
+// - Traducción a SQL: Llamadas como `$request->user()->addresses()` equivalen 
+//   a un filtro automático por clave foránea (`WHERE user_id = ?`).
+// =====================================================================

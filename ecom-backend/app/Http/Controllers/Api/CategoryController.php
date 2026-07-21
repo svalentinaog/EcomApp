@@ -8,11 +8,13 @@ use Illuminate\Http\Request;
 
 class CategoryController extends Controller
 {
-    // PÚBLICO: Lista todas las categorías CON sus subcategorías
+    /**
+     * Display a listing of the resource.
+     */
     public function index()
     {
-        // 'with' carga la relación definida en tu modelo Category
         $categories = Category::with('subcategories.products')->get();
+        
         return response()->json([
             'success' => true,
             'message' => 'Categorías obtenidas correctamente',
@@ -20,13 +22,16 @@ class CategoryController extends Controller
         ]);
     }
 
-    // SOLO ADMIN: Crear categoría
+    /**
+     * Store a newly created resource in storage.
+     */
     public function store(Request $request)
     {
         if (empty($request->all())) {
             return response()->json([
                 'success' => false,
-                'message' => 'No se enviaron datos'], 422);
+                'message' => 'No se enviaron datos'
+            ], 422);
         }
 
         $validatedData = $request->validate([
@@ -42,7 +47,9 @@ class CategoryController extends Controller
         ], 201);
     }
 
-    // PÚBLICO: Ver una categoría específica con sus subcategorías
+    /**
+     * Display the specified resource.
+     */
     public function show($id)
     {
         $category = Category::with('subcategories.products')->find($id);
@@ -61,7 +68,9 @@ class CategoryController extends Controller
         ], 200);
     }
 
-    // SOLO ADMIN: Actualizar categoría
+    /**
+     * Update the specified resource in storage.
+     */
     public function update(Request $request, $id)
     {
         $category = Category::find($id);
@@ -76,7 +85,8 @@ class CategoryController extends Controller
         if (empty($request->all())) {
             return response()->json([
                 'success' => false,
-                'message' => 'No se enviaron datos para actualizar'], 422);
+                'message' => 'No se enviaron datos para actualizar'
+            ], 422);
         }
 
         $validatedData = $request->validate([
@@ -92,7 +102,9 @@ class CategoryController extends Controller
         ], 200);
     }
 
-    // SOLO ADMIN: Eliminar categoría (Borrará las subcategorías en cascada gracias a tu migración)
+    /**
+     * Remove the specified resource from storage.
+     */
     public function destroy($id)
     {
         $category = Category::find($id);
@@ -112,3 +124,21 @@ class CategoryController extends Controller
         ], 200);
     }
 }
+
+// =====================================================================
+// 🧠 NOTAS DE APRENDIZAJE: CategoryController y Relaciones Anidadas
+// - Carga Anidada (Eager Loading con Dot Notation): Uso de `with('subcategories.products')` 
+//   para recuperar en una sola consulta estructurada tanto las categorías como sus 
+//   subcategorías y los productos pertenecientes a ellas.
+//
+// - Validación `unique` en Actualizaciones: Al actualizar registros, se excluye el ID 
+//   actual (`unique:categories,name,$category->id`) para evitar conflictos falsos de 
+//   duplicidad cuando el nombre de la categoría permanece sin cambios.
+//
+// - Control de Solicitudes Vacías: Verificación previa (`empty($request->all())`) 
+//   para rechazar peticiones que no contengan cargas útiles válidas antes de validar.
+//
+// - Eliminación en Cascada: El borrado de una categoría padre puede propagarse de forma 
+//   automatizada a sus subcategorías si se configuró correctamente la restricción de 
+//   clave foránea en la migración de base de datos.
+// =====================================================================

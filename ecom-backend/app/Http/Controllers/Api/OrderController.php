@@ -14,14 +14,17 @@ use Illuminate\Support\Facades\DB;
 
 class OrderController extends Controller
 {
+    /**
+     * Display a listing of the resource.
+     */
     public function index(Request $request)
     {
         $userId = auth()->id();
 
         $orders = Order::where('user_id', $userId)
-                         ->with('orderItems.product')
-                         ->orderBy('created_at', 'desc')
-                         ->get();
+                       ->with('orderItems.product')
+                       ->orderBy('created_at', 'desc')
+                       ->get();
 
         return response()->json([
             'success' => true,
@@ -30,6 +33,9 @@ class OrderController extends Controller
         ], 200);
     }
 
+    /**
+     * Display the specified resource.
+     */
     public function show($id)
     {
         $order = Order::with('orderItems.product')->find($id);
@@ -55,6 +61,9 @@ class OrderController extends Controller
         ], 200);
     }
 
+    /**
+     * Store a newly created resource in storage.
+     */
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -158,15 +167,15 @@ class OrderController extends Controller
         }
     }
 
+    /**
+     * Update the specified resource in storage.
+     */
     public function update(Request $request, $id)
     {
-        // Validar datos entrantes.
-        // La regla 'in:...' asegura que solo se acepten esos 4 valores exactos.
         $validated = $request->validate([
             'status' => 'required|string|in:pending,shipped,delivered,canceled'
         ]);
 
-        // Buscar orden
         $order = Order::find($id);
 
         if (!$order) {
@@ -187,3 +196,24 @@ class OrderController extends Controller
         ], 200);
     }
 }
+
+// =====================================================================
+// 🧠 NOTAS DE APRENDIZAJE: OrderController y Procesamiento Transaccional
+// - Transacciones de Base de Datos (`DB::beginTransaction`, `DB::commit`, `DB::rollBack`): 
+//   Aseguran la atomicidad en procesos complejos de e-commerce (crear orden, registrar 
+//   ítems, descontar stock y vaciar carrito). Si ocurre cualquier error, se revierte 
+//   todo para evitar estados inconsistentes.
+//
+// - Snapshot de Dirección: Guardar los datos de envío directamente en la tabla de 
+//   órdenes (`shipping_full_name`, etc.) congela la información en el tiempo, 
+//   protegiendo el registro histórico ante futuros cambios o eliminaciones en el 
+//   perfil del usuario.
+//
+// - Control de Acceso Dual en `show`: Permite que tanto el propietario de la orden 
+//   como un usuario con privilegios de administrador puedan consultar el detalle 
+//   de la misma de forma segura.
+//
+// - Regla de Validación `in:...`: Restringe estrictamente los estados permitidos 
+//   de una orden a un conjunto predefinido (`pending,shipped,delivered,canceled`), 
+//   evitando entradas de datos corruptas o inválidas.
+// =====================================================================

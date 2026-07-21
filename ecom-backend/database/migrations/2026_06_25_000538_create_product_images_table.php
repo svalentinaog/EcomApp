@@ -15,8 +15,6 @@ return new class extends Migration
             $table->id();
             $table->string('url_image');
             $table->foreignId('product_id')->constrained('products')->onDelete('cascade');
-            // $table->unsignedBigInteger('product_id');
-            // $table->foreign('product_id')->references('id')->on('products');
             $table->timestamps();
         });
     }
@@ -29,3 +27,7 @@ return new class extends Migration
         Schema::dropIfExists('product_images');
     }
 };
+
+// Forma clásica de declarar claves foráneas en Laravel:
+// $table->unsignedBigInteger('product_id');
+// $table->foreign('product_id')->references('id')->on('products');
