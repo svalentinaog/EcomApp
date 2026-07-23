@@ -12,3 +12,7 @@
 - **`belongsTo` (Muchos a Uno):** Se usa en el modelo que guarda FÍSICAMENTE la clave foránea en su propia estructura de base de datos (ej. `user_id`, `product_id`). Sus métodos se nombran en **singular**.
 - **`hasMany` (Uno a Muchos):** Se usa en el modelo padre o principal, cuya clave foránea reside físicamente en la tabla destino. Sus métodos se nombran en **plural**.
 - **Inmutabilidad en Historiales:** Guardar campos estáticos (como precios de venta o direcciones de envío) en tablas transaccionales como `orders` y `order_items` garantiza que el historial de compras permanezca intacto aunque los datos originales del producto cambien en el futuro.
+
+<!-- Comunicación Asíncrona (Webhooks) -->
+
+<!-- Stripe Sandbox -->
