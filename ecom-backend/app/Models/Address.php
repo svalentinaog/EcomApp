@@ -21,11 +21,11 @@ class Address extends Model
         'is_default',
     ];
 
-    // ==========================================
+    // =====================================================================
     // RELACIONES DEL DIAGRAMA
-    // ==========================================
+    // =====================================================================
 
-    // Relacion: Inversa de Uno a Muchos (Pertenece a un Usuario)
+    // 🔹 Relación Muchos a Uno (belongsTo): Muchas Direcciones pertenecen a un solo Usuario.
     public function user()
     {
         return $this->belongsTo(User::class);
@@ -33,13 +33,15 @@ class Address extends Model
 }
 
 // =====================================================================
-// 🧠 NOTAS DE APRENDIZAJE: Modelo Address y Relaciones
-// - Definición de Tabla Implícita: No es necesario especificar `$table = 'addresses'`,
-//   ya que Laravel convierte automáticamente el nombre del modelo a plural en minúsculas.
-//
-// - Visibilidad de `$fillable`: Debe ser `protected` para mantener el
-//   encapsulamiento y la seguridad de la asignación masiva.
-//
-// - Relación `belongsTo`: Se aplica en este modelo porque `addresses` contiene
-//   físicamente la clave foránea `user_id` en su estructura.
+// 🧠 NOTAS DE APRENDIZAJE: Modelo Address y Tipos de Relación
+// - Convención de Tablas: Omitimos "protected $table" porque Laravel 
+//   traduce automáticamente el nombre "Address" a su plural en minúsculas ("addresses").
+// - Encapsulamiento: "$fillable" siempre debe declararse como "protected" 
+//   para mantener la seguridad en la asignación masiva de datos.
+// - Tipos de Relaciones (Cardinalidad y Regla Física):
+//   * "user()" -> Relación Muchos a Uno ("belongsTo"): Múltiples direcciones 
+//     pueden estar registradas bajo un único Usuario.
+//   * Regla de Clave Foránea: Usamos "belongsTo" en este modelo porque 
+//     "addresses" es la tabla que guarda FÍSICAMENTE la clave foránea 
+//     ("user_id") en su estructura.
 // =====================================================================
