@@ -1,4 +1,4 @@
-import type { CartItem } from "@/contexts/CartContext";
+import type { CartItem } from "@/hooks/useCart";
 
 interface CartTableRowProps {
   item: CartItem;
@@ -14,15 +14,22 @@ export default function CartTableRow({
   onRemove,
 }: CartTableRowProps) {
   const totalItem = item.product.price * item.quantity;
+  
+  // Tipados seguros para propiedades externas o dinámicas
+  // Extrae la primera imagen de product_images usando url_image
+  const productImages = (item.product as { product_images?: { url_image: string }[] }).product_images;
+  const firstImageUrl = productImages?.[0]?.url_image;
+  const productName = (item.product.name as unknown) as Record<string, string>;
 
   return (
     <tr className="cart-item">
       <td className="cart-item-product">
         <img
-          src={item.product.images[0] || "/images/product-image.jpg"}
-          alt={item.product.name[currentLang]}
+          src={firstImageUrl ? `http://localhost:8000/storage/${firstImageUrl}` : "/images/product-image.jpg"}
+          alt={productName[currentLang] || "Producto"}
         />
-        <p>{item.product.name[currentLang]}</p>
+        <p>{productName[currentLang]}</p>
+        <p>{item.product.name}</p>
       </td>
 
       <td className="cart-item-price">

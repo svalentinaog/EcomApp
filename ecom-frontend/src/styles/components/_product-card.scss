@@ -30,7 +30,7 @@
   }
 
   &:hover {
-    transform: translateY(-6px);
+    transform: translateY(- 6px);
     box-shadow: $shadow-base;
     cursor: pointer;
 
@@ -79,7 +79,7 @@
 @media (max-width: 768px) {
   .card-product {
     &-image-wrapper {
-      height: 250px;
+      height: 400px;
     }
   }
 }
@@ -87,7 +87,7 @@
 @media (max-width: 480px) {
   .card-product {
     &-image-wrapper {
-      height: 220px;
+      height: 380px;
     }
   }
 }

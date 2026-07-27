@@ -18,6 +18,7 @@
 @use "./components/auth";
 @use "./components/cart";
 @use "./components/cart-empty";
+@use "./components/loading";
 
 // Layout
 @use "./layout/container";

@@ -1,17 +1,24 @@
-export type TranslationMap = {
-  es: string;
-  en: string;
-};
-
-export type Product = {
+export interface Product {
   id: number;
-  name: TranslationMap;
-  description: TranslationMap;
+  name: string;
+  description: string;
   price: number;
-  oldPrice: number;
+  old_price: number | null;
   discount: number;
-  category: TranslationMap;
-  subCategory: TranslationMap;
-  images: string[];
   rating: number;
-};
+  sku: string;
+  stock: number;
+  subcategory_id: number;
+  subcategory?: {
+    id: number;
+    name: string;
+    category?: {
+      id: number;
+      name: string;
+    }
+  };
+  product_images: {
+    id: number;
+    url_image: string;
+  }[];
+}

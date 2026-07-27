@@ -5,6 +5,7 @@
     "cart": "Carrito de Compras",
     "contact": "Contacto",
     "access": "Acceso",
+    "profile": "Mi Perfil",
     "legalNotice": "Aviso legal",
     "privacyPolicy": "Política de privacidad",
     "shippingPolicy": "Política de envíos y devoluciones"
@@ -43,12 +44,31 @@
     "auth": "Próximamente autenticación",
     "shop": "Próximamente tienda"
   },
-  "noResults": {
-    "title": "No se hallaron coincidencias",
-    "description": "No se hay productos que coincidan con la búsqueda que realizaste, intenta con otras palabras claves",
-    "button": "Limpiar filtros",
-    "imageAlt": "Sin resultados"
-  },
+   "noResults": {
+      "title": "No se hallaron coincidencias",
+      "description": "No hay productos que coincidan con la búsqueda que realizaste. Intenta con otras palabras.",
+      "imageAlt": "Sin resultados"
+    },
+    "noPriceResults": {
+      "title": "No hay productos en este rango de precios",
+      "description": "Prueba ampliando el rango de precios para ver más productos.",
+      "imageAlt": "Sin productos en el rango de precios seleccionado"
+    },
+    "emptyDb": {
+      "title": "No hay productos disponibles",
+      "description": "En este momento no hay productos para mostrar. Cuando haya productos disponibles, aparecerán aquí.",
+      "imageAlt": "Caja vacía sin productos"
+    },
+    "error503": {
+      "title": "Servidor temporalmente no disponible",
+      "description": "Parece que el servidor no está disponible en este momento. Por favor, inténtalo nuevamente más tarde.",
+      "imageAlt": "Servicio temporalmente no disponible"
+    },
+    "noOrders": {
+      "title": "Aún no has realizado ningún pedido",
+      "description": "Cuando hagas tu primera compra, podrás ver el estado y el historial de tus pedidos aquí."
+    },
+    "loading": "Cargando...",
   "login": {
     "title": "Acceso",
     "email": "Correo electrónico",

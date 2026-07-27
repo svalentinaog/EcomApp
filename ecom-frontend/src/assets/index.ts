@@ -60,6 +60,11 @@ import support from "./icons/support.svg";
 import comingSoon from "./icons/coming-soon.png";
 import emptyCart from "./images/empty-cart.png";
 import refresh from "./icons/refresh.svg";
+import chevronDown from "./icons/chevron-down.svg";
+import chevronRight from "./icons/chevron-right.svg";
+import chevronLeft from "./icons/chevron-left.svg";
+
+
 
 export {
   logoLight,
@@ -95,5 +100,8 @@ export {
   phoneContactPage,
   emailContactPage,
   emptyCart,
-  refresh
+  refresh,
+  chevronDown,
+  chevronRight,
+  chevronLeft
 };

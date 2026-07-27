@@ -1,5 +1,7 @@
+import type { Category } from "@/types/Category";
+
 type Props = {
-  categories: string[];
+  categories: Category[];
   selected: string;
   onSelect: (cat: string) => void;
   allLabel?: string;
@@ -23,11 +25,11 @@ export default function ProductFilter({
 
       {categories.map((cat) => (
         <h4
-          key={cat}
-          className={selected === cat ? "tab-active" : ""}
-          onClick={() => onSelect(cat)}
+          key={cat.id}
+          className={selected === cat.name ? "tab-active" : ""}
+          onClick={() => onSelect(cat.name)}
         >
-          {cat}
+          {cat.name}
         </h4>
       ))}
     </div>

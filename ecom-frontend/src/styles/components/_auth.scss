@@ -75,6 +75,30 @@
   margin: 8px 0 0 0;
 }
 
+.custom-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+
+  input {
+    width: 100%;
+    padding-right: 70px; 
+  }
+
+  .input-action-btn {
+    position: absolute;
+    right: 12px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 0.85rem;
+    color: #666;
+    
+    &:hover {
+      color: #000;
+    }
+  }
+}
 @media (max-width: 768px) {
   .auth-section {
     padding: 40px 0;

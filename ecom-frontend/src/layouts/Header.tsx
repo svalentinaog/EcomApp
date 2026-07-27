@@ -19,7 +19,8 @@ import {
   hamburger,
 } from "@/assets";
 import SearchBar from "@/components/molecules/common/SearchBar";
-import { useCart } from "@/contexts/CartContext";
+import { useCart } from "@/hooks/useCart";
+import { useAuthStore } from "@/store/useAuthStore";
 
 export default function Header() {
   const { lang } = useParams();
@@ -27,14 +28,16 @@ export default function Header() {
   const navigate = useNavigate();
   const location = useLocation();
   const [searchParams, setSearchParams] = useSearchParams();
-  const { getCartCount } = useCart();
-  const cartCount = getCartCount();
+  const { totalItems } = useCart();
+  
+  const token = useAuthStore((state) => state.token);
+  
+  const getPath = (path: string) => `/${lang}${path === "/" ? "" : path}`;
 
   const initialSearch = searchParams.get("q") || "";
   const [search, setSearch] = useState(initialSearch);
   const [menuOpen, setMenuOpen] = useState(false);
 
-  // 1. Centralizamos los items de navegación (Se traducen solos vía 't')
   const navItems = useMemo(
     () => [
       { name: t("navigation.home"), path: "/", end: true },
@@ -44,57 +47,65 @@ export default function Header() {
     [t]
   );
 
-  // 2. Helper para rutas localizadas
-  const getPath = (path: string) => `/${lang}${path === "/" ? "" : path}`;
-
-  // 3. Lógica de cambio de idioma simplificada
   const toggleLanguage = () => {
     const nextLang = lang === "es" ? "en" : "es";
-    // Cambiamos el idioma en la librería e inmediatamente navegamos a la nueva URL
     i18n.changeLanguage(nextLang);
     navigate(location.pathname.replace(`/${lang}`, `/${nextLang}`));
   };
 
-  // Helper para clases activas
   const navLinkClass = ({ isActive }: { isActive: boolean }) =>
     isActive ? "active" : "";
 
-  // Sync search state with URL params (only when URL changes, not on user typing)
+  // 1. Sincroniza la barra de búsqueda si la URL cambia por fuera (ej. usar botones del navegador)
   useEffect(() => {
     const urlSearch = searchParams.get("q") || "";
-    setSearch(urlSearch);
+    if (search !== urlSearch) {
+      setSearch(urlSearch);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams]);
 
-  // Handle search change (update URL as user types)
+  // 2. EFECTO DEBOUNCE: Ejecuta la búsqueda en vivo con un ligero retraso
+  useEffect(() => {
+    const delayDebounceFn = setTimeout(() => {
+      const trimmedSearch = search.trim();
+      const shopPath = `/${lang}/shop`;
+      const currentUrlSearch = searchParams.get("q") || "";
+
+      // Evita actualizar la URL si el parámetro ya es el mismo
+      if (trimmedSearch === currentUrlSearch) return;
+
+      if (trimmedSearch) {
+        if (location.pathname.includes(shopPath)) {
+          // Si estamos en la tienda, actualizamos los parámetros (replace: true evita llenar el historial del navegador)
+          setSearchParams({ q: trimmedSearch }, { replace: true });
+        } else {
+          // Si estamos en inicio u otra página, navegamos a la tienda
+          navigate(`${shopPath}?q=${encodeURIComponent(trimmedSearch)}`);
+        }
+      } else if (location.pathname.includes(shopPath) && currentUrlSearch) {
+        // Si borramos el texto y estamos en la tienda, limpiamos la URL
+        setSearchParams({}, { replace: true });
+      }
+    }, 400); // Espera 400 milisegundos tras dejar de teclear
+
+    return () => clearTimeout(delayDebounceFn);
+  }, [search, lang, location.pathname, navigate, searchParams, setSearchParams]);
+
+  // 3. El change ahora es limpio, solo modifica el input inmediatamente
   const handleSearchChange = (newValue: string) => {
     setSearch(newValue);
-    const currentPath = location.pathname;
-    if (newValue.trim()) {
-      // If there's a search term, clear category filter
-      const newSearchParams = new URLSearchParams();
-      newSearchParams.set("q", newValue.trim());
-      // Update search params without full page reload if already on shop, else navigate
-      if (currentPath.includes(`/${lang}/shop`)) {
-        setSearchParams(newSearchParams);
-      } else {
-        navigate(`/${lang}/shop?q=${encodeURIComponent(newValue.trim())}`);
-      }
-    } else {
-      // Clear search params if empty
-      if (currentPath.includes(`/${lang}/shop`)) {
-        setSearchParams({});
-      } else {
-        navigate(`/${lang}/shop`);
-      }
-    }
   };
 
-  // Handle search submission (on Enter key) - optional, for consistency
+  // 4. El submit se queda por si el usuario presiona "Enter" rápido y no quiere esperar los 400ms
   const handleSearchSubmit = () => {
-    if (search.trim()) {
-      // If not already on shop page, navigate there with query
-      if (!location.pathname.includes(`/${lang}/shop`)) {
-        navigate(`/${lang}/shop?q=${encodeURIComponent(search.trim())}`);
+    const trimmedSearch = search.trim();
+    const shopPath = `/${lang}/shop`;
+    if (trimmedSearch) {
+      if (location.pathname.includes(shopPath)) {
+        setSearchParams({ q: trimmedSearch }, { replace: true });
+      } else {
+        navigate(`${shopPath}?q=${encodeURIComponent(trimmedSearch)}`);
       }
     }
   };
@@ -125,9 +136,15 @@ export default function Header() {
 
           <div className="top-bar-item">
             <img src={userAccess} alt="userAccess" />
-            <NavLink to={getPath("/login")} className={navLinkClass}>
-              {t("header.access")}
-            </NavLink>
+            {token ? (
+              <NavLink to={getPath("/profile")} className={navLinkClass}>
+                Mi Perfil
+              </NavLink>
+            ) : (
+              <NavLink to={getPath("/login")} className={navLinkClass}>
+                {t("header.access") || "Acceso"}
+              </NavLink>
+            )}
           </div>
         </div>
 
@@ -157,8 +174,8 @@ export default function Header() {
 
             <Link to={getPath("/cart")} className="cart-link">
               <img src={shoppingCart} alt="Cart" />
-              {cartCount > 0 && (
-                <span className="cart-count">{cartCount}</span>
+              {totalItems > 0 && (
+                <span className="cart-count">{totalItems}</span>
               )}
             </Link>
 
@@ -171,11 +188,10 @@ export default function Header() {
           </div>
         </nav>
 
-        {/* Overlay for mobile menu */}
+        {/* Overlay y Menú móvil */}
         {menuOpen && (
           <div className="mobile-menu-overlay" onClick={() => setMenuOpen(false)} />
         )}
-        {/* Menú móvil slide-out */}
         <div className={`mobile-menu ${menuOpen ? "open" : ""}`}>
           <div className="mobile-menu-header">
             <h3>Menú</h3>
@@ -183,20 +199,8 @@ export default function Header() {
               className="close-menu-btn"
               onClick={() => setMenuOpen(false)}
             >
-              <svg
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M18 6L6 18M6 6L18 18"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
             </button>
           </div>
@@ -212,6 +216,13 @@ export default function Header() {
               {item.name}
             </NavLink>
           ))}
+          <NavLink
+            to={getPath(token ? "/profile" : "/login")}
+            className={navLinkClass}
+            onClick={() => setMenuOpen(false)}
+          >
+            {token ? "Mi Perfil" : (t("header.access") || "Acceso")}
+          </NavLink>
         </div>
       </div>
     </header>

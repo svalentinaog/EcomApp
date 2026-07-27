@@ -1,12 +1,8 @@
 import { useAccordionMenu } from "@/hooks/useAccordionMenu";
-
-export interface CategoryGroup {
-  name: string;
-  subcategories: string[];
-}
+import type { Category } from "@/types/Category";
 
 interface Props {
-  groups?: CategoryGroup[];
+  groups?: Category[];
   selected?: string;
   onSelect?: (cat: string) => void;
 }
@@ -21,7 +17,7 @@ export default function AccordionMenu({
   return (
     <div className="accordion">
       {groups.map((group) => (
-        <div key={group.name} className="accordion__group">
+        <div key={group.id} className="accordion__group">
           <button
             className={`accordion__header ${
               openGroup === group.name || selected === group.name
@@ -78,13 +74,13 @@ export default function AccordionMenu({
           >
             {(group.subcategories || []).map((sub) => (
               <button
-                key={sub}
+                key={sub.id}
                 className={`accordion__item ${
-                  selected === sub ? "selected" : ""
+                  selected === sub.name ? "selected" : ""
                 }`}
-                onClick={() => onSelect(sub)}
+                onClick={() => onSelect(sub.name)}
               >
-                {sub}
+                {sub.name}
               </button>
             ))}
           </div>

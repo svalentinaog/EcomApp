@@ -19,7 +19,7 @@ Route::apiResource('products', ProductController::class)->only(['index', 'show']
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 
-// Permitimos que cualquiera vea las categorías y subcategorías
+// Cualquiera puede ver las categorías y subcategorías
 Route::apiResource('categories', CategoryController::class)->only(['index', 'show']);
 Route::apiResource('subcategories', SubcategoryController::class)->only(['index', 'show']);
 
@@ -44,6 +44,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // 🍀 Órdenes (Estandarizado con apiResource: el 'store' actúa como el checkout):
     // Ruta para acceder a los órdenes del usuario logueado (historial de compras)
+    Route::post('/checkout', [OrderController::class, 'store']);
     Route::apiResource('orders', OrderController::class)->except(['destroy']);
 
     // 🍀 Direcciones del usuario:

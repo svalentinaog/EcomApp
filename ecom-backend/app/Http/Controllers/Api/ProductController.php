@@ -111,10 +111,21 @@ class ProductController extends Controller
             'rating'         => 'sometimes|integer|min:1|max:5',
             'sku'            => 'sometimes|required|string|unique:products,sku,' . $id,
             'stock'          => 'sometimes|required|integer|min:0',
+            'product_images'       => 'nullable|array',
+            'product_images.*'     => 'image|mimes:jpeg,png,jpg|max:2048',
             'subcategory_id' => 'sometimes|required|exists:subcategories,id',
         ]);
 
         $product->update($validatedData);
+
+        if ($request->hasFile('product_images')) {
+            foreach ($request->file('product_images') as $image) {
+                $path = $image->store('products', 'public');
+                $product->productImages()->create([
+                    'url_image' => $path 
+                ]);
+            }
+        }
 
         return response()->json([
             'success' => true,

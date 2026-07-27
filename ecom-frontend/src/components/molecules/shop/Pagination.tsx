@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
+import { ChevronLeftIcon, ChevronRightIcon } from "@/components/atoms/icons/Icons";
 
 interface PaginationProps {
   currentPage: number;
@@ -45,7 +46,7 @@ export default function Pagination({
         aria-label={t("pagination.previous")}
         onClick={() => onPageChange(currentPage - 1)}
       >
-        {"<"}
+        <ChevronLeftIcon className="" />
       </button>
 
       {pageItems.map((item, index) => {
@@ -76,7 +77,7 @@ export default function Pagination({
         aria-label={t("pagination.next")}
         onClick={() => onPageChange(currentPage + 1)}
       >
-        {">"}
+        <ChevronRightIcon className="" />
       </button>
     </nav>
   );

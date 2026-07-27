@@ -2,9 +2,10 @@
   "navigation": {
     "home": "Home",
     "shop": "Shop",
-    "cart": "Shopping Cart",
+    "cart": "Shopping Cart", 
     "contact": "Contact",
     "access": "Access",
+    "profile": "My Profile",
     "legalNotice": "Legal Notice",
     "privacyPolicy": "Privacy Policy",
     "shippingPolicy": "Shipping and Returns"
@@ -44,11 +45,30 @@
     "shop": "Shop coming soon"
   },
   "noResults": {
-    "title": "No matches found",
-    "description": "No products match your search, try other keywords",
-    "button": "Clear filters",
+    "title": "No results found",
+    "description": "No products match your search. Try using different keywords.",
     "imageAlt": "No results"
   },
+  "noPriceResults": {
+    "title": "No products in this price range",
+    "description": "Try expanding the selected price range to see more products.",
+    "imageAlt": "No products in the selected price range"
+  },
+  "emptyDb": {
+    "title": "No products available",
+    "description": "There are currently no products to display. Once products become available, they will appear here.",
+    "imageAlt": "Empty box with no products"
+  },
+  "error503": {
+    "title": "Service temporarily unavailable",
+    "description": "The server is currently unavailable. Please try again later.",
+    "imageAlt": "Service temporarily unavailable"
+  },
+  "noOrders": {
+    "title": "You haven't placed any orders yet",
+    "description": "Once you make your first purchase, you'll be able to see your order status and history here."
+  },
+  "loading": "Loading...",
   "login": {
     "title": "Access",
     "email": "Email",

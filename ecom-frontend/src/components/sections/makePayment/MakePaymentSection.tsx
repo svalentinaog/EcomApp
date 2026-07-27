@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 import Container from "@/layouts/Container";
 import CommonButton from "@/components/atoms/CommonButton";
-import Input from "@/components/atoms/Input";
+import Input from "@/components/atoms/CustomInput";
 import { visa, mastercard, americanExpress, paypal } from "@/assets";
 
 export default function MakePaymentSection() {

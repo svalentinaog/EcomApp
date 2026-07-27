@@ -16,7 +16,7 @@ import MakePaymentPage from "@/pages/MakePaymentPage";
 import LegalDocumentPage from "@/pages/LegalDocumentPage";
 import UserProfilePage from "@/pages/UserProfilePage";
 
-export default function App() {
+export default function AppRouter() {
   return (
     <BrowserRouter>
       <Routes>

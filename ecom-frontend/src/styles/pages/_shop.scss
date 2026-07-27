@@ -25,7 +25,6 @@
   padding: 1.5rem;
   background: $light-gray;
   border-radius: 8px;
-  margin-bottom: 1.5rem;
 
   h3 {
     color: $title;
@@ -81,12 +80,11 @@
   gap: 0.5rem;
   justify-content: center;
   align-items: center;
-  padding: 1rem 0;
 }
 
 .pagination__item {
-  min-width: 2.5rem;
-  height: 2.5rem;
+  min-width: 3rem;
+  height: 3rem;
   border-radius: 999px;
   border: 1px solid $light-gray;
   background: $white;
@@ -103,7 +101,8 @@
 .pagination__item:hover:not(:disabled) {
   border-color: $primary;
   color: $primary;
-  background: rgba($primary, 0.08);
+  fill: $primary;
+  background: rgba($primary, 0.05);
 }
 
 .pagination__item--active {
@@ -112,8 +111,7 @@
 }
 
 .pagination__item--control {
-  min-width: 2.5rem;
-  padding: 0 0.85rem;
+  padding: 0.5rem;
 }
 
 .pagination__item--ellipsis {
@@ -153,6 +151,155 @@
 
 .filter-overlay {
   display: none;
+}
+
+.product-toolbar {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem; // Espacio entre el toolbar y los productos
+  color: $text-paragraph;
+
+  @media (max-width: 640px) {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+
+  // ¡Nota el ampersand (&) antes de los guiones! Esto es vital.
+  &__info {
+    strong {
+      color: $title;
+      font-weight: 600;
+    }
+  }
+
+  &__controls {
+    display: flex;
+    align-items: center;
+    gap: 12px; // <-- Valor de Gap exacto de Figma
+
+    @media (max-width: 640px) {
+      width: 100%;
+      justify-content: space-between;
+    }
+  }
+
+  &__select-wrapper {
+    position: relative;
+    display: flex;
+  }
+
+  &__select {
+    width: auto;
+    // Padding de Figma: 8px arriba/abajo, 12px izquierda, 36px derecha (para dejar espacio a la flecha)
+    padding: 8px 36px 8px 12px;
+    font-size: 1rem;
+    color: $title;
+    background-color: $white;
+    border: 1px solid $light-gray;
+    border-radius: 8px; // <-- Corner radius exacto de Figma
+    cursor: pointer;
+    
+    // Ocultar la flecha por defecto del navegador
+    outline: none;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    
+    // Flecha SVG personalizada inyectada por CSS
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236B7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 16px;
+    
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+
+    &:hover {
+      border-color: darken(#e5e7eb, 10%); // Oscurece levemente tu light-gray
+    }
+
+    &:focus {
+      border-color: $primary;
+      box-shadow: 0 0 0 2px rgba(45, 212, 191, 0.2); // Usa el tono de tu color $primary pero con opacidad
+    }
+  }
+}
+
+.custom-select {
+  position: relative;
+  user-select: none;
+  width: max-content;
+
+  &__trigger {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 8px 12px;
+    font-size: 0.875rem;
+    color: $title;
+    background-color: $white;
+    border: 1px solid $light-gray;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+      border-color: darken($light-gray, 10%);
+    }
+
+    &.open {
+      border-color: $primary;
+      box-shadow: 0 0 0 2px rgba($primary, 0.2);
+    }
+  }
+
+  &__arrow {
+    color: $text-paragraph;
+    transition: transform 0.2s ease;
+
+    &.rotate {
+      transform: rotate(180deg);
+    }
+  }
+
+  &__menu {
+    position: absolute;
+    top: calc(100% + 6px);
+    right: 0; // Se alinea a la derecha para evitar desbordes en layouts estrechos
+    min-width: 100%;
+    width: max-content;
+    background-color: $white;
+    border: 1px solid $light-gray;
+    border-radius: 8px;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
+    padding: 6px;
+    list-style: none;
+    z-index: 50;
+    margin: 0;
+  }
+
+  &__option {
+    padding: 8px 12px;
+    font-size: 0.875rem;
+    color: $text-paragraph;
+    border-radius: 6px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background-color 0.15s ease, color 0.15s ease;
+
+    &:hover {
+      background-color: rgba($primary, 0.05);
+      color: $primary;
+    }
+
+    &.selected {
+      background-color: rgba($primary, 0.05);
+      color: $primary;
+    }
+  }
 }
 
 // Mobile styles
@@ -239,7 +386,6 @@
 
   .current-category {
     padding: 1rem;
-    margin-bottom: 1rem;
   }
 
   .product-list-shop {

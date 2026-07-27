@@ -1,9 +1,10 @@
 import AccordionMenu from "../../molecules/shop/AccordionMenu";
 import PriceRange from "@/components/molecules/shop/PriceRange";
 import { useTranslation } from "react-i18next";
+import type { Category } from "@/types/Category";
 
 interface FilterSidebarProps {
-  categories: any[];
+  categories: Category[];
   selectedCat: string;
   onSelectCat: (cat: string) => void;
   priceRange: [number, number];
@@ -27,7 +28,7 @@ export default function FilterSidebar({
     <aside className="filter-sidebar">
       <div className="filter-sidebar__section">
         <h3 className="filter-title">{t("filters.categories")}</h3>
-        {/* Pasamos 'categories' que ya vienen agrupadas como {name, subcategories} */}
+        {/* 'categories' pasa directo a AccordionMenu ya con la estructura { id, name, subcategories } */}
         <AccordionMenu
           groups={categories}
           selected={selectedCat}

@@ -3,7 +3,7 @@
 
   &__container {
     display: flex;
-    gap: 4rem;
+    gap: 6rem; /* Se amplió el gap para coincidir con la caja rosa de la imagen */
     align-items: flex-start;
 
     @media (max-width: 768px) {
@@ -13,7 +13,7 @@
   }
 
   &__left {
-    flex: 0 0 250px;
+    flex: 0 0 240px; /* Ancho exacto del Figma */
     width: 100%;
 
     @media (max-width: 768px) {
@@ -30,37 +30,42 @@
   }
 
   &__menu-item {
-    padding: 1rem;
+    height: 42px; /* Altura exacta del Figma */
+    display: flex;
+    align-items: center; /* Centra el texto verticalmente */
+    padding: 0 1rem;
     cursor: pointer;
-    transition: background-color 0.3s, color 0.3s;
+    transition: background-color 0.3s, color 0.3s, border 0.3s;
+    font-size: 1rem;
+    color: #374151; /* Un gris oscuro para el texto normal */
 
     &--active {
-      // background-color: rgba($primary-color, 0.1);
-      // color: $text-color;
-      // font-weight: $font-semibold;
-      // border-left: 3px solid $primary-color;
+      background-color: rgba(32, 201, 151, 0.08); /* Fondo verde super tenue */
+      color: #111827; /* Texto casi negro para contrastar */
+      font-weight: 600; /* Semibold */
+      border-left: 3px solid #2DD4BF; /* Color primario sólido en el borde */
     }
 
     &:hover:not(&--active) {
-      // background-color: $gray-50;
-      // color: $text-color;
+      background-color: #F3F4F6;
+      color: #111827;
     }
   }
 
   &__right {
     flex: 1;
-    max-width: 700px;
+    max-width: 700px; /* Controla el ancho del formulario */
   }
 
   &__title {
-    // font-size: $text-4xl;
-    // font-weight: $font-bold;
-    // color: $text-color;
+    font-size: 2.25rem;
+    font-weight: 700; /* Bold */
+    color: #111827;
     margin-bottom: 0.5rem;
   }
 
   &__subtitle {
-    // color: $gray-500;
+    color: #6B7280;
     margin-bottom: 3rem;
   }
 
@@ -71,9 +76,9 @@
   }
 
   &__section-title {
-    // font-size: $text-xl;
-    // font-weight: $font-semibold;
-    // color: $text-color;
+    font-size: 1.5rem;
+    font-weight: 700; /* Bold */
+    color: #111827;
     margin-bottom: 0.5rem;
   }
 
@@ -85,27 +90,30 @@
     }
 
     .input-label {
-      // color: $gray-500;
-      // font-size: $text-sm;
+      color: #4B5563;
+      font-size: 0.875rem;
       margin-bottom: 0.5rem;
+      display: block;
     }
     
     .input-field {
       padding: 0.75rem 1rem;
-      // border: 1px solid $gray-200;
-      // border-radius: $border-radius-sm;
-      // color: $text-color;
+      border: 1px solid #D1D5DB;
+      border-radius: 0.375rem;
+      color: #111827;
       width: 100%;
+      background-color: #ffffff;
+      transition: border-color 0.2s, box-shadow 0.2s;
 
       &:focus {
-        // border-color: $primary-color;
+        border-color: #2DD4BF; /* Color primario al hacer foco */
         outline: none;
+        box-shadow: 0 0 0 1px #2DD4BF;
       }
     }
   }
 
   &__submit-btn {
     align-self: flex-start;
-    margin-top: 1rem;
   }
 }
