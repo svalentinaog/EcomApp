@@ -57,10 +57,19 @@
   .product-list {
     width: 100%;
     display: grid;
+    gap: 24px;
+    grid-template-columns: repeat(auto-fit, minmax(270px, 280px));
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .product-list-related {
+    width: 100%;
+    display: grid;
     // grid-template-columns: repeat(4, 1fr);
     grid-template-columns: repeat(auto-fit, minmax(270px, 280px));
     gap: 24px;
-    justify-content: center;
+    justify-content: left;
   }
 
   .product-cta {

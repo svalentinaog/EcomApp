@@ -12,17 +12,29 @@ use Illuminate\Support\Facades\Auth;
 class CartController extends Controller
 {
     /**
-     * Display a listing of the resource.
-     */
+    * Display a listing of the resource.
+    */
     public function index()
     {
         $cartItems = CartItem::with('product.productImages')
-        ->where('user_id', Auth::id())
-        ->get();
+            ->where('user_id', Auth::id())
+            ->get();
+
+        $subtotal = $cartItems->reduce(
+            fn ($carry, $item) => $carry + ($item->product->price * $item->quantity),
+            0
+        );
+
+        $shippingCost = $cartItems->isEmpty() ? 0 : 500;
 
         return response()->json([
             'success' => true,
-            'data' => $cartItems
+            'data' => $cartItems,
+            'summary' => [
+                'subtotal' => $subtotal,
+                'shipping_cost' => $shippingCost,
+                'total' => $subtotal + $shippingCost,
+            ],
         ], 200);
     }
 

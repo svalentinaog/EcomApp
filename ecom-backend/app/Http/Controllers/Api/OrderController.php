@@ -12,6 +12,9 @@ use App\Models\Product;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+// --- Importación para Mercado Pago ---
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class OrderController extends Controller
 {
@@ -23,6 +26,7 @@ class OrderController extends Controller
         $userId = Auth::id();
 
         $orders = Order::where('user_id', $userId)
+                    //    ->where('payment_status', 'approved')
                        ->with('orderItems.product')
                        ->orderBy('created_at', 'desc')
                        ->get();
@@ -105,7 +109,7 @@ class OrderController extends Controller
 
         try {
             $subtotal = 0;
-            $shippingCost = 15000;
+            $shippingCost = 500;
 
             foreach ($cartItems as $item) {
                 if ($item->product->stock < $item->quantity) {
@@ -119,17 +123,17 @@ class OrderController extends Controller
             $order = Order::create([
                 'user_id' => $userId,
                 'address_id' => $address->id,
-                'status' => 'pending',
+                'payment_status' => 'pending',
                 'payment_method' => $request->payment_method,
-                'shipping_full_name' => $address->full_name,
-                'shipping_phone' => $address->phone,
-                'shipping_address_line' => $address->address_line,
-                'shipping_city' => $address->city,
-                'shipping_state' => $address->state,
-                'shipping_postal_code' => $address->postal_code,
-                'shipping_country' => $address->country,
+                'full_name' => $address->full_name,
+                'phone' => $address->phone,
+                'address_line' => $address->address_line,
+                'city' => $address->city,
+                'state' => $address->state,
+                'postal_code' => $address->postal_code,
+                'country' => $address->country,
                 'subtotal' => $subtotal,
-                'shipping_cost' => $shippingCost,
+                'cost' => $shippingCost,
                 'total' => $total,
             ]);
 
@@ -149,21 +153,88 @@ class OrderController extends Controller
 
             CartItem::where('user_id', $userId)->delete();
 
+            // =====================================================================
+            // 👇 Integración con API de Mercado Pago - Inicio
+            // =====================================================================
+            $itemsForMP = [];
+            foreach ($cartItems as $item) {
+                $itemsForMP[] = [
+                    'title'       => $item->product->name,
+                    'quantity'    => $item->quantity, 
+                    'unit_price'  => (float) $item->product->price,
+                    'currency_id' => 'COP' 
+                ];
+            }
+
+            if ($shippingCost > 0) {
+                $itemsForMP[] = [
+                    'title'       => 'Costo de Envío',
+                    'quantity'    => 1,
+                    'unit_price'  => (float) $shippingCost,
+                    'currency_id' => 'COP'
+                ];
+            }
+
+            $mpResponse = Http::withToken(env('MERCADOPAGO_ACCESS_TOKEN'))
+            ->post('https://api.mercadopago.com/checkout/preferences', [
+
+                'items' => $itemsForMP,
+
+                'payer' => [
+                    'email' => Auth::user()->email,
+                ],
+
+                'back_urls' => [
+                    'success' => 'http://localhost:5173/es/profile',
+                    'failure' => 'http://localhost:5173/es/make-payment',
+                    'pending' => 'http://localhost:5173/es/profile'
+                ],
+
+                // 'auto_return' => 'approved',
+
+                'notification_url' => env('MERCADOPAGO_WEBHOOK_URL'),
+                'external_reference' => (string) $order->id, 
+            ]);
+
+            if ($mpResponse->failed()) {
+                throw new \Exception('Error al crear la preferencia en Mercado Pago: ' . $mpResponse->body());
+            }
+
+            $preference = $mpResponse->json();
+
+            // dd($mpResponse->status(), $preference);
+            Log::info('MercadoPago Preference 💰👉', $preference);
+
+            // =====================================================================
+            // 👆 Integración con API de Mercado Pago - Fin
+            // =====================================================================
+
+            Log::info($itemsForMP);
+
+            Log::info($mpResponse->json());
+
             DB::commit();
 
             return response()->json([
                 'success' => true,
                 'message' => 'Orden creada exitosamente.',
+                'checkout_url' => $preference['init_point'], // ---Enviar URL al Frontend ---
                 'data' => $order->load('orderItems.product')
             ], 201);
 
         } catch (\Exception $e) {
             DB::rollBack();
 
+            
+
+            Log::error('Error al procesar orden: ' . $e->getMessage());
+
             return response()->json([
                 'success' => false,
                 'message' => 'Ocurrió un error al procesar tu orden.',
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
+                'line' => $e->getLine(),
+                'file' => $e->getFile()
             ], 500);
         }
     }
@@ -174,7 +245,7 @@ class OrderController extends Controller
     public function update(Request $request, int $id)
     {
         $validated = $request->validate([
-            'status' => 'required|string|in:pending,shipped,delivered,canceled'
+            'payment_status' => 'required|string|in:pending,approved,rejected,in_process'
         ]);
 
         $order = Order::find($id);
@@ -186,13 +257,20 @@ class OrderController extends Controller
             ], 404);
         }
 
+        if ($order->user_id !== Auth::id() && !Auth::user()->is_admin) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No tienes permiso para actualizar esta orden.'
+            ], 403);
+        }
+
         $order->update([
-            'status' => $validated['status']
+            'payment_status' => $validated['payment_status']
         ]);
 
         return response()->json([
             'success' => true,
-            'message' => 'Estado de la orden actualizado exitosamente.',
+            'message' => 'Estado de pago actualizado exitosamente.',
             'data' => $order
         ], 200);
     }
@@ -206,7 +284,7 @@ class OrderController extends Controller
 //   todo para evitar estados inconsistentes.
 //
 // - Snapshot de Dirección: Guardar los datos de envío directamente en la tabla de
-//   órdenes (`shipping_full_name`, etc.) congela la información en el tiempo,
+//   órdenes (`full_name`, `phone`, `address_line`, `city`, `state`, `postal_code`, `country`) congela la información en el tiempo,
 //   protegiendo el registro histórico ante futuros cambios o eliminaciones en el
 //   perfil del usuario.
 //

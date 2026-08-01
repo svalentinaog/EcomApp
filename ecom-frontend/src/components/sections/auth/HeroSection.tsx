@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useSearchParams} from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 import { useAuthHero } from "@/hooks/useAuthHero";
 import CommonButton from "@/components/atoms/CommonButton";
@@ -9,12 +9,18 @@ import { api } from "@/services/api";
 import { useAuthStore } from "@/store/useAuthStore";
 
 interface HeroSectionProps {
-  mode?: "login" | "register" | "recover-password" | "new-password";
+  mode?: "login" | "register" | "forgot-password" | "reset-password";
 }
 
 export default function HeroSection({ mode = "login" }: HeroSectionProps) {
-  const { t, getPath, isRegister, isRecover, isNewPassword } = useAuthHero(mode);
+  const { t, getPath, isRegister, isForgot, isResetPassword } = useAuthHero(mode);
   
+  const [successMessage, setSuccessMessage] = useState("");
+
+  const [searchParams] = useSearchParams();
+  const resetToken = searchParams.get("token");
+  const resetEmail = searchParams.get("email");
+
   const setToken = useAuthStore((state) => state.setToken);
   const navigate = useNavigate();
 
@@ -42,15 +48,42 @@ export default function HeroSection({ mode = "login" }: HeroSectionProps) {
       if (isRegister) {
         const response = await api.post("/register", data);
         return response.data;
-      } else {
-        const response = await api.post("/login", {
-          email: data.email,
+      }
+
+      if (isForgot) {
+        const response = await api.post("/forgot-password", { email: data.email });
+        return response.data;
+      }
+
+      if (isResetPassword) {
+        const response = await api.post("/reset-password", {
+          token: resetToken,
+          email: resetEmail,
           password: data.password,
+          password_confirmation: data.password_confirmation,
         });
         return response.data;
       }
+
+      // login
+      const response = await api.post("/login", {
+        email: data.email,
+        password: data.password,
+      });
+      return response.data;
     },
     onSuccess: (data) => {
+      if (isForgot) {
+        setSuccessMessage("Revisa tu correo para continuar");
+        return;
+      }
+
+      if (isResetPassword) {
+        navigate(getPath("/login"));
+        return;
+      }
+
+      // login o register: sí hay token
       const token = data?.access_token || data?.token;
       if (token) {
         setToken(token);
@@ -88,6 +121,7 @@ export default function HeroSection({ mode = "login" }: HeroSectionProps) {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (isRegister && ageError) return; // Evita enviar si es menor de edad
+    setSuccessMessage("");
     authMutation.mutate(formData);
   };
 
@@ -102,9 +136,9 @@ export default function HeroSection({ mode = "login" }: HeroSectionProps) {
           <h1 className="auth-title">
             {isRegister
               ? t("register.title")
-              : isRecover
+              : isForgot
               ? t("recoverPassword.title")
-              : isNewPassword
+              : isResetPassword
               ? t("newPassword.title")
               : t("login.title")}
           </h1>
@@ -115,6 +149,10 @@ export default function HeroSection({ mode = "login" }: HeroSectionProps) {
 
           {ageError && (
             <p style={{ color: "red", marginBottom: "1rem" }}>{ageError}</p>
+          )}
+
+          {successMessage && (
+            <p style={{ color: "green", marginBottom: "1rem" }}>{successMessage}</p>
           )}
 
           <form className="auth-form" onSubmit={handleSubmit}>
@@ -139,21 +177,21 @@ export default function HeroSection({ mode = "login" }: HeroSectionProps) {
               </>
             )}
 
-            {(isRegister || isRecover || !isNewPassword) && (
+            {(isRegister || isForgot || !isResetPassword) && (
               <CustomInput
                 label={
-                  isRecover
+                  isForgot
                     ? t("recoverPassword.email")
                     : isRegister
                     ? t("register.email")
                     : t("login.email")
                 }
-                type={isRecover || isRegister || !isNewPassword ? "email" : "text"}
+                type={isForgot || isRegister || !isResetPassword ? "email" : "text"}
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
                 placeholder={
-                  isRecover
+                  isForgot
                     ? t("recoverPassword.emailPlaceholder")
                     : isRegister
                     ? t("register.emailPlaceholder")
@@ -162,10 +200,10 @@ export default function HeroSection({ mode = "login" }: HeroSectionProps) {
               />
             )}
 
-            {(isRegister || !isRecover) && (
+            {(isRegister || !isForgot) && (
               <CustomInput
                 label={
-                  isNewPassword
+                  isResetPassword
                     ? t("newPassword.newPassword")
                     : isRegister
                     ? t("register.password")
@@ -176,7 +214,7 @@ export default function HeroSection({ mode = "login" }: HeroSectionProps) {
                 value={formData.password}
                 onChange={handleChange}
                 placeholder={
-                  isNewPassword
+                  isResetPassword
                     ? t("newPassword.newPasswordPlaceholder")
                     : isRegister
                     ? t("register.passwordPlaceholder")
@@ -185,10 +223,10 @@ export default function HeroSection({ mode = "login" }: HeroSectionProps) {
               />
             )}
 
-            {(isRegister || isNewPassword) && (
+            {(isRegister || isResetPassword) && (
               <CustomInput
                 label={
-                  isNewPassword
+                  isResetPassword
                     ? t("newPassword.confirmPassword")
                     : t("register.confirmPassword")
                 }
@@ -197,21 +235,21 @@ export default function HeroSection({ mode = "login" }: HeroSectionProps) {
                 value={formData.password_confirmation}
                 onChange={handleChange}
                 placeholder={
-                  isNewPassword
+                  isResetPassword
                     ? t("newPassword.confirmPasswordPlaceholder")
                     : t("register.confirmPasswordPlaceholder")
                 }
               />
             )}
 
-            {!isRegister && !isRecover && !isNewPassword && (
+            {!isRegister && !isForgot && !isResetPassword && (
               <div className="auth-options">
                 <label className="auth-checkbox-label">
                   <input type="checkbox" />
                   {t("login.rememberMe")}
                 </label>
                 <Link
-                  to={getPath("/recover-password")}
+                  to={getPath("/forgot-password")}
                   className="auth-link"
                 >
                   {t("login.forgotPassword")}
@@ -225,9 +263,9 @@ export default function HeroSection({ mode = "login" }: HeroSectionProps) {
               disabled={authMutation.isPending || !!ageError}
             >
               {authMutation.isPending ? "Cargando..." : (
-                isNewPassword
+                isResetPassword
                   ? t("newPassword.changeButton")
-                  : isRecover
+                  : isForgot
                   ? t("recoverPassword.sendButton")
                   : isRegister
                   ? t("register.registerButton")
@@ -235,7 +273,7 @@ export default function HeroSection({ mode = "login" }: HeroSectionProps) {
               )}
             </CommonButton>
 
-            {(isRecover || isNewPassword) && (
+            {(isForgot || isResetPassword) && (
               <p className="auth-footer-text">
                 <Link
                   to={getPath("/login")}
@@ -246,7 +284,7 @@ export default function HeroSection({ mode = "login" }: HeroSectionProps) {
               </p>
             )}
 
-            {!isRecover && !isNewPassword && (
+            {!isForgot && !isResetPassword && (
               <p className="auth-footer-text">
                 {isRegister
                   ? t("register.haveAccount")

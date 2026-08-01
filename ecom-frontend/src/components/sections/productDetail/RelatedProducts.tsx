@@ -31,7 +31,7 @@ export default function RelatedProducts({ currentProduct }: { currentProduct: Pr
         <h2 style={{ textAlign: "left", width: "100%" }}>
           {t("relatedProducts.title")}
         </h2>
-        <div className="product-list">
+        <div className="product-list-related">
           {relatedProducts.map((product) => (
             <ProductCard key={product.id} {...product} />
           ))}

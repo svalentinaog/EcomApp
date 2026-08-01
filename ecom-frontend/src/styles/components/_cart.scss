@@ -174,7 +174,7 @@
   width: 100%;
   max-width: none;
   margin: 0;
-  border: 1px solid $light-gray;
+  border: 1px solid $border;
   padding: 24px;
   border-radius: 8px;
   display: flex;
@@ -261,7 +261,7 @@
   }
 
   .cart-table tbody tr {
-    border: 1px solid $light-gray;
+    border: 1px solid $border;
     border-radius: 14px;
     padding: 16px;
     margin-bottom: 14px;

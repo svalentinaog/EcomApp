@@ -3,8 +3,9 @@
  */
 import logoLight from "./logo-light.svg"; // Primary footer logo
 import logoDark from "./logo-dark.svg"; // Primary header logo
-import imageSection from "./images/image-section.jpg";
-
+import imageSection from "./images/image-home.png";
+import imageCTA from "./images/image-CTA.png";
+import imageContact from "./images/image-contact.png";
 /**
  * SOCIAL MEDIA ICONS
  */
@@ -70,6 +71,8 @@ export {
   logoLight,
   logoDark,
   imageSection,
+  imageCTA,
+  imageContact,
   facebook,
   twitter,
   google,

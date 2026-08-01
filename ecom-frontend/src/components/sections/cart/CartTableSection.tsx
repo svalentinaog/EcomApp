@@ -5,13 +5,14 @@ import CartDivider from "@/components/molecules/cart/CartDivider";
 import CartSummary from "@/components/molecules/cart/CartSummary";
 import EmptyCart from "@/components/molecules/cart/EmptyCart";
 import Container from "@/layouts/Container";
+import LoandingState from "@/components/molecules/common/LoadingState";
 
 export default function CartTableSection() {
   const { t, i18n } = useTranslation("common");
   const currentLang = i18n.language;
 
   // Extraemos todo directamente del hook de TanStack Query
-  const { cartItems, isLoading, totalAmount, totalItems, removeFromCart, updateQuantity } = useCart();
+const { cartItems, isLoading, summary, totalItems, removeFromCart, updateQuantity } = useCart();
 
   const cartLabels = {
     columns: {
@@ -26,14 +27,14 @@ export default function CartTableSection() {
       quantityProducts: t("cart.summary.quantityProducts"),
       subtotal: t("cart.summary.subtotal"),
       shipping: t("cart.summary.shipping"),
-      shippingFree: t("cart.summary.shippingFree"),
+      shippingFree: t("cart.summary.shippingFree"), // 👈 borra esta línea
       total: t("cart.summary.total"),
       checkoutButton: t("cart.checkoutButton"),
     },
   };
 
-  if (isLoading) {
-    return <p style={{ textAlign: "center", padding: "2rem" }}>Cargando carrito...</p>;
+   if (isLoading) {
+    return <LoandingState />
   }
 
   if (cartItems.length === 0) {
@@ -54,8 +55,9 @@ export default function CartTableSection() {
         <CartDivider />
 
         <CartSummary
-          subtotal={totalAmount}
-          total={totalAmount}
+          subtotal={summary.subtotal}
+          shippingCost={summary.shippingCost}
+          total={summary.total}
           quantityProducts={totalItems}
           labels={cartLabels.summary}
         />

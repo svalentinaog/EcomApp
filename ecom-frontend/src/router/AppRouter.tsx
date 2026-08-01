@@ -8,8 +8,8 @@ import ContactPage from "@/pages/ContactPage";
 
 import LoginPage from "@/pages/LoginPage";
 import RegisterPage from "@/pages/RegisterPage";
-import RecoverPasswordPage from "@/pages/RecoverPasswordPage";
-import NewPasswordPage from "@/pages/NewPasswordPage";
+import ForgotPasswordPage from "@/pages/ForgotPasswordPage";
+import ResetPasswordPage from "@/pages/ResetPasswordPage";
 
 import CartPage from "@/pages/CartPage";
 import MakePaymentPage from "@/pages/MakePaymentPage";
@@ -28,8 +28,8 @@ export default function AppRouter() {
           <Route path="contact" element={<ContactPage />} />
           <Route path="login" element={<LoginPage />} />
           <Route path="register" element={<RegisterPage />} />
-          <Route path="recover-password" element={<RecoverPasswordPage />} />
-          <Route path="new-password" element={<NewPasswordPage />} />
+          <Route path="forgot-password" element={<ForgotPasswordPage />} />
+          <Route path="reset-password" element={<ResetPasswordPage />} />
           <Route path="cart" element={<CartPage />} />
           <Route path="make-payment" element={<MakePaymentPage />} />
           <Route path="legal/:slug" element={<LegalDocumentPage />} />

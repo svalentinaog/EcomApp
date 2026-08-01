@@ -9,9 +9,9 @@ import ProductListToolbar from "@/components/molecules/shop/ProductListToolbar";
 import { useProducts } from "@/hooks/useProducts";
 import { useCategories } from "@/hooks/useCategories";
 import { useTranslation } from "react-i18next";
+import LoandingState from "@/components/molecules/common/LoadingState";
 
 import error503 from "@/assets/images/error-503.png";
-import loadingIcon from "@/assets/icons/loading-icon.png";
 
 export default function ProductListSection() {
   const { t } = useTranslation("shop");
@@ -155,17 +155,7 @@ export default function ProductListSection() {
   }
 
   if (isLoading) {
-    return (
-      <Container>
-        <div className="loading">
-          <img 
-            src={loadingIcon} 
-            alt={t("loading")} 
-            className="w-16 h-16 animate-spin opacity-60" 
-          />
-        </div>
-      </Container>
-    );
+    return <LoandingState />
   }
 
   return (

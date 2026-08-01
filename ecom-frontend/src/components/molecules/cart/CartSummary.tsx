@@ -1,7 +1,9 @@
 import CommonButton from "@/components/atoms/CommonButton";
+import { useNavigate, useParams } from "react-router-dom";
 
 interface CartSummaryProps {
   subtotal: number;
+  shippingCost: number;
   total: number;
   quantityProducts: number;
   labels: {
@@ -9,7 +11,6 @@ interface CartSummaryProps {
     quantityProducts: string;
     subtotal: string;
     shipping: string;
-    shippingFree: string;
     total: string;
     checkoutButton: string;
   };
@@ -17,10 +18,15 @@ interface CartSummaryProps {
 
 export default function CartSummary({
   subtotal,
+  shippingCost,
   total,
   quantityProducts,
   labels,
 }: CartSummaryProps) {
+
+  const navigate = useNavigate();
+  const { lang } = useParams<{ lang: string }>();
+  
   return (
     <div className="cart-summary">
       <div className="cart-summary-header">
@@ -41,7 +47,7 @@ export default function CartSummary({
 
           <tr className="cart-summary-row">
             <td>{labels.shipping}</td>
-            <td>{labels.shippingFree}</td>
+            <td>${shippingCost.toLocaleString()}</td>
           </tr>
 
           <tr className="cart-summary-row cart-summary-row--total">
@@ -51,7 +57,8 @@ export default function CartSummary({
         </tbody>
       </table>
 
-      <CommonButton variant="primary">{labels.checkoutButton}</CommonButton>
+      {/* Pagar 👇 */}
+      <CommonButton variant="primary" onClick={() => navigate(`/${lang}/make-payment`)}>{labels.checkoutButton}</CommonButton>
     </div>
   );
 }

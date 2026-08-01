@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { EyeOffIcon, EyeOnIcon } from "./icons/Icons";
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label: string;
@@ -19,30 +20,20 @@ export default function CustomInput({
     <div className={`input-wrapper ${className}`}>
       <label className="input-label">{label}</label>
       
-      {/* Contenedor relativo para alinear el botón de forma limpia a la derecha */}
-      <div style={{ position: "relative", display: "flex", alignItems: "center" }}>
+      <div className="input-container">
         <input 
-          className="input-field" 
+          className={`input-field ${isPassword ? "with-password" : ""}`} 
           type={inputType} 
-          style={{ width: "100%", paddingRight: isPassword ? "70px" : undefined }}
           {...props} 
         />
 
         {isPassword && (
           <button
             type="button"
+            className="input-password-toggle"
             onClick={() => setShowPassword(!showPassword)}
-            style={{
-              position: "absolute",
-              right: "12px",
-              background: "transparent",
-              border: "none",
-              cursor: "pointer",
-              fontSize: "0.85rem",
-              padding: 0,
-            }}
           >
-            {showPassword ? "Ocultar" : "Mostrar"}
+            {showPassword ? <EyeOffIcon /> : <EyeOnIcon />}
           </button>
         )}
       </div>

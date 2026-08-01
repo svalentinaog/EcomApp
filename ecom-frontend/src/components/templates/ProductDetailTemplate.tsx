@@ -1,13 +1,14 @@
 import { useProductDetail } from "@/hooks/useProductDetail";
 import ProductCardDetail from "@/components/sections/productDetail/ProductCardDetail";
 import RelatedProducts from "@/components/sections/productDetail/RelatedProducts";
+import LoandingState from "@/components/molecules/common/LoadingState";
 
 export default function ProductDetailTemplate() {
   const { product, isLoading, isError } = useProductDetail();
 
   // 1. Mostrar estado de carga si está haciendo el fetch por primera vez
   if (isLoading) {
-    return <div className="text-center py-20">Cargando detalles del producto...</div>;
+    return <LoandingState />
   }
 
   // 2. Manejar errores del servidor

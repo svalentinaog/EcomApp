@@ -1,16 +1,18 @@
 import { useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 import Container from "@/layouts/Container";
 import Input from "@/components/atoms/CustomInput";
 import CommonButton from "@/components/atoms/CommonButton";
-import EmptyState from "@/components/molecules/common/EmptyState"; // Reutilizamos tu EmptyState
+import EmptyState from "@/components/molecules/common/EmptyState";
 import { api } from "@/services/api";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useTranslation } from "react-i18next";
 
-// Importamos los recursos gráficos
+import AddressesTab from "@/components/organisms/profile/AddressesTab";
+
 import loadingIcon from "@/assets/icons/loading-icon.png";
-import noOrdersImg from "@/assets/images/no-orders.jpg"; // Asegúrate de exportar la imagen de Figma a esta ruta
+import noOrdersImg from "@/assets/images/no-orders.jpg"; 
+import OrdersTab from "@/components/organisms/profile/OrdersTab";
 
 export default function ProfileSection() {
   const { t } = useTranslation("common");
@@ -19,8 +21,12 @@ export default function ProfileSection() {
   
   const logout = () => useAuthStore.setState({ token: null });
 
-  // NUEVO: Estado para controlar la pestaña activa
-  const [activeTab, setActiveTab] = useState<"profile" | "orders">("profile");
+  const location = useLocation(); // ubicación actual
+
+  // Inicializamos la pestaña leyendo el estado de la navegación, si no hay, por defecto "profile"
+  const [activeTab, setActiveTab] = useState<"profile" | "orders" | "addresses">(
+    location.state?.tab || "profile"
+  );
 
   const [formData, setFormData] = useState({
     fullName: "",
@@ -109,6 +115,12 @@ export default function ProfileSection() {
             Mi Perfil
           </li>
           <li 
+            className={`user-profile__menu-item ${activeTab === "addresses" ? "user-profile__menu-item--active" : ""}`}
+            onClick={() => setActiveTab("addresses")}
+          >
+            Mis Direcciones
+          </li>
+          <li 
             className={`user-profile__menu-item ${activeTab === "orders" ? "user-profile__menu-item--active" : ""}`}
             onClick={() => setActiveTab("orders")}
           >
@@ -181,20 +193,23 @@ export default function ProfileSection() {
               </div>
             </form>
           </>
-        ) : (
+        ) : activeTab === "orders" ? (
           <>
             <h1 className="user-profile__title">Mis pedidos</h1>
             <p className="user-profile__subtitle">
               Consulta el estado y el historial de todos tus pedidos.
             </p>
-            
-            {/* Contenedor del EmptyState para centrarlo visualmente */}
-            <div style={{ display: "flex", justifyContent: "center", padding: "4rem 0" }}>
-              <EmptyState 
-                translationKey="noOrders" 
-                imageSrc={noOrdersImg} 
-              />
-            </div>
+
+            <OrdersTab />
+          </>
+        ) : (
+          <>
+            <h1 className="user-profile__title">Mis direcciones</h1>
+            <p className="user-profile__subtitle">
+              Administra las direcciones donde quieres recibir tus pedidos.
+            </p>
+
+            <AddressesTab />
           </>
         )}
       </div>

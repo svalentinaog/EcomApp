@@ -17,6 +17,7 @@
     overflow: hidden;
     position: relative;
     border-radius: 8px;
+    background: $light-gray;
 
     .card-product-image {
       width: 100%;
@@ -35,7 +36,7 @@
     cursor: pointer;
 
     .card-product-image {
-      transform: scale(1.08);
+      transform: scale(1.05);
     }
   }
 

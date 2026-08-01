@@ -1,9 +1,9 @@
 {
   "hero": {
-    "badge": "[Área para promociones principales]",
-    "title": "[Mensaje llamativo o slogan de campaña]",
-    "description": "[Espacio para una breve descripción]",
-    "cta": "Tienda"
+    "badge": "Tu tienda de confianza",
+    "title": "Calidad que cuidas, ahorro que disfrutas",
+    "description": "Encuentra productos frescos, de calidad y a los mejores precios. ¡Lleva más por menos!",
+    "cta": "Ir a la Tienda"
   },
   "benefits": {
     "shipping": {

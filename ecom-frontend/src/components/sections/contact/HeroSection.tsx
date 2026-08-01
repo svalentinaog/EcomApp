@@ -1,5 +1,5 @@
 import Container from "@/layouts/Container";
-import { imageSection } from "@/assets";
+import { imageContact } from "@/assets";
 
 import { useTranslation } from "react-i18next";
 
@@ -17,7 +17,7 @@ export default function HeroSection() {
           <div className="container-image-home">
             <img
               className="image-home"
-              src={imageSection}
+              src={imageContact}
               alt="Imagen destacada"
             />
           </div>

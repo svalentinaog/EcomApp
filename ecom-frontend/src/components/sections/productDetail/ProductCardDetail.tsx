@@ -4,12 +4,16 @@ import QuantitySelector from "@/components/molecules/productDetail/QuantitySelec
 import Container from "@/layouts/Container";
 import ProductGallery from "@/components/molecules/productDetail/ProductGallery";
 import { useCart } from "@/hooks/useCart";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useParams } from "react-router-dom";
+import { AddCartIcon, CheckIcon } from "@/components/atoms/icons/Icons";
+
+import { useNavigate, useParams } from "react-router-dom"; 
+import { useAuthStore } from "@/store/useAuthStore";
+import toast from "react-hot-toast";
 
 // URL base de tu backend para archivos públicos de Laravel
-const STORAGE_URL = "http://localhost:8000/storage"; 
+const STORAGE_URL = "http://localhost:8000/storage";
 
 // Helper para textos traducidos si vienen en formato objeto desde Laravel
 const getLocalizedText = (field: any, currentLang: string) => {
@@ -21,13 +25,47 @@ const getLocalizedText = (field: any, currentLang: string) => {
 export default function ProductCardDetail({ product }: { product: Product }) {
   const { t } = useTranslation("shop");
   const { lang = "es" } = useParams<{ lang: string }>();
-  const { addToCart } = useCart();
-  
-  const [quantity, setQuantity] = useState<number>(1);
+  const navigate = useNavigate();
+  const token = useAuthStore((state) => state.token);
+
+  const { addToCart, updateQuantity, cartItems = [] } = useCart();
+
+  // 1. Buscamos si este producto ya existe en el carrito
+  const existingCartItem = useMemo(
+    () => cartItems.find((item) => Number(item.product_id) === Number(product.id)),
+    [cartItems, product.id]
+  );
+
+  const isAdded = Boolean(existingCartItem);
+
+  // 2. La cantidad local arranca en 1, pero si el producto ya está en el
+  // carrito, la sincronizamos con lo que el usuario ya tenía guardado.
+  const [quantity, setQuantity] = useState<number>(existingCartItem?.quantity ?? 1);
+
+  // Si cartItems llega después (fetch asíncrono) o cambia en otra pestaña/tab,
+  // actualizamos la cantidad mostrada para que no se quede en "1" por defecto.
+  useEffect(() => {
+    if (existingCartItem) {
+      setQuantity(existingCartItem.quantity);
+    }
+  }, [existingCartItem?.quantity]);
+
+  // 3. La cantidad mostrada difiere de la ya guardada -> el usuario está
+  // pidiendo un cambio, no solo viendo el estado actual.
+  const hasPendingChange = isAdded && quantity !== existingCartItem?.quantity;
 
   const handleAddToCart = () => {
-    // Llamamos a la mutación pasando el ID del producto y la cantidad seleccionada
-    addToCart(product.id, quantity);
+     if (!token) {
+      toast.error(t("product.login_required", "Debes iniciar sesión para añadir productos a tu carrito."));
+      navigate(`/${lang}/login`, { state: { from: `/${lang}/product/${product.id}` } });
+      return;
+    }
+
+    if (isAdded && existingCartItem) {
+      updateQuantity(existingCartItem.id, quantity); 
+    } else {
+      addToCart(product.id, quantity);
+    }
   };
 
   // Formateamos cada imagen construyendo la URL completa hacia Laravel
@@ -46,19 +84,19 @@ export default function ProductCardDetail({ product }: { product: Product }) {
     <Container>
       <div className="card-product-detail">
         <ProductGallery images={imageUrls} />
-        
+
         <div className="card-product-detail-content">
           <div className="card-product-detail-content-info">
             <h1 className="product-name">{productName}</h1>
-            
+
             <div className="product-detail-info-container">
               <div className="price-container">
                 <h2 className="price">${product.price}</h2>
-                
+
                 {product.old_price && (
                   <p className="old-price">${product.old_price}</p>
                 )}
-                
+
                 {product.discount > 0 && (
                   <p className="discount">
                     {product.discount}% {t("product.discount")}
@@ -67,14 +105,42 @@ export default function ProductCardDetail({ product }: { product: Product }) {
               </div>
               <p>⭐⭐⭐⭐⭐ ({product.rating || 0})</p>
             </div>
-            
+
             <p>{productDescription}</p>
+
+            {isAdded && !hasPendingChange && (
+              <p className="already-in-cart-hint">
+                {t("product.already_in_cart", "Ya tienes {{count}} en el carrito", {
+                  count: existingCartItem?.quantity,
+                })}
+              </p>
+            )}
           </div>
-          
+
           <div className="card-product-detail-content-actions">
             <QuantitySelector quantity={quantity} setQuantity={setQuantity} />
-            <CommonButton variant="primary" onClick={handleAddToCart}>
-              {t("product.add_to_cart")}
+            
+            <CommonButton
+              variant={isAdded && !hasPendingChange ? "success" : "primary"}
+              onClick={handleAddToCart}
+              disabled={isAdded && !hasPendingChange}
+            >
+              {hasPendingChange ? (
+                <>
+                  <AddCartIcon />
+                  {t("product.update_cart")}
+                </>
+              ) : isAdded ? (
+                <>
+                  {t("product.added_to_cart")}
+                  <CheckIcon />
+                </>
+              ) : (
+                <>
+                  <AddCartIcon />
+                  {t("product.add_to_cart")}
+                </>
+              )}
             </CommonButton>
           </div>
         </div>

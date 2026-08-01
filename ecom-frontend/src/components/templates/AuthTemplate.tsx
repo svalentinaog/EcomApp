@@ -1,7 +1,7 @@
 import HeroSection from "@/components/sections/auth/HeroSection";
 
 interface AuthTemplateProps {
-  mode?: "login" | "register" | "recover-password" | "new-password";
+  mode?: "login" | "register" | "forgot-password" | "reset-password";
 }
 
 export default function AuthTemplate({ mode = "login" }: AuthTemplateProps) {

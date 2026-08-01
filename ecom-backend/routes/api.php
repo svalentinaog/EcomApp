@@ -11,6 +11,7 @@ use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\SubcategoryController;
 use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\CartController;
+use App\Http\Controllers\Api\MercadoPagoWebhookController;
 
 // ==========================================
 // RUTAS PÚBLICAS (No requieren token)
@@ -23,28 +24,30 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::apiResource('categories', CategoryController::class)->only(['index', 'show']);
 Route::apiResource('subcategories', SubcategoryController::class)->only(['index', 'show']);
 
+// Olvidaste tu Contraseña / Nueva contraseña
+Route::post('/forgot-password', [AuthController::class, 'forgotPassword']);
+Route::post('/reset-password', [AuthController::class, 'resetPassword']);
+
+// 💸💰 Webhook de Mercado Pago (público, Mercado Pago no manda token de Sanctum) 💸💰
+Route::post('/webhooks/mercadopago', [MercadoPagoWebhookController::class, 'handle']);
+
 // ==========================================
 // RUTAS PROTEGIDAS (Requieren token)
 // protegidas para todos los usuarios (auth:sanctum)
 // ==========================================
 Route::middleware('auth:sanctum')->group(function () {
     // 🍀 Autenticación y Perfil:
-    // Ruta para cerrar sesión
     Route::post('/logout', [AuthController::class, 'logout']);
-    // Ruta para obtener el perfil del usuario logueado (closure corta, Nota 4)
     Route::get('/user', fn(Request $request) => $request->user());
-    // Cualquier usuario logueado puede editar su propio perfil
     Route::put('/profile', [UserController::class, 'updateProfile']);
 
     // 🍀 Carrito de Compras:
-    // Ruta para acceder a el carrito de compras del usuario logueado
     Route::apiResource('cart', CartController::class)->except(['show']);
     // Ruta para vaciar el carrito de compras
     Route::delete('/cart-empty', [CartController::class, 'empty']);
 
-    // 🍀 Órdenes (Estandarizado con apiResource: el 'store' actúa como el checkout):
+    // 🍀 Órdenes (Estandarizado con apiResource):
     // Ruta para acceder a los órdenes del usuario logueado (historial de compras)
-    Route::post('/checkout', [OrderController::class, 'store']);
     Route::apiResource('orders', OrderController::class)->except(['destroy']);
 
     // 🍀 Direcciones del usuario:

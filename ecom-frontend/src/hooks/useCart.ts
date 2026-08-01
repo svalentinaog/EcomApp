@@ -10,18 +10,33 @@ export interface CartItem {
   product: Product;
 }
 
+export interface CartSummary {
+  subtotal: number;
+  shippingCost: number;
+  total: number;
+}
+
+const emptySummary: CartSummary = { subtotal: 0, shippingCost: 0, total: 0 };
+
 export function useCart() {
   const queryClient = useQueryClient();
 
-  const { data: cartItems = [], isLoading } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: ["cart"],
     queryFn: async () => {
       const { data } = await api.get("/cart");
-      return data.data as CartItem[];
+      const summary: CartSummary = {
+        subtotal: Number(data.summary.subtotal),
+        shippingCost: Number(data.summary.shipping_cost),
+        total: Number(data.summary.total),
+      };
+      return { items: data.data as CartItem[], summary };
     },
   });
 
-  // 👇 Añadimos la mutación para el endpoint POST /cart (store)
+  const cartItems = data?.items ?? [];
+  const summary = data?.summary ?? emptySummary;
+
   const addMutation = useMutation({
     mutationFn: ({ productId, quantity }: { productId: number; quantity: number }) =>
       api.post("/cart", { product_id: productId, quantity }),
@@ -45,20 +60,14 @@ export function useCart() {
     },
   });
 
-  const getCartTotal = () => {
-    return cartItems.reduce((total, item) => {
-      return total + (Number(item.product.price) * item.quantity);
-    }, 0);
-  };
-
   const totalItems = cartItems.reduce((count, item) => count + item.quantity, 0);
 
   return {
     cartItems,
     isLoading,
-    totalAmount: getCartTotal(),
+    summary,
     totalItems,
-    addToCart: (productId: number, quantity: number = 1) => addMutation.mutate({ productId, quantity }), // 👈 Lo exponemos aquí
+    addToCart: (productId: number, quantity: number = 1) => addMutation.mutate({ productId, quantity }),
     removeFromCart: (cartId: number) => removeMutation.mutate(cartId),
     updateQuantity: (cartId: number, quantity: number) => updateMutation.mutate({ cartId, quantity }),
   };

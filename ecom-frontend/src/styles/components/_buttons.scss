@@ -15,7 +15,13 @@
   &--white {
     background: #fff;
     color: $title;
+
     box-shadow: 0 2px 8px rgba(0, 0, 0, .08);
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
 
     &:hover {
       background: color.adjust(#fff, $lightness: -5%);
@@ -26,15 +32,54 @@
     background: $primary;
     color: $title;
 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+
     &:hover {
       background: color.adjust($primary, $lightness: -5%);
+    }
+  }
+
+  &--success {
+    background: color.adjust($light-primary, $lightness: 15%);
+    color: $dark-primary;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+
+    &:hover {
+      background: color.adjust($light-primary, $lightness: 7%);
+    }
+  }
+
+  &--success-full-width {
+    background: color.adjust($light-primary, $lightness: 15%);
+    color: $dark-primary;
+
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+
+    &:hover {
+      background: color.adjust($light-primary, $lightness: 7%);
     }
   }
 
   &--primary-full-width {
     background: $primary;
     color: $title;
+    
     width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
 
     &:hover {
       background: color.adjust($primary, $lightness: -5%);

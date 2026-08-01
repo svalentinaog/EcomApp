@@ -12,17 +12,18 @@ class Order extends Model
     protected $fillable = [
         'user_id',
         'address_id',
-        'status',
+        'payment_status', // si se realizo el pago 😊
+        'mercadopago_payment_id',
         'payment_method',
-        'shipping_full_name',
-        'shipping_phone',
-        'shipping_address_line',
-        'shipping_city',
-        'shipping_state',
-        'shipping_postal_code',
-        'shipping_country',
+        'full_name',
+        'phone',
+        'address_line',
+        'city',
+        'state',
+        'postal_code',
+        'country',
         'subtotal',
-        'shipping_cost',
+        'cost',
         'total',
     ];
 
@@ -61,7 +62,7 @@ class Order extends Model
 //   * "hasMany": Se usa para "orderItems" porque la orden es la "dueña" de los 
 //     ítems, pero la llave foránea ("order_id") está guardada en la tabla destino.
 // - Buenas Prácticas de E-commerce (Datos de Envío): Guardar campos como 
-//   "shipping_address_line" en la orden es una excelente decisión arquitectónica. 
+//   "address_line" en la orden es una excelente decisión arquitectónica. 
 //   Si el usuario elimina o modifica su dirección en el futuro, el histórico 
 //   de esta compra queda intacto e inmutable.
 // =====================================================================

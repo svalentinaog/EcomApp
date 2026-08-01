@@ -16,22 +16,43 @@ export default function Pagination({
   const { t } = useTranslation("shop");
 
   const pageItems = useMemo<(number | string)[]>(() => {
-    if (totalPages <= 7) {
-      return Array.from({ length: totalPages }, (_, index) => index + 1);
-    }
+  const siblingCount = 1; // páginas vecinas a mostrar a cada lado de la actual
+  const boundaryCount = 1; // páginas fijas al inicio y al final (1 y última)
 
-    const pages: (number | string)[] = [];
+  const totalNumbers = siblingCount * 2 + boundaryCount * 2 + 3; // vecinos + extremos + actual + 2 posibles "..."
 
-    if (currentPage <= 4) {
-      pages.push(1, 2, 3, 4, 5, "...", totalPages);
-    } else if (currentPage >= totalPages - 3) {
-      pages.push(1, "...", totalPages - 4, totalPages - 3, totalPages - 2, totalPages - 1, totalPages);
-    } else {
-      pages.push(1, "...", currentPage - 1, currentPage, currentPage + 1, "...", totalPages);
-    }
+  if (totalPages <= totalNumbers) {
+    return Array.from({ length: totalPages }, (_, index) => index + 1);
+  }
 
-    return pages;
-  }, [currentPage, totalPages]);
+  const leftSiblingIndex = Math.max(currentPage - siblingCount, boundaryCount + 2);
+  const rightSiblingIndex = Math.min(currentPage + siblingCount, totalPages - boundaryCount - 1);
+
+  const showLeftEllipsis = leftSiblingIndex > boundaryCount + 2;
+  const showRightEllipsis = rightSiblingIndex < totalPages - boundaryCount - 1;
+
+  const pages: (number | string)[] = [1];
+
+  if (showLeftEllipsis) {
+    pages.push("...");
+  } else {
+    for (let i = 2; i < leftSiblingIndex; i++) pages.push(i);
+  }
+
+  for (let i = leftSiblingIndex; i <= rightSiblingIndex; i++) {
+    pages.push(i);
+  }
+
+  if (showRightEllipsis) {
+    pages.push("...");
+  } else {
+    for (let i = rightSiblingIndex + 1; i < totalPages; i++) pages.push(i);
+  }
+
+  pages.push(totalPages);
+
+  return pages;
+}, [currentPage, totalPages]);
 
   if (totalPages <= 1) {
     return null;

@@ -1,23 +1,26 @@
-import type { MouseEvent } from "react";
-import { useTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router-dom";
 import { useCart } from "@/hooks/useCart";
+import { useAuthStore } from "@/store/useAuthStore";
+import toast from "react-hot-toast";
+import type { MouseEvent } from "react";
+import { useTranslation } from "react-i18next";
 import type { Product } from "@/types/Product";
 import CommonButton from "@/components/atoms/CommonButton";
+import { AddCartIcon, CheckIcon } from "@/components/atoms/icons/Icons";
 
-// Función helper para extraer el texto si viene como {es, en} desde Laravel
 const getLocalizedText = (field: any, currentLang: string) => {
   if (!field) return "";
-  if (typeof field === "string") return field; // Si ya es texto, lo devolvemos
-  return field[currentLang] || field.es || field.en || ""; // Extraemos el idioma o un fallback
+  if (typeof field === "string") return field;
+  return field[currentLang] || field.es || field.en || "";
 };
 
 export default function ProductCard(product: Product) {
-  const { t } = useTranslation("shop");
   const navigate = useNavigate();
-  // Sacamos el idioma actual de la URL (ej. "es" o "en")
   const { lang = "es" } = useParams<{ lang: string }>(); 
-  const { addToCart } = useCart();
+  const { t } = useTranslation("shop");
+  
+  const { addToCart, cartItems = [] } = useCart();
+  const token = useAuthStore((state) => state.token);
 
   const imageUrl = product.product_images?.[0]?.url_image 
     ? `http://localhost:8000/storage/${product.product_images[0].url_image}` 
@@ -27,13 +30,28 @@ export default function ProductCard(product: Product) {
     navigate(`/${lang}/product/${product.id}`);
   };
 
+  // 1. SOLUCIÓN AL POSIBLE ERROR DE TIPOS: Convertimos ambos a Number por seguridad
+  const isAdded = cartItems.some((item) => Number(item.product_id) === Number(product.id));
+
   const handleAddToCart = (e: MouseEvent<HTMLDivElement>) => {
-    e.stopPropagation();
-    // 👈 Pasamos el id del producto y la cantidad inicial (1)
-    addToCart(product.id, 1);
+    e.stopPropagation(); // Evita que se dispare el clic de la tarjeta (que te lleva al detalle)
+    
+    console.log("🛒 Intentando añadir producto ID:", product.id);
+    console.log("📦 Estado actual del carrito antes de añadir:", cartItems);
+
+    if (!token) {
+      toast.error(t("product.login_required", "Debes iniciar sesión para añadir productos a tu carrito."));
+      navigate(`/${lang}/login`, { state: { from: `/${lang}/product/${product.id}` } });
+      return;
+    }
+    
+    if (!isAdded) {
+      addToCart(product.id, 1);
+    } else {
+      console.log("⚠️ El producto ya está en el carrito, se ignoró el clic.");
+    }
   };
 
-  // Extraemos el nombre correcto usando el helper
   const productName = getLocalizedText(product.name, lang);
 
   return (
@@ -47,7 +65,6 @@ export default function ProductCard(product: Product) {
       </div>
       <div className="card-product-content">
         <div className="card-product-info-content">
-          {/* Renderizamos el texto ya extraído */}
           <p className="product-name">{productName}</p>
           <div className="price-container">
             <p className="price">${product.price}</p>
@@ -60,10 +77,19 @@ export default function ProductCard(product: Product) {
           </div>
           <p>⭐⭐⭐⭐⭐ ({product.rating || 5})</p>
         </div>
-        <div onClick={handleAddToCart}>
-          <CommonButton variant="primary-full-width">
-            {t("product.add_to_cart")}
-          </CommonButton>
+        
+        <div onClick={handleAddToCart} style={{ width: "100%" }}>
+          {isAdded ? (
+            <CommonButton variant="success-full-width">
+              {t("product.added_to_cart")}
+              <CheckIcon />
+            </CommonButton>
+          ) : (
+            <CommonButton variant="primary-full-width">
+              <AddCartIcon />
+              {t("product.add_to_cart")}
+            </CommonButton>
+          )}
         </div>
       </div>
     </div>

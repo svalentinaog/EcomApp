@@ -10,6 +10,8 @@
   },
   "product": {
     "add_to_cart": "Add to cart",
+    "added_to_cart": "Added to cart",
+    "update_cart": "Update cart",
     "discount": "Discount"
   },
   "pagination": {

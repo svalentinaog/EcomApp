@@ -1,6 +1,6 @@
 import Container from "@/layouts/Container";
 import Button from "@/components/atoms/CommonButton";
-import { imageSection } from "@/assets";
+import { imageCTA } from "@/assets";
 import { useTranslation } from "react-i18next";
 import { useParams, Link } from "react-router-dom";
 
@@ -14,7 +14,7 @@ export default function CallToAction() {
       <Container>
         <div className="hero-section-CTA">
           <div className="container-image-CTA">
-            <img className="image-CTA" src={imageSection} alt={t("CTA.alt")} />
+            <img className="image-CTA" src={imageCTA} alt={t("CTA.alt")} />
           </div>
           <div className="text-content-CTA">
             <h2>{t("CTA.title")}</h2>

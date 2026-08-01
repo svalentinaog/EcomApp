@@ -10,10 +10,10 @@ import CommonButton from "@/components/atoms/CommonButton";
 import { useProducts } from "@/hooks/useProducts";
 import { useCategories } from "@/hooks/useCategories";
 import EmptyState from "@/components/molecules/common/EmptyState";
+import LoandingState from "@/components/molecules/common/LoadingState";
 
 // NUEVO: Importaciones de recursos
 import error503 from "@/assets/images/error-503.png";
-import loadingIcon from "@/assets/icons/loading-icon.png";
 
 export default function ProductListSection() {
   const { t } = useTranslation("home");
@@ -69,7 +69,7 @@ export default function ProductListSection() {
         product.subcategory?.name === filter
       );
     });
-    return filtered.slice(0, 4); // Mostramos solo los primeros 4 productos
+    return filtered.slice(0, 8); // Mostramos solo los primeros 4 productos
   }, [products, filter]);
 
   // NUEVO: Evaluamos condiciones de error y carga unificadas
@@ -91,19 +91,9 @@ export default function ProductListSection() {
   }
 
   // 2. Manejo del estado de carga (Spinner girando)
-  if (isLoading) {
-    return (
-      <Container>
-        <div className="loading">
-          <img 
-            src={loadingIcon} 
-            alt="Cargando..." 
-            className="w-16 h-16 animate-spin opacity-60" 
-          />
-        </div>
-      </Container>
-    );
-  }
+    if (isLoading) {
+      return <LoandingState />
+    }
 
   // 3. Renderizado principal
   return (
