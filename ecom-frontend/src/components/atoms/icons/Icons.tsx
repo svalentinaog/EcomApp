@@ -1,6 +1,5 @@
 import React from "react";
 
-// Interfaz base para todos los íconos
 interface IconProps extends React.SVGProps<SVGSVGElement> {
   size?: number;
   className?: string;

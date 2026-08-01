@@ -1,20 +1,8 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { api } from "@/services/api";
-import type { Product } from "@/types/Product";
+import { cartService } from "@/services/cartService";
+import type { CartSummary } from "@/types/Cart";
 
-export interface CartItem {
-  id: number;
-  user_id: number;
-  product_id: number;
-  quantity: number;
-  product: Product;
-}
-
-export interface CartSummary {
-  subtotal: number;
-  shippingCost: number;
-  total: number;
-}
+export type { CartItem, CartSummary } from "@/types/Cart";
 
 const emptySummary: CartSummary = { subtotal: 0, shippingCost: 0, total: 0 };
 
@@ -23,15 +11,7 @@ export function useCart() {
 
   const { data, isLoading } = useQuery({
     queryKey: ["cart"],
-    queryFn: async () => {
-      const { data } = await api.get("/cart");
-      const summary: CartSummary = {
-        subtotal: Number(data.summary.subtotal),
-        shippingCost: Number(data.summary.shipping_cost),
-        total: Number(data.summary.total),
-      };
-      return { items: data.data as CartItem[], summary };
-    },
+    queryFn: () => cartService.getAll(),
   });
 
   const cartItems = data?.items ?? [];
@@ -39,14 +19,14 @@ export function useCart() {
 
   const addMutation = useMutation({
     mutationFn: ({ productId, quantity }: { productId: number; quantity: number }) =>
-      api.post("/cart", { product_id: productId, quantity }),
+      cartService.add({ productId, quantity }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["cart"] });
     },
   });
 
   const removeMutation = useMutation({
-    mutationFn: (cartId: number) => api.delete(`/cart/${cartId}`),
+    mutationFn: (cartId: number) => cartService.remove(cartId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["cart"] });
     },
@@ -54,7 +34,7 @@ export function useCart() {
 
   const updateMutation = useMutation({
     mutationFn: ({ cartId, quantity }: { cartId: number; quantity: number }) =>
-      api.put(`/cart/${cartId}`, { quantity }),
+      cartService.update({ cartId, quantity }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["cart"] });
     },

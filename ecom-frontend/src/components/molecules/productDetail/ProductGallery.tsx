@@ -1,4 +1,4 @@
-import { useProductGallery } from "@/hooks/useProductGallery";
+import { useProductGallery } from "@/hooks/ui/useProductGallery";
 
 interface ProductGalleryProps {
   images: string[];

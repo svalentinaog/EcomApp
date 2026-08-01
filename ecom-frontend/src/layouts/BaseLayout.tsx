@@ -2,8 +2,8 @@ import { useParams, Outlet, useLocation } from "react-router-dom";
 import Header from "@/layouts/Header";
 import Footer from "@/layouts/Footer";
 import CallToAction from "@/layouts/CallToAction";
-import { useScrollToTop } from "@/hooks/useScrollToTop";
-import { useLanguageSync } from "@/hooks/useLanguageSync";
+import { useScrollToTop } from "@/hooks/ui/useScrollToTop";
+import { useLanguageSync } from "@/hooks/ui/useLanguageSync";
 
 export default function BaseLayout() {
   useScrollToTop();

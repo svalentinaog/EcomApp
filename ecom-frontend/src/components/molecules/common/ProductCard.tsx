@@ -1,5 +1,5 @@
 import { useNavigate, useParams } from "react-router-dom";
-import { useCart } from "@/hooks/useCart";
+import { useCart } from "@/hooks/api/useCart";
 import { useAuthStore } from "@/store/useAuthStore";
 import toast from "react-hot-toast";
 import type { MouseEvent } from "react";

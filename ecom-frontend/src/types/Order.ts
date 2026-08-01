@@ -1,5 +1,3 @@
-import { useQuery } from "@tanstack/react-query";
-import { api } from "@/services/api";
 import type { Product } from "@/types/Product";
 
 export interface OrderItem {
@@ -34,14 +32,14 @@ export interface Order {
   order_items: OrderItem[];
 }
 
-export function useOrders() {
-  const { data: orders = [], isLoading, isError } = useQuery({
-    queryKey: ["orders"],
-    queryFn: async () => {
-      const { data } = await api.get("/orders");
-      return data.data as Order[];
-    },
-  });
+export interface CreateOrderPayload {
+  address_id: number;
+  payment_method: string;
+}
 
-  return { orders, isLoading, isError };
+export interface CreateOrderResponse {
+  success: boolean;
+  message: string;
+  checkout_url?: string;
+  data: Order;
 }

@@ -126,6 +126,96 @@
   color: $secondary;
 }
 
+.make-payment-summary__divider {
+  margin: 1rem 0;
+  border: 0;
+  border-top: 1px solid $divider-soft;
+}
+
+.make-payment-address-selector {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.make-payment-address-empty {
+  padding: 1.5rem;
+  text-align: center;
+  border: 1px dashed $border-soft;
+  border-radius: 8px;
+  background-color: $surface-ghost;
+}
+
+.make-payment-address-empty__text {
+  margin: 0 0 1rem;
+  color: $muted-text;
+}
+
+.make-payment-address-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.make-payment-address-option {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  border: 1px solid $border-soft;
+  background-color: $white;
+}
+
+.make-payment-address-option--selected {
+  border: 2px solid $active-green;
+  background-color: $active-green-soft;
+}
+
+.make-payment-address-option__header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.make-payment-address-option__name {
+  font-size: 1rem;
+  color: $secondary;
+}
+
+.make-payment-address-option__tag {
+  font-size: 0.75rem;
+  background-color: $light-gray;
+  color: $secondary;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-weight: 500;
+}
+
+.make-payment-address-option__detail {
+  margin: 0.25rem 0 0;
+  color: $muted-text;
+  font-size: 0.9rem;
+}
+
+.make-payment-address-option__detail--muted {
+  color: $subtle-text;
+  font-size: 0.85rem;
+}
+
+.make-payment-address-option__radio {
+  margin-top: 4px;
+  accent-color: $active-green;
+  cursor: pointer;
+}
+
+.make-payment-address-actions {
+  margin-top: 0.5rem;
+}
+
 @media (max-width: 1024px) {
   .make-payment-main {
     grid-template-columns: 1fr;

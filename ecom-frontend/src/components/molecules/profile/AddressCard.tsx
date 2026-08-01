@@ -1,4 +1,4 @@
-import type { Address } from "@/hooks/useAddresses";
+import type { Address } from "@/types/Address";
 import CommonButton from "@/components/atoms/CommonButton";
 
 interface AddressCardProps {
@@ -28,8 +28,7 @@ export default function AddressCard({ address, onEdit, onDelete, isDeleting }: A
           Editar
         </CommonButton>
         <CommonButton
-          variant="primary"
-          style={{ backgroundColor: "#A70000", color: "#fff", border: "none" }}
+          variant="danger"
           onClick={() => onDelete(address.id)}
           disabled={isDeleting}
         >

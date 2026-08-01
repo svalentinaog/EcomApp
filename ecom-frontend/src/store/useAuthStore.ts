@@ -1,29 +1,65 @@
-import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { create } from "zustand";
+import { persist, createJSONStorage } from "zustand/middleware";
 
-// 1. Definimos qué datos vamos a guardar
 interface AuthState {
   token: string | null;
-  setToken: (newToken: string) => void;
+  rememberMe: boolean;
+  setToken: (newToken: string, shouldRemember?: boolean) => void;
+  setRememberMe: (shouldRemember: boolean) => void;
   logout: () => void;
 }
 
-// 2. Creamos la "tienda"
+const storage = {
+  getItem: (name: string) => {
+    const fromLocal = localStorage.getItem(name);
+    const fromSession = sessionStorage.getItem(name);
+
+    if (fromLocal) return fromLocal;
+    return fromSession;
+  },
+  setItem: (name: string, value: string) => {
+    const parsedValue = JSON.parse(value) as { state?: { rememberMe?: boolean } };
+    const shouldPersistLocally = parsedValue.state?.rememberMe === true;
+
+    if (shouldPersistLocally) {
+      localStorage.setItem(name, value);
+      sessionStorage.removeItem(name);
+      return;
+    }
+
+    sessionStorage.setItem(name, value);
+    localStorage.removeItem(name);
+  },
+  removeItem: (name: string) => {
+    localStorage.removeItem(name);
+    sessionStorage.removeItem(name);
+  },
+};
+
 export const useAuthStore = create<AuthState>()(
   persist(
     (set) => ({
-      // Estado inicial
       token: null,
+      rememberMe: false,
 
-      // Función para guardar el token cuando nos logueamos
-      setToken: (newToken: string) => set({ token: newToken }),
+      setToken: (newToken: string, shouldRemember = false) =>
+        set({ token: newToken, rememberMe: shouldRemember }),
 
-      // Función para borrar el token al cerrar sesión
-      logout: () => set({ token: null }),
+      setRememberMe: (shouldRemember: boolean) =>
+        set((state) => ({
+          rememberMe: shouldRemember,
+          token: state.token,
+        })),
+
+      logout: () => set({ token: null, rememberMe: false }),
     }),
     {
-      // Nombre con el que se guardará en el Application > Local Storage de tu navegador
-      name: 'auth-storage', 
+      name: "auth-storage",
+      storage: createJSONStorage(() => storage),
+      partialize: (state) => ({
+        token: state.token,
+        rememberMe: state.rememberMe,
+      }),
     }
   )
 );

@@ -26,7 +26,7 @@ export default function Footer() {
   // Helper para rutas localizadas
   const getPath = (path: string) => `/${lang}${path === "/" ? "" : path}`;
 
-  // 1. Items del menú (Consistentes con el Header)
+  // Items del menú (Consistentes con el Header)
   const menuItems = useMemo(
     () => [
       { name: t("navigation.home"), path: "/", end: true },

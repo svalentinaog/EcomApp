@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { useAddresses, type Addresses } from "@/hooks/useAddresses";
+import { useAddresses } from "@/hooks/api/useAddresses";
+import type { Address } from "@/types/Address";
 import AddressCard from "@/components/molecules/profile/AddressCard";
 import AddressForm from "@/components/molecules/profile/AddressForm";
 import CommonButton from "@/components/atoms/CommonButton";
@@ -20,10 +21,10 @@ export default function AddressesTab() {
   } = useAddresses();
 
   const [mode, setMode] = useState<"list" | "create" | "edit">("list");
-  const [editingAddress, setEditingAddress] = useState<Addresses | null>(null);
+  const [editingAddress, setEditingAddress] = useState<Address | null>(null);
   const [deletingId, setDeletingId] = useState<number | null>(null);
 
-  const handleEdit = (address: Addresses) => {
+  const handleEdit = (address: Address) => {
     setEditingAddress(address);
     setMode("edit");
   };

@@ -1,7 +1,7 @@
 import Container from "@/layouts/Container";
 import { imageSection } from "@/assets";
 
-import { useHomeHero } from "@/hooks/useHomeHero";
+import { useHomeHero } from "@/hooks/ui/useHomeHero";
 import { Link } from "react-router-dom";
 import Button from "@/components/atoms/CommonButton";
 

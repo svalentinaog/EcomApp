@@ -1,24 +1,29 @@
-import { useProductDetail } from "@/hooks/useProductDetail";
+import { useParams } from "react-router-dom";
+import { useProductDetail } from "@/hooks/api/useProducts";
 import ProductCardDetail from "@/components/sections/productDetail/ProductCardDetail";
 import RelatedProducts from "@/components/sections/productDetail/RelatedProducts";
 import LoandingState from "@/components/molecules/common/LoadingState";
+import EmptyState from "../molecules/common/EmptyState";
 
 export default function ProductDetailTemplate() {
-  const { product, isLoading, isError } = useProductDetail();
+  const { id } = useParams<{ id: string }>();
+  const { product, isLoading, isError } = useProductDetail(Number(id));
 
-  // 1. Mostrar estado de carga si está haciendo el fetch por primera vez
   if (isLoading) {
     return <LoandingState />
   }
 
-  // 2. Manejar errores del servidor
   if (isError) {
-    return <div className="text-center py-20 text-red-500">Ocurrió un error al cargar el producto.</div>;
+    return (
+      <EmptyState 
+        translationKey="error503" 
+        description="Ocurrió un error al cargar el producto." 
+      />
+    );
   }
 
-  // 3. Manejar el caso donde no existe el producto (ej. un ID inventado)
   if (!product) {
-    return <div className="text-center py-20 text-xl font-bold">Producto no encontrado</div>;
+    return <EmptyState translationKey="noResults" />;
   }
 
   return (

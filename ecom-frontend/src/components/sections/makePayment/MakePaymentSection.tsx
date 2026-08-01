@@ -1,79 +1,52 @@
 import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router-dom";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import Container from "@/layouts/Container";
 import CommonButton from "@/components/atoms/CommonButton";
 import { visa, mastercard, americanExpress, paypal } from "@/assets";
-import { api } from "@/services/api";
-import { useCart } from "@/hooks/useCart";
-import { useAddresses, type Addresses } from "@/hooks/useAddresses";
+import { useCart } from "@/hooks/api/useCart";
+import { useAddresses } from "@/hooks/api/useAddresses";
+import { useCheckout } from "@/hooks/api/useOrders";
+import type { Address } from "@/types/Address";
 
 export default function MakePaymentSection() {
   const { t } = useTranslation("payment");
   const navigate = useNavigate();
   const { lang = "es" } = useParams<{ lang: string }>();
-  const queryClient = useQueryClient();
 
-  // Hooks personalizados
   const { summary, cartItems } = useCart();
   const { addresses, isLoading: loadingAddresses, defaultAddress } = useAddresses();
+  const { createOrder, isSubmitting } = useCheckout();
 
-  // Estado local para seleccionar la dirección activa para la compra
   const [selectedAddressId, setSelectedAddressId] = useState<number | null>(null);
 
-  // Seleccionamos la dirección predeterminada cuando la lista esté disponible
   useEffect(() => {
     if (defaultAddress && selectedAddressId === null) {
       setSelectedAddressId(defaultAddress.id);
     }
   }, [defaultAddress, selectedAddressId]);
 
-  // Redirección hacia la sección de direcciones del perfil
   const handleGoToManageAddresses = () => {
     navigate(`/${lang}/profile`, { state: { tab: "addresses" } });
   };
 
-  // Mutación para crear la orden enviando el ID de la dirección seleccionada
-  const createOrderMutation = useMutation({
-    mutationFn: async () => {
-      if (!selectedAddressId) {
-        throw new Error("Debes seleccionar una dirección de envío");
-      }
+  const handleCheckout = async () => {
+    if (cartItems.length === 0 || !selectedAddressId) return;
 
-      const { data } = await api.post("/orders", {
+    try {
+      const response = await createOrder({
         payment_method: "mercado_pago",
         address_id: selectedAddressId,
       });
-      return data;
-    },
-    // =====================================================================
-    // START: Capturar la respuesta y redirigir a Mercado Pago
-    // =====================================================================
-    onSuccess: (response) => {
-      // 1. Limpiamos el carrito en el estado global (React Query)
-      queryClient.invalidateQueries({ queryKey: ["cart"] });
 
-      // 2. Verificamos si el backend nos envió la URL de pago
       if (response.checkout_url) {
-        // Redirigimos al usuario a la página de Mercado Pago
         window.location.href = response.checkout_url;
       } else {
-        // Fallback: Si por alguna razón no hay URL, lo mandamos a sus órdenes
         navigate(`/${lang}/profile`, { state: { tab: "orders" } });
       }
-    },
-    // =====================================================================
-    // END Capturar la respuesta y redirigir a Mercado Pago
-    // =====================================================================
-    onError: (error) => {
-      console.error("Error al procesar el pago y generar la orden:", error);
-    },
-  });
-
-  const handleCheckout = () => {
-    if (cartItems.length === 0 || !selectedAddressId) return;
-    createOrderMutation.mutate();
+    } catch (checkoutError) {
+      console.error("Error al procesar el pago y generar la orden:", checkoutError);
+    }
   };
 
   return (
@@ -86,7 +59,6 @@ export default function MakePaymentSection() {
               <p>{t("subtitle")}</p>
             </div>
 
-            {/* Paso 1: Método de Pago */}
             <div className="make-payment-step">
               <p className="make-payment-step__label">1. {t("paymentMethod.title")}</p>
               <div className="make-payment-method-card">
@@ -107,12 +79,12 @@ export default function MakePaymentSection() {
                   variant="primary-full-width"
                   onClick={handleCheckout}
                   disabled={
-                    createOrderMutation.isPending ||
+                    isSubmitting ||
                     cartItems.length === 0 ||
                     !selectedAddressId
                   }
                 >
-                  {createOrderMutation.isPending
+                  {isSubmitting
                     ? "Procesando..."
                     : t("paymentMethod.button")}
                 </CommonButton>
@@ -123,7 +95,6 @@ export default function MakePaymentSection() {
               </div>
             </div>
 
-            {/* Paso 2: Selector de Dirección de Envío */}
             <div className="make-payment-step">
               <p className="make-payment-step__label">2. Dirección de Envío</p>
 
@@ -131,17 +102,8 @@ export default function MakePaymentSection() {
                 {loadingAddresses ? (
                   <p>Cargando tus direcciones...</p>
                 ) : addresses.length === 0 ? (
-                  /* Estado sin direcciones guardadas */
-                  <div
-                    style={{
-                      padding: "1.5rem",
-                      textAlign: "center",
-                      border: "1px dashed #ccc",
-                      borderRadius: "8px",
-                      backgroundColor: "#fafafa",
-                    }}
-                  >
-                    <p style={{ marginBottom: "1rem", color: "#666" }}>
+                  <div className="make-payment-address-empty">
+                    <p className="make-payment-address-empty__text">
                       No tienes ninguna dirección registrada.
                     </p>
                     <CommonButton variant="primary" onClick={handleGoToManageAddresses}>
@@ -149,54 +111,34 @@ export default function MakePaymentSection() {
                     </CommonButton>
                   </div>
                 ) : (
-                  /* Direcciones disponibles */
-                  <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-                    {addresses.map((address: Addresses) => {
+                  <div className="make-payment-address-list">
+                    {addresses.map((address: Address) => {
                       const isSelected = selectedAddressId === address.id;
 
                       return (
                         <div
                           key={address.id}
                           onClick={() => setSelectedAddressId(address.id)}
-                          style={{
-                            border: isSelected ? "2px solid #1f8955" : "1px solid #e5e7eb",
-                            backgroundColor: isSelected ? "#f3fbf6" : "#ffffff",
-                            padding: "1rem",
-                            borderRadius: "8px",
-                            cursor: "pointer",
-                            transition: "all 0.2s ease-in-out",
-                            display: "flex",
-                            justifyContent: "space-between",
-                            alignItems: "flex-start",
-                          }}
+                          className={`make-payment-address-option ${isSelected ? "make-payment-address-option--selected" : ""}`}
                         >
                           <div>
-                            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                              <strong style={{ fontSize: "1rem", color: "#111" }}>
+                            <div className="make-payment-address-option__header">
+                              <strong className="make-payment-address-option__name">
                                 {address.full_name}
                               </strong>
                               {address.is_default && (
-                                <span
-                                  style={{
-                                    fontSize: "0.75rem",
-                                    backgroundColor: "#e2e8f0",
-                                    color: "#334155",
-                                    padding: "2px 8px",
-                                    borderRadius: "12px",
-                                    fontWeight: "500",
-                                  }}
-                                >
+                                <span className="make-payment-address-option__tag">
                                   Predeterminada
                                 </span>
                               )}
                             </div>
-                            <p style={{ margin: "0.25rem 0 0", color: "#4b5563", fontSize: "0.9rem" }}>
+                            <p className="make-payment-address-option__detail">
                               {address.address_line}
                             </p>
-                            <p style={{ margin: "0.1rem 0 0", color: "#6b7280", fontSize: "0.85rem" }}>
+                            <p className="make-payment-address-option__detail make-payment-address-option__detail--muted">
                               {address.city}, {address.state}, {address.postal_code} — {address.country}
                             </p>
-                            <p style={{ margin: "0.25rem 0 0", color: "#6b7280", fontSize: "0.85rem" }}>
+                            <p className="make-payment-address-option__detail make-payment-address-option__detail--muted">
                               Teléfono: {address.phone}
                             </p>
                           </div>
@@ -206,21 +148,16 @@ export default function MakePaymentSection() {
                             name="selectedAddress"
                             checked={isSelected}
                             onChange={() => setSelectedAddressId(address.id)}
-                            style={{ marginTop: "4px", accentColor: "#1f8955", cursor: "pointer" }}
+                            className="make-payment-address-option__radio"
                           />
                         </div>
                       );
                     })}
 
-                    <div style={{ marginTop: "0.5rem" }}>
+                    <div className="make-payment-address-actions">
                       <CommonButton
                         variant="primary"
                         onClick={handleGoToManageAddresses}
-                        style={{
-                          backgroundColor: "#f3f4f6",
-                          color: "#1f2937",
-                          border: "1px solid #d1d5db",
-                        }}
                       >
                         + Agregar o administrar direcciones
                       </CommonButton>
@@ -231,7 +168,6 @@ export default function MakePaymentSection() {
             </div>
           </div>
 
-          {/* Resumen del pedido */}
           <aside className="make-payment-summary">
             <div className="make-payment-summary__box">
               <h2>{t("summary.title")}</h2>
@@ -247,7 +183,7 @@ export default function MakePaymentSection() {
                 </div>
               ))}
 
-              <hr style={{ margin: "1rem 0", borderColor: "#eee" }} />
+              <hr className="make-payment-summary__divider" />
 
               <div className="make-payment-summary__item">
                 <p>{t("summary.subtotal")}</p>

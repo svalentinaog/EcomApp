@@ -1,9 +1,10 @@
 import { useState, useMemo } from "react";
-import { useOrders, type Order } from "@/hooks/useOrders";
+import { useOrders } from "@/hooks/api/useOrders";
+import type { Order } from "@/types/Order";
 import OrdersTable from "@/components/molecules/profile/OrdersTable";
 import OrderDetail from "@/components/molecules/profile/OrderDetail";
 import EmptyState from "@/components/molecules/common/EmptyState";
-import Pagination from "@/components/molecules/shop/Pagination"; // 👈 ajusta la ruta a donde realmente viva
+import Pagination from "@/components/molecules/shop/Pagination";
 import LoandingState from "@/components/molecules/common/LoadingState";
 
 import noOrdersImg from "@/assets/images/no-orders.jpg";

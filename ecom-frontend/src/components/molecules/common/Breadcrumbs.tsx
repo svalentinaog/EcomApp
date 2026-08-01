@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { useBreadcrumbs } from "@/hooks/useBreadcrumbs";
+import { useBreadcrumbs } from "@/hooks/ui/useBreadcrumbs";
 
 export default function Breadcrumbs() {
   const { t, lang, pathnames, buildLink, getLabel } = useBreadcrumbs();

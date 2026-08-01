@@ -1,4 +1,4 @@
-import type { CartItem } from "@/hooks/useCart";
+import type { CartItem } from "@/types/Cart";
 
 interface CartTableRowProps {
   item: CartItem;
@@ -15,7 +15,6 @@ export default function CartTableRow({
 }: CartTableRowProps) {
   const totalItem = item.product.price * item.quantity;
   
-  // Tipados seguros para propiedades externas o dinámicas
   // Extrae la primera imagen de product_images usando url_image
   const productImages = (item.product as { product_images?: { url_image: string }[] }).product_images;
   const firstImageUrl = productImages?.[0]?.url_image;

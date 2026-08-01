@@ -7,28 +7,24 @@ import ProductCard from "@/components/molecules/common/ProductCard";
 import Container from "@/layouts/Container";
 import CommonButton from "@/components/atoms/CommonButton";
 
-import { useProducts } from "@/hooks/useProducts";
-import { useCategories } from "@/hooks/useCategories";
+import { useProducts } from "@/hooks/api/useProducts";
+import { useCategories } from "@/hooks/api/useCategories";
 import EmptyState from "@/components/molecules/common/EmptyState";
 import LoandingState from "@/components/molecules/common/LoadingState";
 
-// NUEVO: Importaciones de recursos
 import error503 from "@/assets/images/error-503.png";
 
 export default function ProductListSection() {
   const { t } = useTranslation("home");
   const { lang } = useParams();
 
-  // NUEVO: Extraemos isErrorProducts
   const { data: products = [], isLoading: isLoadingProducts, isError: isErrorProducts } = useProducts();
   const { data: categories = [], isLoading: isLoadingCategories } = useCategories();
 
   const [filter, setFilter] = useState<string>("all");
   
-  // NUEVO: Estado para el temporizador de carga
   const [isTakingTooLong, setIsTakingTooLong] = useState(false);
 
-  // NUEVO: Efecto que evalúa cuánto tiempo lleva cargando (10 segundos máx)
   useEffect(() => {
     let timeout: ReturnType<typeof setTimeout>; 
     
@@ -43,7 +39,6 @@ export default function ProductListSection() {
     return () => clearTimeout(timeout);
   }, [isLoadingProducts, isLoadingCategories]);
 
-  // Filtramos las categorías que no tienen productos
   const activeCategories = useMemo(() => {
     if (!products.length || !categories.length) return [];
 
@@ -69,14 +64,12 @@ export default function ProductListSection() {
         product.subcategory?.name === filter
       );
     });
-    return filtered.slice(0, 8); // Mostramos solo los primeros 4 productos
+    return filtered.slice(0, 8); 
   }, [products, filter]);
 
-  // NUEVO: Evaluamos condiciones de error y carga unificadas
   const isError = isErrorProducts || isTakingTooLong;
   const isLoading = isLoadingProducts || isLoadingCategories;
 
-  // 1. Manejo de error 503 o servidor caído
   if (isError) {
     return (
       <Container>
@@ -90,12 +83,10 @@ export default function ProductListSection() {
     );
   }
 
-  // 2. Manejo del estado de carga (Spinner girando)
     if (isLoading) {
       return <LoandingState />
     }
 
-  // 3. Renderizado principal
   return (
     <Container>
       <div className="products">

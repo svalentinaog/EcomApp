@@ -1,4 +1,4 @@
-import type { Order } from "@/hooks/useOrders";
+import type { Order } from "@/types/Order";
 
 const paymentStatusLabels: Record<string, string> = {
   pending: "Pago pendiente",

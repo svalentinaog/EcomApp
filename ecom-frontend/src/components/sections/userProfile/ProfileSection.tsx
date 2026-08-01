@@ -3,7 +3,6 @@ import { useNavigate, useParams, useLocation } from "react-router-dom";
 import Container from "@/layouts/Container";
 import Input from "@/components/atoms/CustomInput";
 import CommonButton from "@/components/atoms/CommonButton";
-import EmptyState from "@/components/molecules/common/EmptyState";
 import { api } from "@/services/api";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useTranslation } from "react-i18next";
@@ -11,7 +10,6 @@ import { useTranslation } from "react-i18next";
 import AddressesTab from "@/components/organisms/profile/AddressesTab";
 
 import loadingIcon from "@/assets/icons/loading-icon.png";
-import noOrdersImg from "@/assets/images/no-orders.jpg"; 
 import OrdersTab from "@/components/organisms/profile/OrdersTab";
 
 export default function ProfileSection() {
@@ -21,9 +19,8 @@ export default function ProfileSection() {
   
   const logout = () => useAuthStore.setState({ token: null });
 
-  const location = useLocation(); // ubicación actual
+  const location = useLocation();
 
-  // Inicializamos la pestaña leyendo el estado de la navegación, si no hay, por defecto "profile"
   const [activeTab, setActiveTab] = useState<"profile" | "orders" | "addresses">(
     location.state?.tab || "profile"
   );
@@ -184,9 +181,8 @@ export default function ProfileSection() {
                 
                 <CommonButton 
                   type="button" 
-                  variant="primary" 
-                  onClick={handleLogout} 
-                  style={{ backgroundColor: "#A70000", color: "#fff", border: "none" }}
+                  variant="danger" 
+                  onClick={handleLogout}
                 >
                   Cerrar Sesión
                 </CommonButton>

@@ -6,8 +6,8 @@ import Container from "@/layouts/Container";
 import FilterSidebar from "@/components/molecules/shop/FilterSidebar";
 import Pagination from "@/components/molecules/shop/Pagination";
 import ProductListToolbar from "@/components/molecules/shop/ProductListToolbar";
-import { useProducts } from "@/hooks/useProducts";
-import { useCategories } from "@/hooks/useCategories";
+import { useProducts } from "@/hooks/api/useProducts";
+import { useCategories } from "@/hooks/api/useCategories";
 import { useTranslation } from "react-i18next";
 import LoandingState from "@/components/molecules/common/LoadingState";
 
@@ -29,14 +29,12 @@ export default function ProductListSection() {
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 25000]);
   const [page, setPage] = useState(1);
   
-  // NUEVO: Estados para dinámicas del toolbar
   const [pageSize, setPageSize] = useState<number>(9);
   const [sortOption, setSortOption] = useState<string>("default");
 
   const topListRef = useRef<HTMLDivElement>(null);
   const [isTakingTooLong, setIsTakingTooLong] = useState(false);
 
-  // Ocultar las categorías vacías
   const activeCategories = useMemo(() => {
     if (!products.length || !categories.length) return [];
     const categoriesInUse = new Set();
@@ -77,7 +75,6 @@ export default function ProductListSection() {
     return () => clearTimeout(timeout);
   }, [isLoadingProducts, isLoadingCategories]);
 
-  // 1. Filtrar los productos
   const filteredProducts = useMemo(() => {
     return products.filter((product) => {
       const matchesCategory =
@@ -114,7 +111,6 @@ export default function ProductListSection() {
   
   const totalPages = Math.max(1, Math.ceil(sortedProducts.length / pageSize));
 
-  // 3. Paginar los productos ordenados
   const paginatedProducts = useMemo(() => {
     const startIndex = (page - 1) * pageSize;
     return sortedProducts.slice(startIndex, startIndex + pageSize);
@@ -233,7 +229,6 @@ export default function ProductListSection() {
               </button>
             </div>
 
-            {/* INTEGRACIÓN DEL COMPONENTE TOOLBAR */}
             {filteredProducts.length > 0 && (
               <ProductListToolbar
                 showingCount={paginatedProducts.length}

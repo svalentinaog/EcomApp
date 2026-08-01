@@ -1,6 +1,6 @@
 import CommonButton from "@/components/atoms/CommonButton";
 import { useNavigate } from "react-router-dom";
-import { useCartState } from "@/hooks/useCartState";
+import { useCartState } from "@/hooks/ui/useCartState";
 import Container from "@/layouts/Container";
 import { emptyCart } from "@/assets";
 

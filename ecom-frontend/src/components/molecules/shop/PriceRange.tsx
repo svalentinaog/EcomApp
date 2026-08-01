@@ -1,5 +1,5 @@
 import React from "react";
-import { usePriceRange } from "@/hooks/usePriceRange";
+import { usePriceRange } from "@/hooks/ui/usePriceRange";
 
 interface PriceRangeProps {
   value: [number, number];

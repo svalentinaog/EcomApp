@@ -1,4 +1,4 @@
-import { useQuantitySelector } from "@/hooks/useQuantitySelector";
+import { useQuantitySelector } from "@/hooks/ui/useQuantitySelector";
 
 interface QuantitySelectorProps {
   quantity: number;

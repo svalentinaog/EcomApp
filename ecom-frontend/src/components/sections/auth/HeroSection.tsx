@@ -1,12 +1,13 @@
 import { useState } from "react";
-import { useNavigate, Link, useSearchParams} from "react-router-dom";
+import { useNavigate, Link, useSearchParams, useLocation } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
-import { useAuthHero } from "@/hooks/useAuthHero";
+import { useAuthHero } from "@/hooks/ui/useAuthHero";
 import CommonButton from "@/components/atoms/CommonButton";
 import CustomInput from "@/components/atoms/CustomInput";
 import Container from "@/layouts/Container";
 import { api } from "@/services/api";
 import { useAuthStore } from "@/store/useAuthStore";
+import { validateAge } from "@/utils/validation";
 
 interface HeroSectionProps {
   mode?: "login" | "register" | "forgot-password" | "reset-password";
@@ -16,6 +17,7 @@ export default function HeroSection({ mode = "login" }: HeroSectionProps) {
   const { t, getPath, isRegister, isForgot, isResetPassword } = useAuthHero(mode);
   
   const [successMessage, setSuccessMessage] = useState("");
+  const location = useLocation();
 
   const [searchParams] = useSearchParams();
   const resetToken = searchParams.get("token");
@@ -23,6 +25,7 @@ export default function HeroSection({ mode = "login" }: HeroSectionProps) {
 
   const setToken = useAuthStore((state) => state.setToken);
   const navigate = useNavigate();
+  const isRemembered = useAuthStore((state) => state.rememberMe);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -30,6 +33,7 @@ export default function HeroSection({ mode = "login" }: HeroSectionProps) {
     password: "",
     password_confirmation: "",
     birth_date: "",
+    rememberMe: isRemembered,
   });
 
   const [ageError, setAgeError] = useState("");
@@ -74,7 +78,7 @@ export default function HeroSection({ mode = "login" }: HeroSectionProps) {
     },
     onSuccess: (data) => {
       if (isForgot) {
-        setSuccessMessage("Revisa tu correo para continuar");
+        setSuccessMessage(t("login.recoveryEmailSent"));
         return;
       }
 
@@ -83,11 +87,11 @@ export default function HeroSection({ mode = "login" }: HeroSectionProps) {
         return;
       }
 
-      // login o register: sí hay token
       const token = data?.access_token || data?.token;
       if (token) {
-        setToken(token);
-        navigate("/es");
+        setToken(token, formData.rememberMe);
+        const redirectTo = (location.state as { from?: string } | null)?.from || getPath("/");
+        navigate(redirectTo, { replace: true });
       }
     },
   });
@@ -95,38 +99,28 @@ export default function HeroSection({ mode = "login" }: HeroSectionProps) {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
 
-    // Validación extra de seguridad en tiempo real para la edad
     if (name === "birth_date" && value) {
-      const birthDate = new Date(value);
-      const today = new Date();
-      let age = today.getFullYear() - birthDate.getFullYear();
-      const m = today.getMonth() - birthDate.getMonth();
-      if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
-        age--;
-      }
-
-      if (age < 18) {
-        setAgeError("Debes ser mayor de 18 años para registrarte.");
-      } else {
-        setAgeError("");
-      }
+      setAgeError(validateAge(value));
     }
 
     setFormData({
       ...formData,
-      [name]: value,
+      [name]: name === "rememberMe" ? (e.target.checked as unknown as string) : value,
     });
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (isRegister && ageError) return; // Evita enviar si es menor de edad
+    if (isRegister && ageError) return;
     setSuccessMessage("");
-    authMutation.mutate(formData);
+    authMutation.mutate({
+      ...formData,
+      rememberMe: formData.rememberMe,
+    } as typeof formData);
   };
 
   const errorMessage = authMutation.error 
-    ? (authMutation.error as any).response?.data?.message || "Ocurrió un error"
+    ? (authMutation.error as any).response?.data?.message || t("login.genericError")
     : "";
 
   return (
@@ -245,7 +239,16 @@ export default function HeroSection({ mode = "login" }: HeroSectionProps) {
             {!isRegister && !isForgot && !isResetPassword && (
               <div className="auth-options">
                 <label className="auth-checkbox-label">
-                  <input type="checkbox" />
+                  <input
+                    type="checkbox"
+                    checked={Boolean(formData.rememberMe)}
+                    onChange={(event) => {
+                      setFormData({
+                        ...formData,
+                        rememberMe: event.target.checked,
+                      });
+                    }}
+                  />
                   {t("login.rememberMe")}
                 </label>
                 <Link
@@ -262,7 +265,7 @@ export default function HeroSection({ mode = "login" }: HeroSectionProps) {
               type="submit"
               disabled={authMutation.isPending || !!ageError}
             >
-              {authMutation.isPending ? "Cargando..." : (
+              {authMutation.isPending ? t("loading") : (
                 isResetPassword
                   ? t("newPassword.changeButton")
                   : isForgot

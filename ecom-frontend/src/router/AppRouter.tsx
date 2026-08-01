@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import BaseLayout from "@/layouts/BaseLayout";
+import ProtectedRoute from "@/router/ProtectedRoute";
 
 import HomePage from "@/pages/HomePage";
 import ShopPage from "@/pages/ShopPage";
@@ -31,9 +32,23 @@ export default function AppRouter() {
           <Route path="forgot-password" element={<ForgotPasswordPage />} />
           <Route path="reset-password" element={<ResetPasswordPage />} />
           <Route path="cart" element={<CartPage />} />
-          <Route path="make-payment" element={<MakePaymentPage />} />
+          <Route
+            path="make-payment"
+            element={
+              <ProtectedRoute>
+                <MakePaymentPage />
+              </ProtectedRoute>
+            }
+          />
           <Route path="legal/:slug" element={<LegalDocumentPage />} />
-          <Route path="profile" element={<UserProfilePage />} />
+          <Route
+            path="profile"
+            element={
+              <ProtectedRoute>
+                <UserProfilePage />
+              </ProtectedRoute>
+            }
+          />
         </Route>
       </Routes>
     </BrowserRouter>

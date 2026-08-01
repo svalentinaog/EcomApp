@@ -1,4 +1,4 @@
-import { useAccordionMenu } from "@/hooks/useAccordionMenu";
+import { useAccordionMenu } from "@/hooks/ui/useAccordionMenu";
 import type { Category } from "@/types/Category";
 
 interface Props {

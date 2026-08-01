@@ -71,6 +71,20 @@
     }
   }
 
+  &--danger {
+    background: $danger;
+    color: $white;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+
+    &:hover {
+      background: color.adjust($danger, $lightness: -5%);
+    }
+  }
+
   &--primary-full-width {
     background: $primary;
     color: $title;

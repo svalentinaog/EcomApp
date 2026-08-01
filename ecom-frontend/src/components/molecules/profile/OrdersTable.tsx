@@ -1,4 +1,4 @@
-import type { Order } from "@/hooks/useOrders";
+import type { Order } from "@/types/Order";
 import OrderTableRow from "@/components/molecules/profile/OrderTableRow";
 
 interface OrdersTableProps {

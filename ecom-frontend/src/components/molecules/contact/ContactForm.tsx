@@ -1,5 +1,5 @@
 import Button from "@/components/atoms/CommonButton";
-import { useContactForm } from "@/hooks/useContactForm";
+import { useContactForm } from "@/hooks/ui/useContactForm";
 
 export default function ContactForm() {
   const { t, register, handleSubmit, errors, onSubmit } = useContactForm();

@@ -1,5 +1,5 @@
 import { search } from "@/assets";
-import { useSearchBar } from "@/hooks/useSearchBar";
+import { useSearchBar } from "@/hooks/ui/useSearchBar";
 
 type SearchBarProps = {
   value: string;

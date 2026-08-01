@@ -3,7 +3,7 @@ import Container from "@/layouts/Container";
 import { useTranslation } from "react-i18next";
 import type { Product } from "@/types/Product";
 import ProductCard from "@/components/molecules/common/ProductCard";
-import { useProducts } from "@/hooks/useProducts";
+import { useProducts } from "@/hooks/api/useProducts";
 
 export default function RelatedProducts({ currentProduct }: { currentProduct: Product }) {
   const { t } = useTranslation("shop");
@@ -17,10 +17,10 @@ export default function RelatedProducts({ currentProduct }: { currentProduct: Pr
           product.subcategory_id === currentProduct.subcategory_id &&
           product.id !== currentProduct.id
       )
-      .slice(0, 4); // Limitamos a 4 productos como en el diseño
+      .slice(0, 4); 
   }, [products, currentProduct]);
 
-  // Si no hay productos relacionados, no renderizamos la sección
+  // Si no hay productos relacionados, no se renderiza la sección
   if (relatedProducts.length === 0) {
     return null; 
   }

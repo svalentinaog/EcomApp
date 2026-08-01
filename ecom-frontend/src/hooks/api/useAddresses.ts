@@ -1,47 +1,32 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { api } from "@/services/api";
+import { addressService } from "@/services/addressService";
+import type { AddressPayload } from "@/types/Address";
 
-export interface Addresses {
-  id: number;
-  user_id: number;
-  full_name: string;
-  phone: string;
-  address_line: string;
-  city: string;
-  state: string;
-  postal_code: string;
-  country: string;
-  is_default: boolean;
-}
-
-export type AddressPayload = Omit<Addresses, "id" | "user_id">;
+export type { Address, AddressPayload } from "@/types/Address";
 
 export function useAddresses() {
   const queryClient = useQueryClient();
 
   const { data: addresses = [], isLoading } = useQuery({
     queryKey: ["addresses"],
-    queryFn: async () => {
-      const { data } = await api.get("/addresses");
-      return data.data as Addresses[];
-    },
+    queryFn: () => addressService.getAll(),
   });
 
   const invalidate = () => queryClient.invalidateQueries({ queryKey: ["addresses"] });
 
   const createMutation = useMutation({
-    mutationFn: (payload: AddressPayload) => api.post("/addresses", payload),
+    mutationFn: (payload: AddressPayload) => addressService.create(payload),
     onSuccess: invalidate,
   });
 
   const updateMutation = useMutation({
     mutationFn: ({ id, payload }: { id: number; payload: Partial<AddressPayload> }) =>
-      api.put(`/addresses/${id}`, payload),
+      addressService.update(id, payload),
     onSuccess: invalidate,
   });
 
   const deleteMutation = useMutation({
-    mutationFn: (id: number) => api.delete(`/addresses/${id}`),
+    mutationFn: (id: number) => addressService.remove(id),
     onSuccess: invalidate,
   });
 

@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { useCart } from "@/hooks/useCart";
+import { useCart } from "@/hooks/api/useCart";
 import CartTable from "@/components/molecules/cart/CartTable";
 import CartDivider from "@/components/molecules/cart/CartDivider";
 import CartSummary from "@/components/molecules/cart/CartSummary";
@@ -9,10 +9,10 @@ import LoandingState from "@/components/molecules/common/LoadingState";
 
 export default function CartTableSection() {
   const { t, i18n } = useTranslation("common");
+  
   const currentLang = i18n.language;
 
-  // Extraemos todo directamente del hook de TanStack Query
-const { cartItems, isLoading, summary, totalItems, removeFromCart, updateQuantity } = useCart();
+  const { cartItems, isLoading, summary, totalItems, removeFromCart, updateQuantity } = useCart();
 
   const cartLabels = {
     columns: {

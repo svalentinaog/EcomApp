@@ -1,7 +1,7 @@
 import { useState } from "react";
 import CustomInput from "@/components/atoms/CustomInput";
 import CommonButton from "@/components/atoms/CommonButton";
-import type { Address, AddressPayload } from "@/hooks/useAddresses";
+import type { Address, AddressPayload } from "@/types/Address";
 
 interface AddressFormProps {
   initialData?: Address | null;

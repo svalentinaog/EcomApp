@@ -19,7 +19,7 @@ import {
   hamburger,
 } from "@/assets";
 import SearchBar from "@/components/molecules/common/SearchBar";
-import { useCart } from "@/hooks/useCart";
+import { useCart } from "@/hooks/api/useCart";
 import { useAuthStore } from "@/store/useAuthStore";
 
 export default function Header() {

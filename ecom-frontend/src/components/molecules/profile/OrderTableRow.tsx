@@ -1,4 +1,4 @@
-import type { Order } from "@/hooks/useOrders";
+import type { Order } from "@/types/Order";
 
 const paymentStatusMap: Record<string, { label: string; variant: string }> = {
   approved: { label: "Pagado", variant: "success" },

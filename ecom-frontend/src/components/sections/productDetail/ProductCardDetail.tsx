@@ -3,7 +3,7 @@ import CommonButton from "@/components/atoms/CommonButton";
 import QuantitySelector from "@/components/molecules/productDetail/QuantitySelector";
 import Container from "@/layouts/Container";
 import ProductGallery from "@/components/molecules/productDetail/ProductGallery";
-import { useCart } from "@/hooks/useCart";
+import { useCart } from "@/hooks/api/useCart";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { AddCartIcon, CheckIcon } from "@/components/atoms/icons/Icons";
@@ -12,7 +12,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useAuthStore } from "@/store/useAuthStore";
 import toast from "react-hot-toast";
 
-// URL base de tu backend para archivos públicos de Laravel
+// URL base del backend para archivos públicos de Laravel
 const STORAGE_URL = "http://localhost:8000/storage";
 
 // Helper para textos traducidos si vienen en formato objeto desde Laravel
@@ -30,7 +30,7 @@ export default function ProductCardDetail({ product }: { product: Product }) {
 
   const { addToCart, updateQuantity, cartItems = [] } = useCart();
 
-  // 1. Buscamos si este producto ya existe en el carrito
+  // Buscamos si este producto ya existe en el carrito
   const existingCartItem = useMemo(
     () => cartItems.find((item) => Number(item.product_id) === Number(product.id)),
     [cartItems, product.id]
@@ -38,20 +38,17 @@ export default function ProductCardDetail({ product }: { product: Product }) {
 
   const isAdded = Boolean(existingCartItem);
 
-  // 2. La cantidad local arranca en 1, pero si el producto ya está en el
-  // carrito, la sincronizamos con lo que el usuario ya tenía guardado.
+  // La cantidad local arranca en 1, pero si el producto ya está en el carrito, la sincronizamos con lo que el usuario ya tenía guardado.
   const [quantity, setQuantity] = useState<number>(existingCartItem?.quantity ?? 1);
 
-  // Si cartItems llega después (fetch asíncrono) o cambia en otra pestaña/tab,
-  // actualizamos la cantidad mostrada para que no se quede en "1" por defecto.
+  // Si cartItems llega después (fetch asíncrono) o cambia en otra pestaña/tab, actualizamos la cantidad mostrada para que no se quede en "1" por defecto.
   useEffect(() => {
     if (existingCartItem) {
       setQuantity(existingCartItem.quantity);
     }
   }, [existingCartItem?.quantity]);
 
-  // 3. La cantidad mostrada difiere de la ya guardada -> el usuario está
-  // pidiendo un cambio, no solo viendo el estado actual.
+  // La cantidad mostrada difiere de la ya guardada -> el usuario está pidiendo un cambio, no solo viendo el estado actual.
   const hasPendingChange = isAdded && quantity !== existingCartItem?.quantity;
 
   const handleAddToCart = () => {
