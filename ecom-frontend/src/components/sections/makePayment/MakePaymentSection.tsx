@@ -124,20 +124,30 @@ export default function MakePaymentSection() {
                           <div>
                             <div className="make-payment-address-option__header">
                               <strong className="make-payment-address-option__name">
-                                {address.full_name}
+                                {address.recipient_full_name}
                               </strong>
+
                               {address.is_default && (
                                 <span className="make-payment-address-option__tag">
                                   Predeterminada
                                 </span>
                               )}
                             </div>
+
                             <p className="make-payment-address-option__detail">
                               {address.address_line}
                             </p>
+
                             <p className="make-payment-address-option__detail make-payment-address-option__detail--muted">
-                              {address.city}, {address.state}, {address.postal_code} — {address.country}
+                              {address.city}, {address.department} — {address.neighborhood}
                             </p>
+
+                            {address.complement && (
+                              <p className="make-payment-address-option__detail make-payment-address-option__detail--muted">
+                                Complemento: {address.complement}
+                              </p>
+                            )}
+
                             <p className="make-payment-address-option__detail make-payment-address-option__detail--muted">
                               Teléfono: {address.phone}
                             </p>
