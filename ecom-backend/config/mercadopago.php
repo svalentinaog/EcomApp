@@ -10,4 +10,6 @@ return [
 
     'webhook_url' => env('MERCADOPAGO_WEBHOOK_URL'),
 
+    'frontend_url' => env('FRONTEND_URL', 'https://beeshop-market.vercel.app'),
+
 ];

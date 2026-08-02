@@ -185,9 +185,9 @@ class OrderController extends Controller
                 ],
 
                 'back_urls' => [
-                    'success' => 'http://localhost:5173/es/profile',
-                    'failure' => 'http://localhost:5173/es/make-payment',
-                    'pending' => 'http://localhost:5173/es/profile'
+                    'success' => config('mercadopago.frontend_url') . '/es/profile',
+                    'failure' => config('mercadopago.frontend_url') . '/es/make-payment',
+                    'pending' => config('mercadopago.frontend_url') . '/es/profile'
                 ],
 
                 // 'auto_return' => 'approved',
