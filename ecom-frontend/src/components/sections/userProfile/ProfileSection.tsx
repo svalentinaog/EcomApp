@@ -1,212 +1,72 @@
-import { useState, useEffect } from "react";
+import { useMemo, useEffect } from "react"; // 1. Importamos useEffect
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import Container from "@/layouts/Container";
-import Input from "@/components/atoms/CustomInput";
-import CommonButton from "@/components/atoms/CommonButton";
-import { api } from "@/services/api";
-import { useAuthStore } from "@/store/useAuthStore";
 import { useTranslation } from "react-i18next";
 
+import ProfileTab from "@/components/organisms/profile/ProfileTab";
+import OrdersTab from "@/components/organisms/profile/OrdersTab";
 import AddressesTab from "@/components/organisms/profile/AddressesTab";
 
-import loadingIcon from "@/assets/icons/loading-icon.png";
-import OrdersTab from "@/components/organisms/profile/OrdersTab";
-
 export default function ProfileSection() {
-  const { t } = useTranslation("common");
+  const { t, i18n } = useTranslation("profile"); 
   const navigate = useNavigate();
   const { lang = "es" } = useParams<{ lang: string }>();
-  
-  const logout = () => useAuthStore.setState({ token: null });
-
   const location = useLocation();
 
-  const [activeTab, setActiveTab] = useState<"profile" | "orders" | "addresses">(
-    location.state?.tab || "profile"
-  );
-
-  const [formData, setFormData] = useState({
-    fullName: "",
-    email: "",
-    birthDate: "",
-  });
-  const [loading, setLoading] = useState(true);
-  const [message, setMessage] = useState("");
-
+  // Sincroniza el idioma de i18next con el parámetro de la URL
   useEffect(() => {
-    const fetchUserProfile = async () => {
-      try {
-        const { data } = await api.get("/user");
-        
-        let formattedDate = "";
-        if (data.birth_date) {
-          formattedDate = data.birth_date.split("T")[0]; 
-        }
-
-        setFormData({
-          fullName: data.name || "",
-          email: data.email || "",
-          birthDate: formattedDate,
-        });
-      } catch (error) {
-        console.error("Error al obtener el perfil:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchUserProfile();
-  }, []);
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setMessage("");
-    try {
-      await api.put("/profile", {
-        name: formData.fullName,
-        email: formData.email,
-        birth_date: formData.birthDate,
-      });
-      setMessage("¡Datos actualizados con éxito!");
-    } catch (error) {
-      console.error("Error al actualizar:", error);
-      setMessage("Ocurrió un error al actualizar los datos.");
+    if (lang && i18n.language !== lang) {
+      i18n.changeLanguage(lang);
     }
-  };
+  }, [lang, i18n]);
 
-  const handleLogout = () => {
-    logout();
-    navigate(`/${lang}/login`);
-  };
+  const activeTab = useMemo(() => {
+    const queryParams = new URLSearchParams(location.search);
+    const tabParam = queryParams.get("tab");
+    
+    if (tabParam === "orders" || tabParam === "addresses") {
+      return tabParam;
+    }
+    
+    return location.state?.tab || "profile";
+  }, [location.search, location.state]);
 
-  if (loading) {
-    return (
-      <Container>
-        <div className="loading">
-          <img 
-            src={loadingIcon} 
-            alt={t("loading")} 
-            className="w-16 h-16 animate-spin opacity-60" 
-          />
-        </div>
-      </Container>
-    );
-  }
+  const handleTabChange = (tab: "profile" | "orders" | "addresses") => {
+    navigate(`/${lang}/profile?tab=${tab}`);
+  };
 
   return (
     <Container className="user-profile__container">
       <div className="user-profile__left">
         <ul className="user-profile__menu">
-          {/* Clickeable con renderizado condicional de la clase activa */}
           <li 
             className={`user-profile__menu-item ${activeTab === "profile" ? "user-profile__menu-item--active" : ""}`}
-            onClick={() => setActiveTab("profile")}
+            onClick={() => handleTabChange("profile")}
           >
-            Mi Perfil
-          </li>
-          <li 
-            className={`user-profile__menu-item ${activeTab === "addresses" ? "user-profile__menu-item--active" : ""}`}
-            onClick={() => setActiveTab("addresses")}
-          >
-            Mis Direcciones
+            {t("menu.profile")}
           </li>
           <li 
             className={`user-profile__menu-item ${activeTab === "orders" ? "user-profile__menu-item--active" : ""}`}
-            onClick={() => setActiveTab("orders")}
+            onClick={() => handleTabChange("orders")}
           >
-            Mis Pedidos
+            {t("menu.orders")}
+          </li>
+          <li 
+            className={`user-profile__menu-item ${activeTab === "addresses" ? "user-profile__menu-item--active" : ""}`}
+            onClick={() => handleTabChange("addresses")}
+          >
+            {t("menu.addresses")}
           </li>
         </ul>
       </div>
       
       <div className="user-profile__right">
-        {/* Renderizado condicional basado en la pestaña seleccionada */}
         {activeTab === "profile" ? (
-          <>
-            <h1 className="user-profile__title">Mi perfil</h1>
-            <p className="user-profile__subtitle">
-              Gestiona tu información personal y preferencias de cuenta.
-            </p>
-
-            {message && (
-              <p style={{ margin: "1rem 0", color: message.includes("éxito") ? "green" : "red" }}>
-                {message}
-              </p>
-            )}
-
-            <form className="user-profile__form" onSubmit={handleSubmit}>
-              <h2 className="user-profile__section-title">Información Personal</h2>
-              
-              <div className="user-profile__form-group">
-                <Input
-                  type="text"
-                  name="fullName"
-                  label="Nombre completo"
-                  value={formData.fullName}
-                  onChange={handleChange}
-                />
-              </div>
-              
-              <div className="user-profile__form-group">
-                <Input
-                  type="email"
-                  name="email"
-                  label="Correo electrónico"
-                  value={formData.email}
-                  onChange={handleChange}
-                />
-              </div>
-              
-              <div className="user-profile__form-group">
-                <Input
-                  type="date"
-                  name="birthDate"
-                  label="Fecha de nacimiento"
-                  value={formData.birthDate}
-                  onChange={handleChange}
-                />
-              </div>
-
-              <div style={{ display: "flex", gap: "1rem", alignItems: "center", marginTop: "1.5rem" }}>
-                <CommonButton type="submit" variant="primary" className="user-profile__submit-btn">
-                  Actualizar Datos
-                </CommonButton>
-                
-                <CommonButton 
-                  type="button" 
-                  variant="danger" 
-                  onClick={handleLogout}
-                >
-                  Cerrar Sesión
-                </CommonButton>
-              </div>
-            </form>
-          </>
+          <ProfileTab />
         ) : activeTab === "orders" ? (
-          <>
-            <h1 className="user-profile__title">Mis pedidos</h1>
-            <p className="user-profile__subtitle">
-              Consulta el estado y el historial de todos tus pedidos.
-            </p>
-
-            <OrdersTab />
-          </>
+          <OrdersTab />
         ) : (
-          <>
-            <h1 className="user-profile__title">Mis direcciones</h1>
-            <p className="user-profile__subtitle">
-              Administra las direcciones donde quieres recibir tus pedidos.
-            </p>
-
-            <AddressesTab />
-          </>
+          <AddressesTab />
         )}
       </div>
     </Container>

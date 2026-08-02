@@ -1,0 +1,30 @@
+{
+  "menu": {
+    "profile": "My Profile",
+    "orders": "My Orders",
+    "addresses": "Addresses"
+  },
+  "profileSection": {
+    "title": "My profile",
+    "subtitle": "Manage your personal information and account preferences.",
+    "personalInfo": "Personal Information",
+    "fullName": "Full name",
+    "email": "Email address",
+    "birthDate": "Date of birth",
+    "updateButton": "Update Data",
+    "logoutButton": "Log Out"
+  },
+  "ordersSection": {
+    "title": "My orders",
+    "subtitle": "Check the status and history of all your orders.",
+    "showingCount": "Showing {{current}} of {{total}} orders",
+    "errorTitle": "We couldn't load your orders",
+    "errorDescription": "An error occurred while fetching your history. Please try again later."
+  },
+  "addressesSection": {
+    "title": "My addresses",
+    "subtitle": "Manage the addresses where you want to receive your orders.",
+    "addButton": "+ Add address",
+    "emptyMessage": "You don't have any saved addresses yet."
+  }
+}

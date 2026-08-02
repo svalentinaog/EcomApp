@@ -1,0 +1,30 @@
+{
+  "menu": {
+    "profile": "Mi Perfil",
+    "orders": "Mis Pedidos",
+    "addresses": "Direcciones"
+  },
+  "profileSection": {
+    "title": "Mi perfil",
+    "subtitle": "Gestiona tu información personal y preferencias de cuenta.",
+    "personalInfo": "Información Personal",
+    "fullName": "Nombre completo",
+    "email": "Correo electrónico",
+    "birthDate": "Fecha de nacimiento",
+    "updateButton": "Actualizar Datos",
+    "logoutButton": "Cerrar Sesión"
+  },
+  "ordersSection": {
+    "title": "Mis pedidos",
+    "subtitle": "Consulta el estado y el historial de todos tus pedidos.",
+    "showingCount": "Mostrando {{current}} de {{total}} pedidos",
+    "errorTitle": "No pudimos cargar tus pedidos",
+    "errorDescription": "Ocurrió un error al consultar tu historial. Intenta de nuevo más tarde."
+  },
+  "addressesSection": {
+    "title": "Mis direcciones",
+    "subtitle": "Administra las direcciones donde quieres recibir tus pedidos.",
+    "addButton": "+ Agregar dirección",
+    "emptyMessage": "Todavía no tienes direcciones guardadas."
+  }
+}

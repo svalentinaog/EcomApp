@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import { useOrders } from "@/hooks/api/useOrders";
 import type { Order } from "@/types/Order";
 import OrdersTable from "@/components/molecules/profile/OrdersTable";
@@ -12,6 +13,7 @@ import noOrdersImg from "@/assets/images/no-orders.jpg";
 const PAGE_SIZE = 5;
 
 export default function OrdersTab() {
+  const { t } = useTranslation("profile");
   const { orders, isLoading, isError } = useOrders();
   const [mode, setMode] = useState<"list" | "detail">("list");
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
@@ -35,15 +37,15 @@ export default function OrdersTab() {
   };
 
   if (isLoading) {
-      return <LoandingState />
-}
+    return <LoandingState />
+  }
 
   if (isError) {
     return (
       <EmptyState
         translationKey="error503"
-        title="No pudimos cargar tus pedidos"
-        description="Ocurrió un error al consultar tu historial. Intenta de nuevo más tarde."
+        title={t("ordersSection.errorTitle")}
+        description={t("ordersSection.errorDescription")}
       />
     );
   }
@@ -58,11 +60,18 @@ export default function OrdersTab() {
 
   return (
     <div className="orders-tab">
+      <div>
+        <h1 className="user-profile__title">{t("ordersSection.title")}</h1>
+        <p className="user-profile__subtitle">{t("ordersSection.subtitle")}</p>
+      </div>
 
       <OrdersTable orders={paginatedOrders} onSelect={handleSelect} />
 
-      <p className=" orders-tab__count">
-        Mostrando {paginatedOrders.length} de {orders.length} pedidos
+      <p className="orders-tab__count">
+        {t("ordersSection.showingCount", { 
+          current: paginatedOrders.length, 
+          total: orders.length 
+        })}
       </p>
       <Pagination
         currentPage={currentPage}

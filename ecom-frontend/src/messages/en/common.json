@@ -69,6 +69,7 @@
     "description": "Once you make your first purchase, you'll be able to see your order status and history here."
   },
   "loading": "Loading...",
+
   "login": {
     "title": "Access",
     "email": "Email",

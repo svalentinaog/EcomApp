@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useAddresses } from "@/hooks/api/useAddresses";
 import type { Address } from "@/types/Address";
 import AddressCard from "@/components/molecules/profile/AddressCard";
@@ -7,6 +8,7 @@ import CommonButton from "@/components/atoms/CommonButton";
 import LoandingState from "@/components/molecules/common/LoadingState";
 
 export default function AddressesTab() {
+  const { t } = useTranslation("profile");
   const {
     addresses,
     isLoading,
@@ -51,7 +53,7 @@ export default function AddressesTab() {
   };
 
   if (isLoading) {
-        return <LoandingState />
+    return <LoandingState />
   }
 
   if (mode === "create") {
@@ -82,14 +84,18 @@ export default function AddressesTab() {
 
   return (
     <div className="addresses-tab">
+      {/* Título integrado en el componente hijo */}
+      <h1 className="user-profile__title">{t("addressesSection.title")}</h1>
+      <p className="user-profile__subtitle">{t("addressesSection.subtitle")}</p>
+
       <div className="addresses-tab__header">
         <CommonButton variant="primary" onClick={() => setMode("create")}>
-          + Agregar dirección
+          {t("addressesSection.addButton")}
         </CommonButton>
       </div>
 
       {addresses.length === 0 ? (
-        <p>Todavía no tienes direcciones guardadas.</p>
+        <p>{t("addressesSection.emptyMessage")}</p>
       ) : (
         <div className="addresses-tab__grid">
           {addresses.map((address) => (

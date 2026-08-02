@@ -69,6 +69,8 @@
       "description": "Cuando hagas tu primera compra, podrás ver el estado y el historial de tus pedidos aquí."
     },
     "loading": "Cargando...",
+
+
   "login": {
     "title": "Acceso",
     "email": "Correo electrónico",
