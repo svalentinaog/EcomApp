@@ -30,7 +30,7 @@ class UserFactory extends Factory
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
             'birth_date' => '1990-01-01', // Añadido para cumplir con la BD
-            'role' => 'client',            // Rol por defecto
+            'role' => 'customer',            // Rol por defecto
             'remember_token' => Str::random(10),
         ];
     }

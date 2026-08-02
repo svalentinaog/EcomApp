@@ -1,10 +1,11 @@
 <?php
 
 namespace App\Http\Controllers\Api;
-
 use App\Http\Controllers\Controller;
 use App\Models\Product;
+use App\Models\ProductImage;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
 {
@@ -153,6 +154,27 @@ class ProductController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Producto eliminado exitosamente'
+        ]);
+    }
+
+    public function destroyImage($id)
+    {
+        $image = ProductImage::find($id);
+
+        if (!$image) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Imagen no encontrada'
+            ], 404);
+        }
+
+        Storage::disk('public')->delete($image->url_image);
+
+        $image->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Imagen eliminada correctamente'
         ]);
     }
 }

@@ -13,8 +13,8 @@ return new class extends Migration
                 $table->string('payment_status')->default('pending')->after('address_id');
             }
 
-            if (!Schema::hasColumn('orders', 'mercadopago_payment_id')) {
-                $table->string('mercadopago_payment_id')->nullable()->after('payment_status');
+            if (!Schema::hasColumn('orders', 'payment_method')) {
+                $table->string('payment_method')->nullable()->after('payment_status');
             }
         });
     }
@@ -22,8 +22,8 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('orders', function (Blueprint $table) {
-            if (Schema::hasColumn('orders', 'mercadopago_payment_id')) {
-                $table->dropColumn('mercadopago_payment_id');
+            if (Schema::hasColumn('orders', 'payment_method')) {
+                $table->dropColumn('payment_method');
             }
 
             if (Schema::hasColumn('orders', 'payment_status')) {

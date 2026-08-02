@@ -72,6 +72,7 @@ Route::middleware('auth:sanctum')->group(function () {
         // Ruta para acceder a todos los productos (para ver, editar, eliminar y registrar productos)
         // Solo el admin puede crear, actualizar o borrar productos
         Route::apiResource('products', ProductController::class)->except(['index', 'show']);
+        Route::delete('/product-images/{id}', [ProductController::class, 'destroyImage']);
     });
 });
 

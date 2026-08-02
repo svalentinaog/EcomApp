@@ -53,19 +53,6 @@
   }
 }
 
-.status-pill {
-  display: inline-block;
-  padding: 0.25rem 0.75rem;
-  border-radius: 999px;
-  font-size: 0.8rem;
-  font-weight: 600;
-
-  &--success { background-color: #DCFCE7; color: #16A34A; }
-  &--warning { background-color: #FEF3C7; color: #D97706; }
-  &--danger  { background-color: #FEE2E2; color: #DC2626; }
-  &--neutral { background-color: #F3F4F6; color: #4B5563; }
-}
-
 .order-detail {
   &__back {
     background: none; border: none; color: $dark-primary;

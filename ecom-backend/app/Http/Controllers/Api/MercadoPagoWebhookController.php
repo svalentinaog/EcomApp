@@ -24,7 +24,7 @@ class MercadoPagoWebhookController extends Controller
             return response()->json(['message' => 'Evento ignorado'], 200);
         }
 
-        $response = Http::withToken(env('MERCADOPAGO_ACCESS_TOKEN'))
+        $response = Http::withToken(config('mercadopago.access_token'))
             ->get("https://api.mercadopago.com/v1/payments/{$paymentId}");
 
         if (! $response->successful()) {
@@ -59,7 +59,10 @@ class MercadoPagoWebhookController extends Controller
 {
     $xSignature = $request->header('x-signature');
     $xRequestId = $request->header('x-request-id');
-    $dataId = $request->input('data.id') ?? $request->query('data.id');
+    
+    // PHP convierte "data.id" en "data_id" al parsear el query string
+    $dataId = $request->query('data_id') ?? $request->input('data.id');
+    $dataId = $dataId ? strtolower((string) $dataId) : null;
 
     Log::info('MP Webhook Debug - Headers y datos recibidos', [
         'x-signature' => $xSignature,
@@ -89,13 +92,16 @@ class MercadoPagoWebhookController extends Controller
     }
 
     $manifest = "id:{$dataId};request-id:{$xRequestId};ts:{$ts};";
-    $computedHash = hash_hmac('sha256', $manifest, env('MERCADOPAGO_WEBHOOK_SECRET'));
+
+    $computedHash = hash_hmac('sha256', $manifest, config('mercadopago.webhook_secret'));
 
     Log::info('MP Webhook Debug - Comparación de firmas', [
         'manifest' => $manifest,
         'computed_hash' => $computedHash,
         'received_hash' => $hash,
-        'webhook_secret_usado' => env('MERCADOPAGO_WEBHOOK_SECRET'), // ⚠️ para depurar, quitar después
+
+        // 'webhook_secret_usado' => env('MERCADOPAGO_WEBHOOK_SECRET'), // ⚠️ para depurar, quitar después
+
         'coinciden' => hash_equals($computedHash, $hash),
     ]);
 

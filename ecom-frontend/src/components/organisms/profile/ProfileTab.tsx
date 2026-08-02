@@ -1,7 +1,6 @@
 import { useTranslation } from "react-i18next";
 import CommonButton from "@/components/atoms/CommonButton";
 import CustomInput from "@/components/atoms/CustomInput";
-import Container from "@/layouts/Container";
 import { validateProfileForm } from "@/utils/validation";
 
 interface ProfileTabProps {

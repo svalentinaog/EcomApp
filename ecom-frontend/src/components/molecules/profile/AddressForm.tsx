@@ -12,13 +12,13 @@ interface AddressFormProps {
 }
 
 const emptyForm: AddressPayload = {
-  full_name: "",
+  recipient_full_name: "",
   phone: "",
   address_line: "",
   city: "",
-  state: "",
-  postal_code: "",
-  country: "CO",
+  department: "",
+  neighborhood: "",
+  complement: "", 
   is_default: false,
 };
 
@@ -32,13 +32,13 @@ export default function AddressForm({
   const [formData, setFormData] = useState<AddressPayload>(
     initialData
       ? {
-          full_name: initialData.full_name,
+          recipient_full_name: initialData.recipient_full_name,
           phone: initialData.phone,
           address_line: initialData.address_line,
           city: initialData.city,
-          state: initialData.state,
-          postal_code: initialData.postal_code,
-          country: initialData.country,
+          department: initialData.department,
+          neighborhood: initialData.neighborhood,
+          complement: initialData.complement || "", // Previene warnings de React
           is_default: initialData.is_default,
         }
       : emptyForm
@@ -61,13 +61,15 @@ export default function AddressForm({
     <form className="address-form" onSubmit={handleSubmit}>
       {errorMessage && <p className="address-form__error">{errorMessage}</p>}
 
-      <CustomInput type="text" name="full_name" label="Nombre completo" value={formData.full_name} onChange={handleChange} />
+      <CustomInput type="text" name="recipient_full_name" label="Nombre de quien recibe" value={formData.recipient_full_name} onChange={handleChange} />
       <CustomInput type="text" name="phone" label="Teléfono" value={formData.phone} onChange={handleChange} />
-      <CustomInput type="text" name="address_line" label="Dirección" value={formData.address_line} onChange={handleChange} />
+      
+      <CustomInput type="text" name="department" label="Departamento" value={formData.department} onChange={handleChange} />
       <CustomInput type="text" name="city" label="Ciudad" value={formData.city} onChange={handleChange} />
-      <CustomInput type="text" name="state" label="Departamento" value={formData.state} onChange={handleChange} />
-      <CustomInput type="text" name="postal_code" label="Código postal" value={formData.postal_code} onChange={handleChange} />
-      <CustomInput type="text" name="country" label="País (código, ej: CO)" value={formData.country} onChange={handleChange} />
+      <CustomInput type="text" name="neighborhood" label="Barrio" value={formData.neighborhood} onChange={handleChange} />
+      
+      <CustomInput type="text" name="address_line" label="Dirección principal" value={formData.address_line} onChange={handleChange} />
+      <CustomInput type="text" name="complement" label="Complemento (Apto, Torre, Oficina) Opcional" value={formData.complement || ""} onChange={handleChange} />
 
       <label className="address-form__checkbox">
         <input

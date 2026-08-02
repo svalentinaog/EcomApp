@@ -7,6 +7,7 @@ import { useTranslation } from "react-i18next";
 import type { Product } from "@/types/Product";
 import CommonButton from "@/components/atoms/CommonButton";
 import { AddCartIcon, CheckIcon } from "@/components/atoms/icons/Icons";
+import { formatCurrency } from "@/utils/formatCurrency";
 
 const getLocalizedText = (field: any, currentLang: string) => {
   if (!field) return "";
@@ -30,7 +31,7 @@ export default function ProductCard(product: Product) {
     navigate(`/${lang}/product/${product.id}`);
   };
 
-  // 1. SOLUCIÓN AL POSIBLE ERROR DE TIPOS: Convertimos ambos a Number por seguridad
+  // Convertimos ambos a Number por seguridad
   const isAdded = cartItems.some((item) => Number(item.product_id) === Number(product.id));
 
   const handleAddToCart = (e: MouseEvent<HTMLDivElement>) => {
@@ -67,8 +68,8 @@ export default function ProductCard(product: Product) {
         <div className="card-product-info-content">
           <p className="product-name">{productName}</p>
           <div className="price-container">
-            <p className="price">${product.price}</p>
-            {product.old_price && <p className="old-price">${product.old_price}</p>}
+            <p className="price">{formatCurrency(product.price)}</p>
+            {product.old_price && <p className="old-price">{formatCurrency(product.old_price)}</p>}
             {product.discount > 0 && (
               <p className="discount">
                 {product.discount}% {t("product.discount")}

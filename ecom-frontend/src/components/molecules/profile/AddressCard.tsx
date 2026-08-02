@@ -15,12 +15,17 @@ export default function AddressCard({ address, onEdit, onDelete, isDeleting }: A
         <span className="address-card__badge">Predeterminada</span>
       )}
 
-      <p className="address-card__name">{address.full_name}</p>
+      <p className="address-card__name">{address.recipient_full_name}</p>
       <p className="address-card__line">{address.address_line}</p>
+      
+      {/* Si hay complemento (apto, torre, bloque), lo mostramos */}
+      {address.complement && (
+        <p className="address-card__line">{address.complement}</p>
+      )}
+
       <p className="address-card__line">
-        {address.city}, {address.state}, {address.postal_code}
+        {address.city}, {address.department} - {address.neighborhood}
       </p>
-      <p className="address-card__line">{address.country}</p>
       <p className="address-card__phone">{address.phone}</p>
 
       <div className="address-card__actions">

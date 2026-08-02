@@ -1,4 +1,5 @@
 import type { Order } from "@/types/Order";
+import { getProductImage } from "@/utils/getProductImage";
 
 const paymentStatusMap: Record<string, { label: string; variant: string }> = {
   approved: { label: "Pagado", variant: "success" },
@@ -23,6 +24,24 @@ export default function OrderDetail({ order, onBack }: OrderDetailProps) {
     label: order.payment_status,
     variant: "neutral",
   };
+
+  console.log("📦 ORDER:", order);
+
+  order.order_items.forEach((item, index) => {
+    console.log(`🛒 ITEM ${index + 1}:`, item);
+
+    console.log("📸 product_images:", item.product.product_images);
+
+    console.log(
+      "🖼️ url_image:",
+      item.product.product_images?.[0]?.url_image
+    );
+
+    console.log(
+      "✅ URL FINAL:",
+      getProductImage(item.product.product_images?.[0]?.url_image)
+    );
+  });
 
   return (
     <div className="order-detail">
@@ -72,7 +91,7 @@ export default function OrderDetail({ order, onBack }: OrderDetailProps) {
               <td>
                 <div className="order-detail__product-cell">
                   <img
-                    src={item.product.product_images?.[0]?.url_image}
+                    src={getProductImage(item.product.product_images?.[0]?.url_image)}
                     alt={item.product.name}
                   />
                   <div>
@@ -109,11 +128,13 @@ export default function OrderDetail({ order, onBack }: OrderDetailProps) {
         <div className="order-detail__box">
           <h4>Envío y contacto</h4>
           <p className="order-detail__box-subtitle">DIRECCIÓN DE ENVÍO</p>
-          <p>{order.full_name}</p>
+          <p>{order.recipient_full_name}</p>
           <p>{order.address_line}</p>
-          <p>{order.city}, {order.state}, {order.postal_code}</p>
-          <p>{order.country}</p>
-          <p className="order-detail__box-subtitle">CONTACTO</p>
+          {order.complement && <p>{order.complement}</p>}
+          <p>{order.neighborhood}</p>
+          <p>{order.city}, {order.department}</p>
+          
+          <p className="order-detail__box-subtitle" style={{ marginTop: '1rem' }}>CONTACTO</p>
           <p>Tel: {order.phone}</p>
         </div>
       

@@ -27,7 +27,7 @@ class OrderController extends Controller
 
         $orders = Order::where('user_id', $userId)
                     //    ->where('payment_status', 'approved')
-                       ->with('orderItems.product')
+                       ->with('orderItems.product.productImages')
                        ->orderBy('created_at', 'desc')
                        ->get();
 
@@ -125,13 +125,13 @@ class OrderController extends Controller
                 'address_id' => $address->id,
                 'payment_status' => 'pending',
                 'payment_method' => $request->payment_method,
-                'full_name' => $address->full_name,
+                'recipient_full_name' => $address->recipient_full_name,
                 'phone' => $address->phone,
                 'address_line' => $address->address_line,
+                'department' => $address->department,
                 'city' => $address->city,
-                'state' => $address->state,
-                'postal_code' => $address->postal_code,
-                'country' => $address->country,
+                'neighborhood' => $address->neighborhood,
+                'complement' => $address->complement,
                 'subtotal' => $subtotal,
                 'cost' => $shippingCost,
                 'total' => $total,
@@ -175,7 +175,7 @@ class OrderController extends Controller
                 ];
             }
 
-            $mpResponse = Http::withToken(env('MERCADOPAGO_ACCESS_TOKEN'))
+            $mpResponse = Http::withToken(config('mercadopago.access_token'))
             ->post('https://api.mercadopago.com/checkout/preferences', [
 
                 'items' => $itemsForMP,
@@ -192,7 +192,7 @@ class OrderController extends Controller
 
                 // 'auto_return' => 'approved',
 
-                'notification_url' => env('MERCADOPAGO_WEBHOOK_URL'),
+                'notification_url' => config('mercadopago.webhook_url'),
                 'external_reference' => (string) $order->id, 
             ]);
 

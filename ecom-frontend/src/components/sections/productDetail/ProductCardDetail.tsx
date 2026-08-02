@@ -11,6 +11,7 @@ import { AddCartIcon, CheckIcon } from "@/components/atoms/icons/Icons";
 import { useNavigate, useParams } from "react-router-dom"; 
 import { useAuthStore } from "@/store/useAuthStore";
 import toast from "react-hot-toast";
+import { formatCurrency } from "@/utils/formatCurrency";
 
 // URL base del backend para archivos públicos de Laravel
 const STORAGE_URL = "http://localhost:8000/storage";
@@ -88,10 +89,10 @@ export default function ProductCardDetail({ product }: { product: Product }) {
 
             <div className="product-detail-info-container">
               <div className="price-container">
-                <h2 className="price">${product.price}</h2>
+                <h2 className="price">{formatCurrency(product.price)}</h2>
 
                 {product.old_price && (
-                  <p className="old-price">${product.old_price}</p>
+                  <p className="old-price">{formatCurrency(product.old_price)}</p>
                 )}
 
                 {product.discount > 0 && (
@@ -102,6 +103,26 @@ export default function ProductCardDetail({ product }: { product: Product }) {
               </div>
               <p>⭐⭐⭐⭐⭐ ({product.rating || 0})</p>
             </div>
+            
+            <div className="product-detail-info-container">
+               <small
+                className={`status-pill ${
+                  product.stock > 10
+                    ? "status-pill--success"
+                    : product.stock > 0
+                    ? "status-pill--warning"
+                    : "status-pill--danger"
+                }`}
+              >
+                {product.stock} disponibles
+              </small>
+              <small
+                className="status-pill status-pill--neutral"
+              >
+                SKU {product.sku}
+              </small>
+            </div>
+              
 
             <p>{productDescription}</p>
 

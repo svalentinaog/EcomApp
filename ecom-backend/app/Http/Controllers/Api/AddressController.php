@@ -27,14 +27,14 @@ class AddressController extends Controller
     public function store(Request $request)
     {
         $validatedData = $request->validate([
-            'full_name'    => 'required|string|max:255',
-            'phone'        => 'required|string|max:20',
-            'address_line' => 'required|string|max:255',
-            'city'         => 'required|string|max:100',
-            'state'        => 'required|string|max:100',
-            'postal_code'  => 'required|string|max:20',
-            'country'      => 'required|string|max:2',
-            'is_default'   => 'boolean',
+            'recipient_full_name' => 'required|string|max:255',
+            'phone'                => 'required|string|max:20',
+            'address_line'         => 'required|string|max:255',
+            'department'           => 'required|string|max:100',
+            'city'                 => 'required|string|max:100',
+            'neighborhood'         => 'required|string|max:100',
+            'complement'           => 'nullable|string|max:255',
+            'is_default'           => 'boolean',
         ]);
 
         $duplicate = $request->user()->addresses()
@@ -107,14 +107,14 @@ class AddressController extends Controller
         }
 
         $validatedData = $request->validate([
-            'full_name'    => 'sometimes|required|string|max:255',
-            'phone'        => 'sometimes|required|string|max:20',
-            'address_line' => 'sometimes|required|string|max:255',
-            'city'         => 'sometimes|required|string|max:100',
-            'state'        => 'sometimes|required|string|max:100',
-            'postal_code'  => 'sometimes|required|string|max:20',
-            'country'      => 'sometimes|required|string|max:2',
-            'is_default'   => 'sometimes|boolean',
+            'recipient_full_name' => 'sometimes|required|string|max:255',
+            'phone'                => 'sometimes|required|string|max:20',
+            'address_line'         => 'sometimes|required|string|max:255',
+            'department'           => 'sometimes|required|string|max:100',
+            'city'                 => 'sometimes|required|string|max:100',
+            'neighborhood'         => 'sometimes|required|string|max:100',
+            'complement'           => 'sometimes|nullable|string|max:255',
+            'is_default'           => 'sometimes|boolean',
         ]);
 
         if ($request->boolean('is_default')) {
