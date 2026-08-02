@@ -185,9 +185,9 @@ class OrderController extends Controller
                 ],
 
                 'back_urls' => [
-                    'success' => config('mercadopago.frontend_url') . '/es/profile',
+                    'success' => config('mercadopago.frontend_url') . '/es/profile?tab=orders',
                     'failure' => config('mercadopago.frontend_url') . '/es/make-payment',
-                    'pending' => config('mercadopago.frontend_url') . '/es/profile'
+                    'pending' => config('mercadopago.frontend_url') . '/es/profile?tab=orders'
                 ],
 
                 // 'auto_return' => 'approved',
