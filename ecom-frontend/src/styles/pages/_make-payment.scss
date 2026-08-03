@@ -216,6 +216,212 @@
   margin-top: 0.5rem;
 }
 
+/* Layout General */
+.addresses-tab {
+  max-width: 680px;
+  width: 100%;
+}
+
+.addresses-header h2 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 0.25rem;
+}
+
+.addresses-subtitle {
+  color: #6b7280;
+  font-size: 0.95rem;
+  margin-bottom: 2rem;
+}
+
+.addresses-loading {
+  color: #6b7280;
+  font-size: 0.95rem;
+}
+
+/* ================================
+   ESTADO VACÍO (Figma Card Centrada)
+   ================================ */
+.addresses-empty-card {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  border: 1px solid $border;
+  border-radius: 8px;
+  padding: 2rem;
+  text-align: center;
+
+  .addresses-text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+}
+
+/* ================================
+   LISTA DE TARJETAS DE DIRECCIÓN
+   ================================ */
+.addresses-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.address-card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 1.25rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.address-card:hover {
+  border-color: #d1d5db;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+.address-card__top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 0.75rem;
+}
+
+.address-badge-default {
+  display: inline-block;
+  background-color: #e6f7f0;
+  color: #00c897;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.2rem 0.6rem;
+  border-radius: 20px;
+  margin-bottom: 0.4rem;
+}
+
+.address-card__title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #111827;
+  margin: 0;
+}
+
+.address-card__actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.icon-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  padding: 0.3rem;
+  opacity: 0.7;
+  transition: opacity 0.2s ease, transform 0.1s ease;
+}
+
+.icon-btn:hover {
+  opacity: 1;
+  transform: scale(1.1);
+}
+
+.address-card__details p {
+  font-size: 0.9rem;
+  color: #4b5563;
+  margin-bottom: 0.25rem;
+  line-height: 1.4;
+}
+
+.address-card__details strong {
+  color: #1f2937;
+}
+
+.addresses-add-more {
+  margin-top: 1rem;
+}
+
+/* ================================
+   FORMULARIO (Crear / Editar)
+   ================================ */
+.address-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.form-group label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #374151;
+}
+
+.form-group input[type="text"] {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.form-group input[type="text"]:focus {
+  border-color: #00c897;
+  box-shadow: 0 0 0 3px rgba(0, 200, 151, 0.15);
+}
+
+.form-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.form-checkbox input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: #00c897;
+  cursor: pointer;
+}
+
+.form-checkbox label {
+  font-size: 0.9rem;
+  color: #374151;
+  cursor: pointer;
+}
+
+/* Botones del Formulario (Guardar / Cancelar en rojo) */
+.form-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.btn-danger-cancel {
+  background-color: #c82333; /* Rojo idéntico a Figma */
+  color: #ffffff;
+  border: none;
+  padding: 0.75rem 1.75rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.btn-danger-cancel:hover {
+  background-color: #bd2130;
+}
+
 @media (max-width: 1024px) {
   .make-payment-main {
     grid-template-columns: 1fr;

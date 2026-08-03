@@ -9,6 +9,9 @@ import { useAddresses } from "@/hooks/api/useAddresses";
 import { useCheckout } from "@/hooks/api/useOrders";
 import type { Address } from "@/types/Address";
 
+// 👇 1. Importamos el componente InlineAlert (ajusta la ruta si es necesario)
+import InlineAlert from "@/components/molecules/common/InlineAlert";
+
 export default function MakePaymentSection() {
   const { t } = useTranslation("payment");
   const navigate = useNavigate();
@@ -19,6 +22,9 @@ export default function MakePaymentSection() {
   const { createOrder, isSubmitting } = useCheckout();
 
   const [selectedAddressId, setSelectedAddressId] = useState<number | null>(null);
+  
+  // 👇 2. Estado para manejar el mensaje de error de la dirección
+  const [addressError, setAddressError] = useState<string | null>(null);
 
   useEffect(() => {
     if (defaultAddress && selectedAddressId === null) {
@@ -26,12 +32,25 @@ export default function MakePaymentSection() {
     }
   }, [defaultAddress, selectedAddressId]);
 
+  // 👇 Limpiar el error automáticamente si el usuario selecciona una dirección
+  useEffect(() => {
+    if (selectedAddressId) {
+      setAddressError(null);
+    }
+  }, [selectedAddressId]);
+
   const handleGoToManageAddresses = () => {
     navigate(`/${lang}/profile`, { state: { tab: "addresses" } });
   };
 
   const handleCheckout = async () => {
-    if (cartItems.length === 0 || !selectedAddressId) return;
+    if (cartItems.length === 0) return;
+
+    // 👇 3. En lugar de alert(), activamos el InlineAlert
+    if (!selectedAddressId) {
+      setAddressError("Por favor, selecciona o agrega una dirección de envío antes de pagar.");
+      return; 
+    }
 
     try {
       const response = await createOrder({
@@ -75,14 +94,21 @@ export default function MakePaymentSection() {
                   {t("paymentMethod.description")}
                 </p>
 
+                {/* 👇 4. Renderizamos el InlineAlert si existe un error */}
+                {addressError && (
+                  <div style={{ marginBottom: "1rem" }}>
+                    <InlineAlert 
+                      variant="danger" 
+                      message={addressError} 
+                      onClose={() => setAddressError(null)} 
+                    />
+                  </div>
+                )}
+
                 <CommonButton
                   variant="primary-full-width"
                   onClick={handleCheckout}
-                  disabled={
-                    isSubmitting ||
-                    cartItems.length === 0 ||
-                    !selectedAddressId
-                  }
+                  disabled={isSubmitting || cartItems.length === 0}
                 >
                   {isSubmitting
                     ? "Procesando..."
