@@ -1,5 +1,3 @@
-import React from "react";
-
 type AlertVariant = "primary" | "success" | "warning" | "danger" | "info";
 
 interface InlineAlertProps {
