@@ -3,36 +3,41 @@ import { useTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router-dom";
 import Container from "@/layouts/Container";
 import CommonButton from "@/components/atoms/CommonButton";
+import InlineAlert from "@/components/molecules/common/InlineAlert";
 import { visa, mastercard, americanExpress, paypal } from "@/assets";
 import { useCart } from "@/hooks/api/useCart";
 import { useAddresses } from "@/hooks/api/useAddresses";
 import { useCheckout } from "@/hooks/api/useOrders";
 import type { Address } from "@/types/Address";
 
-// 👇 1. Importamos el componente InlineAlert (ajusta la ruta si es necesario)
-import InlineAlert from "@/components/molecules/common/InlineAlert";
-
 export default function MakePaymentSection() {
   const { t } = useTranslation("payment");
   const navigate = useNavigate();
   const { lang = "es" } = useParams<{ lang: string }>();
 
-  const { summary, cartItems } = useCart();
+  // Agregamos isLoadingCart con un valor por defecto false por seguridad
+  const { summary, cartItems, isLoading: isLoadingCart = false } = useCart();
   const { addresses, isLoading: loadingAddresses, defaultAddress } = useAddresses();
   const { createOrder, isSubmitting } = useCheckout();
 
   const [selectedAddressId, setSelectedAddressId] = useState<number | null>(null);
-  
-  // 👇 2. Estado para manejar el mensaje de error de la dirección
   const [addressError, setAddressError] = useState<string | null>(null);
 
+  // 🔴 Redirigir al carrito o tienda si el carrito está vacío
+  useEffect(() => {
+    if (!isLoadingCart && cartItems.length === 0) {
+      navigate(`/${lang}/cart`, { replace: true });
+    }
+  }, [cartItems, isLoadingCart, navigate, lang]);
+
+  // Selecciona automáticamente la dirección predeterminada al cargar
   useEffect(() => {
     if (defaultAddress && selectedAddressId === null) {
       setSelectedAddressId(defaultAddress.id);
     }
   }, [defaultAddress, selectedAddressId]);
 
-  // 👇 Limpiar el error automáticamente si el usuario selecciona una dirección
+  // Limpia el mensaje de error tan pronto como el usuario elige una dirección
   useEffect(() => {
     if (selectedAddressId) {
       setAddressError(null);
@@ -46,10 +51,10 @@ export default function MakePaymentSection() {
   const handleCheckout = async () => {
     if (cartItems.length === 0) return;
 
-    // 👇 3. En lugar de alert(), activamos el InlineAlert
+    // Validación de dirección con InlineAlert
     if (!selectedAddressId) {
       setAddressError("Por favor, selecciona o agrega una dirección de envío antes de pagar.");
-      return; 
+      return;
     }
 
     try {
@@ -78,6 +83,7 @@ export default function MakePaymentSection() {
               <p>{t("subtitle")}</p>
             </div>
 
+            {/* PASO 1: Método de Pago */}
             <div className="make-payment-step">
               <p className="make-payment-step__label">1. {t("paymentMethod.title")}</p>
               <div className="make-payment-method-card">
@@ -94,7 +100,7 @@ export default function MakePaymentSection() {
                   {t("paymentMethod.description")}
                 </p>
 
-                {/* 👇 4. Renderizamos el InlineAlert si existe un error */}
+                {/* Alerta de error si no ha elegido dirección */}
                 {addressError && (
                   <div style={{ marginBottom: "1rem" }}>
                     <InlineAlert 
@@ -121,6 +127,7 @@ export default function MakePaymentSection() {
               </div>
             </div>
 
+            {/* PASO 2: Selección de Dirección */}
             <div className="make-payment-step">
               <p className="make-payment-step__label">2. Dirección de Envío</p>
 
@@ -204,6 +211,7 @@ export default function MakePaymentSection() {
             </div>
           </div>
 
+          {/* ASIDE: Resumen del Pedido */}
           <aside className="make-payment-summary">
             <div className="make-payment-summary__box">
               <h2>{t("summary.title")}</h2>

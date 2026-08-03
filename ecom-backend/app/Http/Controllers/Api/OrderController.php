@@ -176,7 +176,7 @@ class OrderController extends Controller
                     'pending' => config('mercadopago.frontend_url') . '/es/profile?tab=orders'
                 ],
 
-                'auto_return' => 'approved',
+                // 'auto_return' => 'approved',
 
                 'notification_url' => config('mercadopago.webhook_url'),
                 'external_reference' => (string) $order->id, 

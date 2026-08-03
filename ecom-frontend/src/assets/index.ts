@@ -6,6 +6,7 @@ import logoDark from "./logo-dark.svg"; // Primary header logo
 import imageSection from "./images/image-home.png";
 import imageCTA from "./images/image-CTA.png";
 import imageContact from "./images/image-contact.png";
+import image404 from "./images/image-404.png";
 /**
  * SOCIAL MEDIA ICONS
  */
@@ -106,5 +107,6 @@ export {
   refresh,
   chevronDown,
   chevronRight,
-  chevronLeft
+  chevronLeft,
+  image404
 };

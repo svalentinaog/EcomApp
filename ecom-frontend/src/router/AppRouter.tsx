@@ -16,12 +16,14 @@ import CartPage from "@/pages/CartPage";
 import MakePaymentPage from "@/pages/MakePaymentPage";
 import LegalDocumentPage from "@/pages/LegalDocumentPage";
 import UserProfilePage from "@/pages/UserProfilePage";
+import NotFoundPage from "@/pages/NotFoundPage";
 
 export default function AppRouter() {
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Navigate to="/es" replace />} />
+        
         <Route path="/:lang" element={<BaseLayout />}>
           <Route index element={<HomePage />} />
           <Route path="shop" element={<ShopPage />} />
@@ -49,7 +51,11 @@ export default function AppRouter() {
               </ProtectedRoute>
             }
           />
+
+          <Route path="*" element={<NotFoundPage />} />
         </Route>
+
+        <Route path="*" element={<Navigate to="/es/404" replace />} />
       </Routes>
     </BrowserRouter>
   );
