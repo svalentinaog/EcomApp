@@ -30,9 +30,9 @@ export default function OrderTableRow({ order, onSelect }: OrderTableRowProps) {
       <td className="orders-table__col--id">#{order.id}</td>
       <td className="orders-table__col--total">${Number(order.total).toLocaleString()}</td>
       <td className="orders-table__col--status">
-        <span className={`status-pill status-pill--${statusInfo.variant}`}>
+        <small className={`status-pill status-pill--${statusInfo.variant}`}>
           {statusInfo.label}
-        </span>
+        </small>
       </td>
       <td className="orders-table__col--detail">
         <button className="orders-table__detail-link" onClick={onSelect}>

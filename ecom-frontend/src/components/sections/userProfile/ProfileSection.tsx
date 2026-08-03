@@ -1,7 +1,7 @@
+import { useTranslation } from "react-i18next";
 import { useMemo, useEffect } from "react"; // 1. Importamos useEffect
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import Container from "@/layouts/Container";
-import { useTranslation } from "react-i18next";
 
 import ProfileTab from "@/components/organisms/profile/ProfileTab";
 import OrdersTab from "@/components/organisms/profile/OrdersTab";

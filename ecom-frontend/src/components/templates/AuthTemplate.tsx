@@ -1,4 +1,4 @@
-import HeroSection from "@/components/sections/auth/HeroSection";
+import AuthForm from "@/components/sections/auth/AuthForm";
 
 interface AuthTemplateProps {
   mode?: "login" | "register" | "forgot-password" | "reset-password";
@@ -7,7 +7,7 @@ interface AuthTemplateProps {
 export default function AuthTemplate({ mode = "login" }: AuthTemplateProps) {
   return (
     <>
-      <HeroSection mode={mode} />
+      <AuthForm mode={mode} />
     </>
   );
 }

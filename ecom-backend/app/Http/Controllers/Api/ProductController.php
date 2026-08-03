@@ -1,10 +1,11 @@
 <?php
 
 namespace App\Http\Controllers\Api;
+
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\ProductRequest;
 use App\Models\Product;
 use App\Models\ProductImage;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
@@ -25,21 +26,9 @@ class ProductController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(ProductRequest $request) 
     {
-        $validatedData = $request->validate([
-            'name'           => 'required|string|max:255',
-            'description'    => 'nullable|string',
-            'price'          => 'required|numeric|min:0',
-            'old_price'      => 'nullable|numeric|min:0',
-            'discount'       => 'nullable|integer|min:0|max:100',
-            'rating'         => 'nullable|integer|min:1|max:5',
-            'sku'            => 'required|string|unique:products,sku',
-            'stock'          => 'required|integer|min:0',
-            'subcategory_id' => 'required|exists:subcategories,id',
-            'product_images'       => 'nullable|array',
-            'product_images.*'     => 'image|mimes:jpeg,png,jpg|max:2048'
-        ]);
+        $validatedData = $request->validated(); 
 
         $product = Product::create($validatedData);
 
@@ -85,16 +74,9 @@ class ProductController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, int $id)
+    public function update(ProductRequest $request, int $id) 
     {
         $product = Product::find($id);
-
-        if (empty($request->all())) {
-            return response()->json([
-                'success' => false,
-                'message' => 'No se enviaron datos para actualizar'
-            ], 422);
-        }
 
         if (!$product) {
             return response()->json([
@@ -103,19 +85,10 @@ class ProductController extends Controller
             ], 404);
         }
 
-        $validatedData = $request->validate([
-            'name'           => 'sometimes|required|string|max:255',
-            'description'    => 'nullable|string',
-            'price'          => 'sometimes|required|numeric|min:0',
-            'old_price'      => 'nullable|numeric|min:0',
-            'discount'       => 'nullable|integer|min:0|max:100',
-            'rating'         => 'sometimes|integer|min:1|max:5',
-            'sku'            => 'sometimes|required|string|unique:products,sku,' . $id,
-            'stock'          => 'sometimes|required|integer|min:0',
-            'product_images'       => 'nullable|array',
-            'product_images.*'     => 'image|mimes:jpeg,png,jpg|max:2048',
-            'subcategory_id' => 'sometimes|required|exists:subcategories,id',
-        ]);
+        // Eliminamos el if(empty(...)) y el validate manual. 
+        // El FormRequest se encarga de todo.
+
+        $validatedData = $request->validated();
 
         $product->update($validatedData);
 
@@ -127,6 +100,9 @@ class ProductController extends Controller
                 ]);
             }
         }
+
+        // Recargamos las relaciones para devolver el objeto completo y fresco al cliente
+        $product->load('subcategory.category', 'productImages');
 
         return response()->json([
             'success' => true,
@@ -157,7 +133,7 @@ class ProductController extends Controller
         ]);
     }
 
-    public function destroyImage($id)
+    public function destroyImage(int $id)
     {
         $image = ProductImage::find($id);
 
@@ -178,19 +154,3 @@ class ProductController extends Controller
         ]);
     }
 }
-
-// =====================================================================
-// 🧠 NOTAS DE APRENDIZAJE: ProductController y Buenas Prácticas
-// - Eager Loading (`with`): Carga relaciones anidadas (ej. subcategory.category)
-//   para evitar el problema de consultas N+1 y optimizar el rendimiento.
-//
-// - Regla `sometimes`: Valida el campo únicamente si viene presente en la petición,
-//   lo cual es esencial para actualizaciones parciales.
-//
-// - Validación `unique` en Update: Se le concatena el ID actual (unique:table,column,id)
-//   para evitar que la regla falle al intentar conservar el mismo SKU del producto.
-//
-// - Inyección de Dependencias: Técnica de diseño que permite a una clase obtener
-//   sus dependencias u objetos requeridos desde el exterior (como `Request $request`),
-//   en lugar de crearlos internamente.
-// =====================================================================

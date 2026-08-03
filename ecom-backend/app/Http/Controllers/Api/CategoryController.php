@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\CategoryRequest;
 use App\Models\Category;
 use Illuminate\Http\Request;
 
@@ -22,32 +23,7 @@ class CategoryController extends Controller
         ]);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        if (empty($request->all())) {
-            return response()->json([
-                'success' => false,
-                'message' => 'No se enviaron datos'
-            ], 422);
-        }
-
-        $validatedData = $request->validate([
-            'name' => 'required|string|max:100|unique:categories,name'
-        ]);
-
-        $category = Category::create($validatedData);
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Categoría creada exitosamente',
-            'data' => $category
-        ], 201);
-    }
-
-    /**
+        /**
      * Display the specified resource.
      */
     public function show(int $id)
@@ -67,11 +43,27 @@ class CategoryController extends Controller
             'data'    => $category
         ], 200);
     }
+    
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(CategoryRequest $request)
+    {
+        $validatedData = $request->validated();
+
+        $category = Category::create($validatedData);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Categoría creada exitosamente',
+            'data' => $category
+        ], 201);
+    }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, int $id)
+    public function update(CategoryRequest $request, int $id) 
     {
         $category = Category::find($id);
 
@@ -82,16 +74,7 @@ class CategoryController extends Controller
             ], 404);
         }
 
-        if (empty($request->all())) {
-            return response()->json([
-                'success' => false,
-                'message' => 'No se enviaron datos para actualizar'
-            ], 422);
-        }
-
-        $validatedData = $request->validate([
-            'name' => 'sometimes|required|string|max:100|unique:categories,name,' . $category->id
-        ]);
+        $validatedData = $request->validated(); 
 
         $category->update($validatedData);
 

@@ -4,18 +4,25 @@ import { useMutation } from "@tanstack/react-query";
 import { useAuthHero } from "@/hooks/ui/useAuthHero";
 import CommonButton from "@/components/atoms/CommonButton";
 import CustomInput from "@/components/atoms/CustomInput";
+import InlineAlert from "@/components/molecules/common/InlineAlert";
 import Container from "@/layouts/Container";
 import { api } from "@/services/api";
 import { useAuthStore } from "@/store/useAuthStore";
-import { validateAge } from "@/utils/validation";
+import {
+  validateAge,
+  validateName,
+  validateEmail,
+  validatePassword,
+  validatePasswordConfirmation,
+} from "@/utils/validation";
 
-interface HeroSectionProps {
+interface AuthFormProps {
   mode?: "login" | "register" | "forgot-password" | "reset-password";
 }
 
-export default function HeroSection({ mode = "login" }: HeroSectionProps) {
+export default function AuthForm({ mode = "login" }: AuthFormProps) {
   const { t, getPath, isRegister, isForgot, isResetPassword } = useAuthHero(mode);
-  
+
   const [successMessage, setSuccessMessage] = useState("");
   const location = useLocation();
 
@@ -36,15 +43,59 @@ export default function HeroSection({ mode = "login" }: HeroSectionProps) {
     rememberMe: isRemembered,
   });
 
-  const [ageError, setAgeError] = useState("");
+  // Objeto de errores por campo para los CustomInput
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
-  // Calculamos la fecha máxima permitida (hace 18 años exactos)
   const getMaxBirthDate = () => {
     const today = new Date();
     const year = today.getFullYear() - 18;
     const month = String(today.getMonth() + 1).padStart(2, "0");
     const day = String(today.getDate()).padStart(2, "0");
     return `${year}-${month}-${day}`;
+  };
+
+  // Valida un solo campo con las mismas reglas que usa el backend.
+  // Se reutiliza tanto en cada tecla (handleChange) como al enviar (validateForm),
+  // así nunca quedan desincronizados entre "mientras escribes" y "al enviar".
+  const validateSingleField = (name: string, value: string): string => {
+    switch (name) {
+      case "name":
+        return isRegister ? validateName(value) : "";
+      case "email":
+        return isRegister || isForgot || !isResetPassword ? validateEmail(value) : "";
+      case "password":
+        return isRegister || !isResetPassword
+          ? validatePassword(value, isRegister || isResetPassword)
+          : "";
+      case "password_confirmation":
+        return isRegister || isResetPassword
+          ? validatePasswordConfirmation(formData.password, value)
+          : "";
+      case "birth_date":
+        return isRegister ? validateAge(value) : "";
+      default:
+        return "";
+    }
+  };
+
+  const validateForm = () => {
+    const newErrors: Record<string, string> = {
+      name: validateSingleField("name", formData.name),
+      email: validateSingleField("email", formData.email),
+      password: validateSingleField("password", formData.password),
+      password_confirmation: validateSingleField(
+        "password_confirmation",
+        formData.password_confirmation
+      ),
+      birth_date: validateSingleField("birth_date", formData.birth_date),
+    };
+
+    Object.keys(newErrors).forEach((key) => {
+      if (!newErrors[key]) delete newErrors[key];
+    });
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
   const authMutation = useMutation({
@@ -69,7 +120,6 @@ export default function HeroSection({ mode = "login" }: HeroSectionProps) {
         return response.data;
       }
 
-      // login
       const response = await api.post("/login", {
         email: data.email,
         password: data.password,
@@ -97,31 +147,53 @@ export default function HeroSection({ mode = "login" }: HeroSectionProps) {
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
+    const { name, value, type, checked } = e.target;
+    const newValue = type === "checkbox" ? checked : value;
 
-    if (name === "birth_date" && value) {
-      setAgeError(validateAge(value));
-    }
+    setFormData((prev) => ({ ...prev, [name]: newValue }));
 
-    setFormData({
-      ...formData,
-      [name]: name === "rememberMe" ? (e.target.checked as unknown as string) : value,
+    if (type === "checkbox") return;
+
+    setErrors((prev) => {
+      const updated = { ...prev, [name]: validateSingleField(name, value) };
+
+      // Si edita la contraseña después de ya haber escrito la confirmación,
+      // revalida también ese campo para no dejar un error desactualizado.
+      if (name === "password" && formData.password_confirmation) {
+        updated.password_confirmation = validatePasswordConfirmation(
+          value,
+          formData.password_confirmation
+        );
+      }
+
+      return updated;
     });
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (isRegister && ageError) return;
     setSuccessMessage("");
+
+    if (!validateForm()) return;
+
     authMutation.mutate({
       ...formData,
       rememberMe: formData.rememberMe,
     } as typeof formData);
   };
 
-  const errorMessage = authMutation.error 
-    ? (authMutation.error as any).response?.data?.message || t("login.genericError")
-    : "";
+  const getErrorMessage = () => {
+    const err = authMutation.error as any;
+    const apiMessage = err?.response?.data?.message;
+
+    if (typeof apiMessage === "string") return apiMessage;
+    if (Array.isArray(apiMessage)) return apiMessage[0];
+
+    const translated = t("login.genericError");
+    return typeof translated === "string" ? translated : "Ocurrió un error inesperado.";
+  };
+
+  const errorMessage = authMutation.isError ? getErrorMessage() : "";
 
   return (
     <section className="auth-section">
@@ -137,16 +209,18 @@ export default function HeroSection({ mode = "login" }: HeroSectionProps) {
               : t("login.title")}
           </h1>
 
+          {/* Alerta global para errores de la API */}
           {authMutation.isError && (
-            <p style={{ color: "red", marginBottom: "1rem" }}>{errorMessage}</p>
+            <div style={{ marginBottom: "1.5rem" }}>
+              <InlineAlert variant="danger" message={errorMessage} />
+            </div>
           )}
 
-          {ageError && (
-            <p style={{ color: "red", marginBottom: "1rem" }}>{ageError}</p>
-          )}
-
+          {/* Alerta global para mensajes de éxito */}
           {successMessage && (
-            <p style={{ color: "green", marginBottom: "1rem" }}>{successMessage}</p>
+            <div style={{ marginBottom: "1.5rem" }}>
+              <InlineAlert variant="success" message={successMessage} />
+            </div>
           )}
 
           <form className="auth-form" onSubmit={handleSubmit}>
@@ -159,6 +233,7 @@ export default function HeroSection({ mode = "login" }: HeroSectionProps) {
                   value={formData.name}
                   onChange={handleChange}
                   placeholder={t("register.namePlaceholder")}
+                  error={errors.name}
                 />
                 <CustomInput
                   label="Fecha de nacimiento"
@@ -167,6 +242,7 @@ export default function HeroSection({ mode = "login" }: HeroSectionProps) {
                   value={formData.birth_date}
                   onChange={handleChange}
                   max={getMaxBirthDate()}
+                  error={errors.birth_date}
                 />
               </>
             )}
@@ -191,6 +267,7 @@ export default function HeroSection({ mode = "login" }: HeroSectionProps) {
                     ? t("register.emailPlaceholder")
                     : t("login.emailPlaceholder")
                 }
+                error={errors.email}
               />
             )}
 
@@ -214,6 +291,7 @@ export default function HeroSection({ mode = "login" }: HeroSectionProps) {
                     ? t("register.passwordPlaceholder")
                     : t("login.passwordPlaceholder")
                 }
+                error={errors.password}
               />
             )}
 
@@ -233,72 +311,67 @@ export default function HeroSection({ mode = "login" }: HeroSectionProps) {
                     ? t("newPassword.confirmPasswordPlaceholder")
                     : t("register.confirmPasswordPlaceholder")
                 }
+                error={errors.password_confirmation}
               />
             )}
 
             {!isRegister && !isForgot && !isResetPassword && (
-              <div className="auth-options">
-                <label className="auth-checkbox-label">
+              <div
+                className="auth-options"
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  marginBottom: "1.5rem",
+                }}
+              >
+                <label
+                  className="auth-checkbox-label"
+                  style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}
+                >
                   <input
                     type="checkbox"
+                    name="rememberMe"
                     checked={Boolean(formData.rememberMe)}
-                    onChange={(event) => {
-                      setFormData({
-                        ...formData,
-                        rememberMe: event.target.checked,
-                      });
-                    }}
+                    onChange={handleChange}
                   />
                   {t("login.rememberMe")}
                 </label>
-                <Link
-                  to={getPath("/forgot-password")}
-                  className="auth-link"
-                >
+                <Link to={getPath("/forgot-password")} className="auth-link">
                   {t("login.forgotPassword")}
                 </Link>
               </div>
             )}
 
-            <CommonButton 
-              variant="primary-full-width" 
+            <CommonButton
+              variant="primary-full-width"
               type="submit"
-              disabled={authMutation.isPending || !!ageError}
+              disabled={authMutation.isPending}
             >
-              {authMutation.isPending ? t("loading") : (
-                isResetPassword
-                  ? t("newPassword.changeButton")
-                  : isForgot
-                  ? t("recoverPassword.sendButton")
-                  : isRegister
-                  ? t("register.registerButton")
-                  : t("login.loginButton")
-              )}
+              {authMutation.isPending
+                ? t("loading")
+                : isResetPassword
+                ? t("newPassword.changeButton")
+                : isForgot
+                ? t("recoverPassword.sendButton")
+                : isRegister
+                ? t("register.registerButton")
+                : t("login.loginButton")}
             </CommonButton>
 
             {(isForgot || isResetPassword) && (
-              <p className="auth-footer-text">
-                <Link
-                  to={getPath("/login")}
-                  className="auth-link"
-                >
+              <p className="auth-footer-text" style={{ marginTop: "1rem", textAlign: "center" }}>
+                <Link to={getPath("/login")} className="auth-link">
                   {t("newPassword.loginLink")}
                 </Link>
               </p>
             )}
 
             {!isForgot && !isResetPassword && (
-              <p className="auth-footer-text">
-                {isRegister
-                  ? t("register.haveAccount")
-                  : t("login.noAccount")}{" "}
-                <Link
-                  to={getPath(isRegister ? "/login" : "/register")}
-                  className="auth-link"
-                >
-                  {isRegister
-                    ? t("register.loginNow")
-                    : t("login.registerNow")}
+              <p className="auth-footer-text" style={{ marginTop: "1rem", textAlign: "center" }}>
+                {isRegister ? t("register.haveAccount") : t("login.noAccount")}{" "}
+                <Link to={getPath(isRegister ? "/login" : "/register")} className="auth-link">
+                  {isRegister ? t("register.loginNow") : t("login.registerNow")}
                 </Link>
               </p>
             )}

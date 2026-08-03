@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\CartItemRequest;
 use App\Models\CartItem;
 use App\Models\Product;
 use Illuminate\Http\Request;
@@ -41,7 +42,7 @@ class CartController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(CartItemRequest $request)
     {
         $validator = Validator::make($request->all(), [
             'product_id' => 'required|exists:products,id',
@@ -106,7 +107,7 @@ class CartController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, int $id)
+    public function update(CartItemRequest $request, int $id)
     {
         $validator = Validator::make($request->all(), [
             'quantity' => 'required|integer|min:1'

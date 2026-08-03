@@ -11,22 +11,27 @@ use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\SubcategoryController;
 use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\CartController;
+use App\Http\Controllers\Api\ContactController;
 use App\Http\Controllers\Api\MercadoPagoWebhookController;
 
 // ==========================================
 // RUTAS PÚBLICAS (No requieren token)
 // ==========================================
+// Cualquiera puede ver los productos y sus categorías y subcategorías
 Route::apiResource('products', ProductController::class)->only(['index', 'show']);
-Route::post('/register', [AuthController::class, 'register']);
-Route::post('/login', [AuthController::class, 'login']);
-
-// Cualquiera puede ver las categorías y subcategorías
 Route::apiResource('categories', CategoryController::class)->only(['index', 'show']);
 Route::apiResource('subcategories', SubcategoryController::class)->only(['index', 'show']);
 
-// Olvidaste tu Contraseña / Nueva contraseña
-Route::post('/forgot-password', [AuthController::class, 'forgotPassword']);
-Route::post('/reset-password', [AuthController::class, 'resetPassword']);
+Route::post('/contact', [ContactController::class, 'store']);
+
+// 🔒 Protegemos autenticación y recuperación contra fuerza bruta (Máx 6 intentos por minuto)
+Route::middleware('throttle:6,1')->group(function () {
+    Route::post('/register', [AuthController::class, 'register']);
+    Route::post('/login', [AuthController::class, 'login']);
+    // Olvidaste tu Contraseña / Nueva contraseña
+    Route::post('/forgot-password', [AuthController::class, 'forgotPassword']);
+    Route::post('/reset-password', [AuthController::class, 'resetPassword']);
+});
 
 // 💸💰 Webhook de Mercado Pago (público, Mercado Pago no manda token de Sanctum) 💸💰
 Route::post('/webhooks/mercadopago', [MercadoPagoWebhookController::class, 'handle']);
@@ -106,3 +111,7 @@ Route::middleware('auth:sanctum')->group(function () {
 //    Equivalen a funciones largas, pero se limitan a una sola expresión 
 //    devolviendo el valor de forma implícita (sin llaves ni `return`).
 // =====================================================================
+
+// Si prefieres no crear un grupo nuevo para no mover la estructura, simplemente
+// encadenas ->middleware('throttle:6,1') al final de la ruta que quieras proteger:
+// Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:6,1');

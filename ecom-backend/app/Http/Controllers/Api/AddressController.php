@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers\Api;
+use App\Http\Requests\AddressRequest;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -20,22 +21,35 @@ class AddressController extends Controller
             'data'    => $addresses
         ]);
     }
+    
+    /**
+     * Display the specified resource.
+     */
+    public function show(Request $request, string $id)
+    {
+            $address = $request->user()->addresses()->find($id);
+    
+            if (!$address) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'La dirección que estas intentando ver no existe'
+                ], 404);
+            }
+    
+            return response()->json([
+                'success' => true,
+                'message' => 'Dirección obtenida correctamente',
+                'data'    => $address
+            ], 200);
+    }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(AddressRequest $request)
     {
-        $validatedData = $request->validate([
-            'recipient_full_name' => 'required|string|max:255',
-            'phone'                => 'required|string|max:20',
-            'address_line'         => 'required|string|max:255',
-            'department'           => 'required|string|max:100',
-            'city'                 => 'required|string|max:100',
-            'neighborhood'         => 'required|string|max:100',
-            'complement'           => 'nullable|string|max:255',
-            'is_default'           => 'boolean',
-        ]);
+        // 1. Obtenemos los datos ya validados por AddressRequest
+        $validatedData = $request->validated();
 
         $duplicate = $request->user()->addresses()
             ->where('address_line', $validatedData['address_line'])
@@ -65,39 +79,11 @@ class AddressController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     */
-    public function show(Request $request, string $id)
-    {
-        $address = $request->user()->addresses()->find($id);
-
-        if (!$address) {
-            return response()->json([
-                'success' => false,
-                'message' => 'La dirección que estas intentando ver no existe'
-            ], 404);
-        }
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Dirección obtenida correctamente',
-            'data'    => $address
-        ], 200);
-    }
-
-    /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(AddressRequest $request, string $id) 
     {
         $address = $request->user()->addresses()->find($id);
-
-        if (empty($request->all())) {
-            return response()->json([
-                'success' => false,
-                'message' => 'No se enviaron datos para actualizar'
-            ], 422);
-        }
 
         if (!$address) {  
             return response()->json([
@@ -106,16 +92,8 @@ class AddressController extends Controller
             ], 404);
         }
 
-        $validatedData = $request->validate([
-            'recipient_full_name' => 'sometimes|required|string|max:255',
-            'phone'                => 'sometimes|required|string|max:20',
-            'address_line'         => 'sometimes|required|string|max:255',
-            'department'           => 'sometimes|required|string|max:100',
-            'city'                 => 'sometimes|required|string|max:100',
-            'neighborhood'         => 'sometimes|required|string|max:100',
-            'complement'           => 'sometimes|nullable|string|max:255',
-            'is_default'           => 'sometimes|boolean',
-        ]);
+        // 1. Obtenemos los datos ya validados (el Request ya validó que no venga vacío)
+        $validatedData = $request->validated();
 
         if ($request->boolean('is_default')) {
             $request->user()->addresses()

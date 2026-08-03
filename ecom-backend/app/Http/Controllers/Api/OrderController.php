@@ -3,12 +3,15 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Http\Requests\CheckoutRequest;
+
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\CartItem;
 use App\Models\Address;
 use App\Models\Product;
+
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -69,32 +72,15 @@ class OrderController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(CheckoutRequest $request)
     {
-        $validator = Validator::make($request->all(), [
-            'address_id' => 'required|exists:addresses,id',
-            'payment_method' => 'required|string',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'errors' => $validator->errors()
-            ], 422);
-        }
-
+        // 1. Obtenemos los datos limpios. Si llega aquí, address_id existe y pertenece al usuario.
+        $validated = $request->validated();
+        
         $userId = Auth::id();
 
-        $address = Address::where('id', $request->address_id)
-                          ->where('user_id', $userId)
-                          ->first();
-
-        if (!$address) {
-            return response()->json([
-                'success' => false,
-                'message' => 'La dirección seleccionada no es válida o no te pertenece.'
-            ], 403);
-        }
+        // 2. Como el Request ya validó que existe y te pertenece, simplemente la buscamos directo.
+        $address = Address::find($validated['address_id']);
 
         $cartItems = CartItem::where('user_id', $userId)->with('product')->get();
 
@@ -124,7 +110,7 @@ class OrderController extends Controller
                 'user_id' => $userId,
                 'address_id' => $address->id,
                 'payment_status' => 'pending',
-                'payment_method' => $request->payment_method,
+                'payment_method' => $validated['payment_method'], // Usamos el dato validado
                 'recipient_full_name' => $address->recipient_full_name,
                 'phone' => $address->phone,
                 'address_line' => $address->address_line,
@@ -190,7 +176,7 @@ class OrderController extends Controller
                     'pending' => config('mercadopago.frontend_url') . '/es/profile?tab=orders'
                 ],
 
-                // 'auto_return' => 'approved',
+                'auto_return' => 'approved',
 
                 'notification_url' => config('mercadopago.webhook_url'),
                 'external_reference' => (string) $order->id, 
@@ -202,7 +188,6 @@ class OrderController extends Controller
 
             $preference = $mpResponse->json();
 
-            // dd($mpResponse->status(), $preference);
             Log::info('MercadoPago Preference 💰👉', $preference);
 
             // =====================================================================
@@ -210,7 +195,6 @@ class OrderController extends Controller
             // =====================================================================
 
             Log::info($itemsForMP);
-
             Log::info($mpResponse->json());
 
             DB::commit();
@@ -224,8 +208,6 @@ class OrderController extends Controller
 
         } catch (\Exception $e) {
             DB::rollBack();
-
-            
 
             Log::error('Error al procesar orden: ' . $e->getMessage());
 

@@ -3,6 +3,9 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Auth\RegisterRequest;
+use App\Http\Requests\Auth\LoginRequest;
+use App\Http\Requests\Auth\ResetPasswordRequest; 
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -14,14 +17,9 @@ class AuthController extends Controller
     /**
      * Register a new user.
      */
-    public function register(Request $request)
+    public function register(RegisterRequest $request)
     {
-        $validatedData = $request->validate([
-            'name'       => 'required|string|max:255',
-            'email'      => 'required|string|email|max:255|unique:users',
-            'password'   => 'required|string|min:8|confirmed',
-            'birth_date' => 'nullable|date',
-        ]);
+        $validatedData = $request->validated();
 
         $user = User::create([
             'name'       => $validatedData['name'],
@@ -40,15 +38,12 @@ class AuthController extends Controller
         ], 201);
     }
 
-    /**
+   /**
      * Authenticate user and generate token.
      */
-    public function login(Request $request)
+    public function login(LoginRequest $request)
     {
-        $validatedData = $request->validate([
-            'email'    => 'required|email',
-            'password' => 'required',
-        ]);
+        $validatedData = $request->validated();
 
         $user = User::where('email', $validatedData['email'])->first();
 
@@ -95,13 +90,10 @@ class AuthController extends Controller
             : response()->json(['message' => __($status)], 422);
     }
 
-    public function resetPassword(Request $request)
+    public function resetPassword(ResetPasswordRequest $request) 
     {
-        $request->validate([
-            'token' => 'required',
-            'email' => 'required|email',
-            'password' => 'required|min:8|confirmed',
-        ]);
+        // Si el código llega a esta línea, es porque el token, el email y el 
+        // StrongPassword ya pasaron todas tus validaciones estrictas.
 
         $status = Password::reset(
             $request->only('email', 'password', 'password_confirmation', 'token'),
@@ -115,6 +107,8 @@ class AuthController extends Controller
             : response()->json(['message' => __($status)], 422);
     }
 }
+
+// Se elimina el $request->validate([...]) manual de todos los controladores.
 
 // =====================================================================
 // 🧠 NOTAS DE APRENDIZAJE: AuthController y Autenticación con Sanctum
@@ -132,3 +126,4 @@ class AuthController extends Controller
 // - Ocultar datos sensibles (`makeHidden`): Permite excluir dinámicamente atributos 
 //   del modelo (como el hash de la contraseña) antes de serializarlos a formato JSON.
 // =====================================================================
+
