@@ -18,6 +18,7 @@
     <table class="w-full text-left border-collapse">
         <thead>
             <tr class="bg-gray-100 text-gray-600 text-sm border-b">
+                <th class="p-4">Imagen</th>
                 <th class="p-4">SKU</th>
                 <th class="p-4">Nombre</th>
                 <th class="p-4">Precio</th>
@@ -29,6 +30,17 @@
         <tbody class="divide-y divide-gray-200 text-sm text-gray-700">
             @forelse($products as $product)
                 <tr>
+                    <td class="p-4">
+                        @if($product->productImages->isNotEmpty())
+                            <img src="{{ Storage::url($product->productImages->first()->url_image) }}"
+                                 alt="{{ $product->name }}"
+                                 style="width:48px; height:48px; object-fit:cover; border-radius:6px; border:1px solid #e5e7eb;">
+                        @else
+                            <div style="width:48px; height:48px; background:#f3f4f6; border-radius:6px; display:flex; align-items:center; justify-content:center; color:#9ca3af; font-size:10px;">
+                                N/A
+                            </div>
+                        @endif
+                    </td>
                     <td class="p-4 font-mono text-gray-500">{{ $product->sku }}</td>
                     <td class="p-4 font-medium text-gray-900">{{ $product->name }}</td>
                     <td class="p-4">${{ number_format($product->price, 2) }}</td>
@@ -49,7 +61,7 @@
                 </tr>
             @empty
                 <tr>
-                    <td colspan="6" class="p-6 text-center text-gray-500">No hay productos registrados.</td>
+                    <td colspan="7" class="p-6 text-center text-gray-500">No hay productos registrados.</td>
                 </tr>
             @endforelse
         </tbody>

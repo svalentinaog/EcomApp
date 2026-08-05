@@ -7,12 +7,13 @@ use App\Models\Product;
 use App\Models\Category;
 use App\Models\Subcategory;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class AdminProductController extends Controller
 {
     public function index()
     {
-        $products = Product::with(['subcategory.category'])->paginate(10);
+        $products = Product::with(['subcategory.category', 'productImages'])->paginate(10);
         return view('admin.products.index', compact('products'));
     }
 
@@ -30,9 +31,21 @@ class AdminProductController extends Controller
             'price' => 'required|numeric',
             'stock' => 'required|integer',
             'subcategory_id' => 'required|exists:subcategories,id',
+            'product_images' => 'nullable|array',
+            'product_images.*' => 'image|mimes:jpg,jpeg,png,webp|max:2048',
         ]);
 
-        Product::create($request->all());
+        $product = Product::create($request->except('product_images'));
+
+        if ($request->hasFile('product_images')) {
+            foreach ($request->file('product_images') as $file) {
+                $path = $file->store('products', 'public');
+
+                $product->productImages()->create([
+                    'url_image' => $path
+                ]);
+            }
+        }
 
         return redirect()->route('admin.products.index')->with('success', 'Producto creado exitosamente.');
     }
@@ -40,6 +53,7 @@ class AdminProductController extends Controller
     public function edit(Product $product)
     {
         $categories = Category::with('subcategories')->get();
+        $product->load('productImages');
         return view('admin.products.create', compact('product', 'categories'));
     }
 
@@ -51,9 +65,21 @@ class AdminProductController extends Controller
             'price' => 'required|numeric',
             'stock' => 'required|integer',
             'subcategory_id' => 'required|exists:subcategories,id',
+            'product_images' => 'nullable|array',
+            'product_images.*' => 'image|mimes:jpg,jpeg,png,webp|max:2048',
         ]);
 
-        $product->update($request->all());
+        $product->update($request->except('product_images'));
+
+        if ($request->hasFile('product_images')) {
+            foreach ($request->file('product_images') as $file) {
+                $path = $file->store('products', 'public');
+
+                $product->productImages()->create([
+                    'url_image' => $path
+                ]);
+            }
+        }
 
         return redirect()->route('admin.products.index')->with('success', 'Producto actualizado exitosamente.');
     }
