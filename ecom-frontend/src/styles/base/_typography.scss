@@ -47,3 +47,35 @@ p, td {
 span, th {
   font-weight: 700;
 }
+
+// Responsive typography
+@media (max-width: 768px) {
+  h1 {
+    font-size: 2rem;
+  }
+
+  h2 {
+    font-size: 1.75rem;
+  }
+
+  h3,
+  span {
+    font-size: 1.25rem;
+  }
+
+  h4 {
+    font-size: 1.1rem;
+  }
+
+  h5 {
+    font-size: 0.95rem;
+  }
+
+  p,
+  button,
+  a,
+  td,
+  th {
+    font-size: 0.9rem;
+  }
+}

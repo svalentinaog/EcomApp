@@ -114,6 +114,35 @@ header {
 
   // Responsive
   @media (max-width: 768px) {
+    .navbar {
+  img.logo {
+    width: 110px; // antes 80px, se veía muy chico
+    height: auto;
+  }
+
+  .navbar-content {
+    gap: 14px; // un poco más compacto para dar espacio al logo
+
+    img[alt="Cart"] {
+      width: 26px;
+      height: 26px;
+    }
+
+    .hamburger-menu {
+      width: 26px;
+      height: 26px;
+    }
+  }
+}
+
+.top-bar-left {
+  .top-bar-item img {
+    width: 20px;
+    height: 20px;
+    object-fit: contain;
+  }
+}
+
     .header-content {
       padding: 0.75rem 1rem;
       position: relative;
@@ -139,7 +168,7 @@ header {
         align-items: center;
 
         img.logo {
-          width: 80px;
+          width: 140px;
         }
 
         .navbar-content {
@@ -152,8 +181,8 @@ header {
           }
 
           img[alt="Cart"] {
-            width: 32px;
-            height: 32px;
+            width: 24px;
+            height: 24px;
           }
 
           .hamburger-menu {
