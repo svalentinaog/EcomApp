@@ -1,15 +1,15 @@
 {
   "hero": {
-    "title": "Contacto",
-    "subtitle": "Área para promociones principales",
-    "description": "Contáctanos para cualquier pregunta o problema"
+    "title": "Estamos aquí para ayudarte",
+    "subtitle": "Atención al cliente",
+    "description": "¿Tienes preguntas sobre un pedido, un producto o nuestros servicios? Nuestro equipo está listo para ayudarte de forma rápida y personalizada."
   },
   "infoSection": {
     "title": "Información de Contacto",
     "address": {
       "title": "Dirección",
       "description": "Av. Principal 123, Ciudad, País"
-    },
+    }, 
     "email": {
       "title": "Correo Electrónico",
       "description": "contacto@ejemplo.com"
@@ -20,8 +20,8 @@
     }
   },
   "formSection": {
-    "title": "Formulario de Contacto",
-    "description": "Contáctanos para cualquier pregunta o problema"
+    "title": "¿Cómo podemos ayudarte?",
+    "description": "Nuestro equipo está listo para responder tus preguntas sobre productos, pedidos y cualquier consulta que tengas."
   },
   "form": {
     "placeholder": {

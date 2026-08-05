@@ -39,12 +39,14 @@ export default function ProductListToolbar({
   return (
     <div className="product-toolbar">
       <div className="product-toolbar__info">
-        {t("toolbar.showing", { defaultValue: "Mostrando:" })}{" "}
+        <p>
+          {t("toolbar.showing", { defaultValue: "Mostrando:" })}{" "}
         <strong>{showingCount}</strong>{" "}
         {t("toolbar.of", { defaultValue: "de" })}{" "}
         <strong>
           {totalCount} {t("toolbar.products", { defaultValue: "Productos" })}
         </strong>
+        </p>
       </div>
 
       <div className="product-toolbar__controls">

@@ -45,6 +45,10 @@
     display: flex;
     flex-direction: column;
     gap: 8px;
+
+    p {
+      font-size: 1rem;
+    }
   }
 
   .card-product-info-content {

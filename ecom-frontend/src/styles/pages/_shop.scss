@@ -172,6 +172,11 @@
     strong {
       color: $title;
       font-weight: 600;
+      font-size: 1rem;
+    }
+
+    p {
+      font-size: 1rem;
     }
   }
 
@@ -231,6 +236,10 @@
   position: relative;
   user-select: none;
   width: max-content;
+
+  p {
+    font-size: 1rem;
+  }
 
   &__trigger {
     display: flex;
